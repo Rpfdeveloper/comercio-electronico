@@ -166,11 +166,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step === 'confirm') {
 
         if ($data['tipo'] === 'registrado') {
             // Alta / reutilización de cliente
-            $st = $pdo->prepare("SELECT id FROM cliente WHERE email = :email");
+            $st = $pdo->prepare(
+                "SELECT c.id, cr.password_hash
+                 FROM cliente c
+                 LEFT JOIN cliente_registrado cr ON cr.id_cliente = c.id
+                 WHERE c.email = :email
+                 FOR UPDATE"
+            );
             $st->execute([':email' => $data['email']]);
             $rowCli = $st->fetch();
 
             if ($rowCli) {
+                // Nunca modificar una cuenta existente sin acreditar su contraseña.
+                if (empty($rowCli['password_hash']) ||
+                    !password_verify($data['password'], $rowCli['password_hash'])) {
+                    throw new RuntimeException('No se ha podido autenticar la cuenta.');
+                }
                 $idCliente = (int)$rowCli['id'];
 
                 $st = $pdo->prepare(
@@ -203,7 +214,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step === 'confirm') {
                  VALUES
                     (:id_cliente, :pw, :dir, :cp, :pob, :prov, :pais)
                  ON DUPLICATE KEY UPDATE
-                    password_hash = VALUES(password_hash),
                     direccion     = VALUES(direccion),
                     cp            = VALUES(cp),
                     poblacion     = VALUES(poblacion),
