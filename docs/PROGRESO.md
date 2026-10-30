@@ -2,6 +2,16 @@
 
 Registro técnico de cambios verificables en `develop`. La rama `original` conserva la entrega recuperada. El proyecto sigue siendo un prototipo: no procesa pagos ni envía correos reales.
 
+## Revisión del PR #1 — categorías inactivas (31 de octubre de 2026)
+
+La revisión detectó que retirar una categoría ocultaba sus fichas, pero un carrito anterior o un POST directo todavía podían comprar sus productos. Se corrige en la validación compartida del carrito y del checkout: categoría activa obligatoria, lectura actual y bloqueo compartido durante la transacción de confirmación.
+
+Las pruebas cubren productos con y sin variantes, altas directas, actualización de cantidades, entrada al checkout, resúmenes anteriores, conservación de stock y eliminación de la línea. Se comprueba además la retirada de una categoría cuando dos confirmaciones ya han pasado la primera validación y esperan el producto: ambas devuelven 409, sin pedidos ni descuentos. Las compras simultáneas normales siguen pasando.
+
+**239 comprobaciones correctas por entorno**: 41 de compra, 45 de cuenta, 48 administrativas, 73 de catálogo y 32 de concurrencia. [Validación de GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions/runs/41145205094), sobre `96ac17e4d6465ca53a90e4c841bfd39fae3d9067`, con PHP 8.3 y 8.4 y MariaDB 11.4. Los 35 PHP pasan sintaxis y los logs no presentan avisos PHP. Las modificaciones posteriores son de documentación.
+
+Antes de abrir el [PR #1](https://github.com/Rpfdeveloper/comercio-electronico/pull/1), se verificaron copias del código y su historial en `backup/2026-10-31-main-85fbc66` y `backup/2026-10-31-develop-e300be6`. Son ramas del mismo repositorio; no incluyen una base de datos de producción. `original` se conserva sin cambios.
+
 ## Catálogo — búsqueda, filtros y paginación
 
 - Nueva página `catalogo.php` con búsqueda por nombre, marca y descripción corta; filtros combinables por categoría, marca, precio y disponibilidad.

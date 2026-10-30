@@ -15,7 +15,7 @@ Se conserva la regla actual del carrito: un `precio_oferta` positivo sustituye a
 
 Los filtros de precio y la ordenación usan ese mismo importe «desde». No buscan cualquier capacidad dentro del rango: por ejemplo, un producto disponible desde 40 € queda fuera de un filtro mínimo de 50 €, aunque tenga otra capacidad de 70 €. Sin variantes se usan el precio y el stock del producto.
 
-La ficha presenta primero la capacidad disponible más barata, deshabilita las agotadas y oculta las inactivas. No permite iniciar una compra desde un producto agotado. El servidor sigue revalidando precio y stock al comprar. Las fichas de productos o categorías inactivos devuelven 404.
+La ficha presenta primero la capacidad disponible más barata, deshabilita las agotadas y oculta las inactivas. No permite iniciar una compra desde un producto agotado. El servidor revalida precio, stock y categoría activa al añadir al carrito y al confirmar. Dentro de la transacción bloquea la categoría en modo compartido: permite compras simultáneas y evita que se retire antes de terminar la confirmación. Una categoría ya retirada bloquea también los carritos y resúmenes anteriores. Las fichas de productos o categorías inactivos devuelven 404.
 
 ## Validación y límites
 
