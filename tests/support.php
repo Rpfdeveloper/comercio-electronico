@@ -14,6 +14,8 @@ $pdo = new PDO($dsn, getenv('TIENDA_TEST_USER') ?: 'root', getenv('TIENDA_TEST_P
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
 ]);
+// Las fixtures Unicode deben usar la misma codificación que la aplicación.
+$pdo->exec('SET NAMES utf8mb4');
 $checks = 0;
 function check(bool $condition, string $message): void {
     global $checks;

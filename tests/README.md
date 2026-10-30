@@ -1,6 +1,6 @@
-# Pruebas de integración, cuenta y concurrencia
+# Pruebas de la tienda
 
-Estado actual: 41 comprobaciones de compra, 45 de cuenta/privacidad, 48 de administración y 29 de concurrencia: **163 por entorno**, más sintaxis y revisión de archivos sensibles. Validación local de esta iteración con PHP 8.3.6 y MariaDB 10.11.14. Los resultados anteriores se conservan más abajo como referencia.
+Estado actual: 41 comprobaciones de compra, 45 de cuenta/privacidad, 48 de administración, 59 de catálogo y 29 de concurrencia: **222 por entorno**, más sintaxis y revisión de archivos sensibles. Validación local de esta iteración con PHP 8.3.6 y MariaDB 10.11.14. Los resultados anteriores se conservan más abajo como referencia.
 
 Esta suite usa peticiones HTTP reales, sesiones independientes y una base MariaDB/MySQL desechable cuyo nombre termina en `_test`. No utiliza pagos ni correo reales.
 
@@ -44,6 +44,7 @@ $env:TIENDA_TEST_ADMIN_PASS='CLAVE_ADMIN_SOLO_DE_PRUEBAS'
 php tests/integration.php
 php tests/customer.php
 php tests/admin.php
+php tests/catalog.php
 python3 tests/privacy.py
 ```
 
@@ -68,6 +69,7 @@ En otra terminal, con las mismas variables de pruebas:
 php tests/integration.php
 php tests/customer.php
 php tests/admin.php
+php tests/catalog.php
 php tests/concurrency.php
 python3 tests/privacy.py
 ```
@@ -86,7 +88,7 @@ Utiliza correos `example.invalid`, restaura el stock y elimina sus pedidos y el 
 
 ## GitHub Actions
 
-`.github/workflows/tienda-tests.yml` ejecuta las cuatro suites cuando cambian la aplicación, las pruebas o el workflow en `develop` o `main`, y en pull requests hacia esas ramas. La matriz prueba PHP 8.3 y 8.4 con MariaDB 11.4 en una base desechable por job. También comprueba la sintaxis de todos los PHP y rechaza avisos, errores y deprecaciones del log.
+`.github/workflows/tienda-tests.yml` ejecuta las cinco suites cuando cambian la aplicación, las pruebas o el workflow en `develop`, `main` o ramas `mejora/**`, y en pull requests hacia esas ramas. La matriz prueba PHP 8.3 y 8.4 con MariaDB 11.4 en una base desechable por job. También comprueba la sintaxis de todos los PHP y rechaza avisos, errores y deprecaciones del log.
 
 El workflow solo tiene permisos de lectura del repositorio; sus contraseñas ficticias sirven exclusivamente para los servicios temporales de CI. Las acciones se fijan a commits concretos. Resultado verificado el 30 de octubre de 2026: **41 comprobaciones de integración + 29 de concurrencia por versión de PHP**, ambas ejecuciones correctas; 21 archivos PHP sin errores de sintaxis y logs sin avisos. [Ejecución verificada](https://github.com/Rpfdeveloper/comercio-electronico/actions/runs/41126154248). Los resultados posteriores aparecen en [GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions).
 
@@ -105,3 +107,9 @@ Referencias técnicas: [servidor integrado de PHP](https://www.php.net/manual/en
 ## Administración
 
 `tests/admin.php` requiere `TIENDA_TEST_ADMIN_PASS` y el mismo `TIENDA_AUTH_SECRET` que el servidor. Comprueba el aislamiento entre cuenta y panel, cookies con alcance administrativo, renovación de identificador/CSRF, expiración y rotación de configuración, límites separados de clientes y competencia de dos solicitudes por el último intento permitido. El secreto y la contraseña son ficticios en CI. Ejecutar secuencialmente: la suite limpia los contadores de la base desechable y elimina sus pedidos y cliente.
+
+## Catálogo
+
+`tests/catalog.php` crea categorías, marcas, productos y variantes ficticios y comprueba búsqueda literal, acentos, escape HTML, filtros combinados, precios de oferta, disponibilidad, ordenación estable, paginación con filtros conservados y errores 404/422. Contrasta el precio de una variante con el carrito y comprueba las fichas ocultas o agotadas. Elimina sus fixtures al terminar, también ante un fallo controlado. La conexión de pruebas utiliza UTF-8 explícito para no alterar las fixtures con acentos.
+
+No es una prueba de rendimiento con catálogos grandes. [Comportamiento y límites del catálogo](../docs/CATALOGO.md).
