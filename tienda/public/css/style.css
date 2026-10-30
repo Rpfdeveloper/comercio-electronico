@@ -1,0 +1,571 @@
+﻿/* ============================================================
+ * Estilos globales
+ * ============================================================ */
+
+:root {
+  --color-bg: #f5f5f7;
+  --color-surface: #ffffff;
+  --color-border: #e5e7eb;
+  --color-text: #111827;
+  --color-muted: #6b7280;
+  --color-primary: #ff6000;   /* naranja tipo pcComponentes */
+  --color-primary-soft: #ffe4cf;
+  --color-danger: #dc2626;
+
+  --radius-card: 16px;
+  --radius-pill: 999px;
+
+  --shadow-soft: 0 8px 24px rgba(15, 23, 42, 0.06);
+  --transition-fast: 150ms ease-out;
+
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+/* Reset básico */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Enlaces */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Contenedor principal reutilizable */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+/* ============================================================
+ * Cabecera y navegación
+ * ============================================================ */
+
+header {
+  background: #ffffff;
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* Layout del header controlado por .header-bar; dejamos .container neutro aquí */
+header .container {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+
+/* Título / logotipo */
+header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  letter-spacing: 0.02em;
+}
+
+header h1 a {
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+/* Menú principal de categorías */
+#menu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+#menu a {
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+#menu a:hover {
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary-soft);
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+/* Si en el futuro marcas una categoría activa con .active */
+#menu a.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #ffffff;
+}
+
+/* ============================================================
+ * Tipografía y títulos
+ * ============================================================ */
+
+main.container {
+  padding-top: 2rem;
+  padding-bottom: 3rem;
+}
+
+h2 {
+  font-size: 1.4rem;
+  margin: 0 0 1rem;
+}
+
+h3 {
+  font-size: 1.1rem;
+  margin: 0 0 0.5rem;
+}
+
+/* Párrafos de texto suave */
+.text-muted {
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+/* ============================================================
+ * Grid y tarjetas de producto / categoría
+ * ============================================================ */
+
+.grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+}
+
+/* Tarjeta genérica */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: 1rem;
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  transition: transform var(--transition-fast),
+              box-shadow var(--transition-fast),
+              border-color var(--transition-fast);
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-soft);
+  border-color: rgba(255, 96, 0, 0.35);
+}
+
+/* Imágenes dentro de tarjetas */
+.card img {
+  display: block;
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+  background: #f3f4f6;
+}
+
+/* Información de producto */
+.card .price {
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+
+.card small {
+  color: var(--color-muted);
+}
+
+/* Enlaces de título de producto */
+.card h3 a {
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.card h3 a:hover {
+  color: var(--color-primary);
+}
+
+/* ============================================================
+ * Páginas de detalle de producto
+ * ============================================================ */
+
+.product-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.product-images img {
+  width: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  border-radius: 18px;
+  background: #f3f4f6;
+}
+
+.product-info h1,
+.product-info h2 {
+  margin-top: 0;
+}
+
+.product-price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 0.75rem;
+}
+
+.product-meta {
+  margin-top: 0.5rem;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+/* ============================================================
+ * Botones y controles
+ * ============================================================ */
+
+button,
+input[type="submit"],
+input[type="button"],
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1.1rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid transparent;
+  font-size: 0.95rem;
+  cursor: pointer;
+  background: var(--color-primary);
+  color: #ffffff;
+  font-weight: 600;
+  transition: background var(--transition-fast),
+              transform var(--transition-fast),
+              box-shadow var(--transition-fast);
+}
+
+button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover,
+.btn:hover {
+  background: #e65400;
+  box-shadow: 0 6px 16px rgba(255, 96, 0, 0.35);
+  transform: translateY(-1px);
+}
+
+button:disabled,
+input[type="submit"]:disabled,
+.btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+  box-shadow: none;
+}
+
+/* Botón secundario (por si lo usas) */
+.btn-secondary {
+  background: #ffffff;
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+.btn-secondary:hover {
+  background: #f3f4f6;
+  box-shadow: none;
+}
+
+/* Inputs y selects */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+select,
+textarea {
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--color-text);
+  background: #ffffff;
+  transition: border-color var(--transition-fast),
+              box-shadow var(--transition-fast);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--color-primary);
+  outline: none;
+  box-shadow: 0 0 0 1px rgba(255, 96, 0, 0.25);
+}
+
+/* Campos pequeños de cantidad en carrito/detalle */
+input.qty-input {
+  width: 80px;
+}
+
+/* ============================================================
+ * Tablas (carrito, checkout, admin)
+ * ============================================================ */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+th,
+td {
+  padding: 0.5rem 0.4rem;
+}
+
+th {
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+  font-weight: 600;
+}
+
+td {
+  border-bottom: 1px solid #f3f4f6;
+}
+
+td.numeric,
+th.numeric {
+  text-align: right;
+}
+
+/* Totales del carrito/checkout */
+.table-totals {
+  margin-top: 1rem;
+  text-align: right;
+  font-weight: 600;
+}
+
+/* Mensajes de error en checkout */
+.error {
+  color: var(--color-danger);
+  font-size: 0.85rem;
+}
+
+/* ============================================================
+ * Carrito vacío, mensajes informativos
+ * ============================================================ */
+
+.message-box {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid var(--color-border);
+  padding: 1.25rem;
+  text-align: center;
+}
+
+/* ============================================================
+ * Footer
+ * ============================================================ */
+
+footer {
+  border-top: 1px solid var(--color-border);
+  background: #ffffff;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+footer.container {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+footer em {
+  font-style: normal;
+  font-weight: 500;
+}
+
+/* ============================================================
+ * Responsivo
+ * ============================================================ */
+
+@media (max-width: 768px) {
+  header .container {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .product-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+ * Header Sticky con botón de carrito
+ * ============================================================ */
+
+.header-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border-bottom: 1px solid #ececec;
+  margin-bottom: 1rem;
+}
+
+/* Contenedor horizontal del header */
+.header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.4rem 0;
+  gap: 1rem;
+}
+
+/* IZQUIERDA: logo + menú */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* Título de la tienda */
+.shop-title {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.shop-title-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Menú principal */
+.main-menu {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* ENLACES DEL MENÚ */
+.main-menu a {
+  background: #fff3e8;
+  border: 1px solid rgba(255,120,0,0.3);
+  color: #ff6000;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.main-menu a:hover {
+  background: #ff6000;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(255,120,0,0.25);
+}
+
+/* BOTÓN DE CARRITO */
+.cart-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: 12px;
+  background: #fff7f2;
+  border: 1px solid rgba(255, 96, 0, 0.35);
+  color: #ff6000;
+  font-weight: 600;
+  font-size: 0.92rem;
+  text-decoration: none;
+  box-shadow: 0 4px 10px rgba(255, 96, 0, 0.15);
+  transition: 0.15s;
+}
+
+.cart-button:hover {
+  background: #ff6000;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(255, 96, 0, 0.35);
+}
+
+/* Icono carrito */
+.cart-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header-bar {
+    flex-wrap: wrap;
+  }
+
+  .header-left {
+    width: 100%;
+    order: 1;
+  }
+
+}
+
+/* ============================================================
+ * Contador del carrito
+ * ============================================================ */
+ .cart-button {
+  position: relative;             
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: 12px;
+  background: #fff7f2;
+  border: 1px solid rgba(255, 96, 0, 0.35);
+  color: #ff6000;
+  font-weight: 600;
+  font-size: 0.92rem;
+  text-decoration: none;
+  box-shadow: 0 4px 10px rgba(255, 96, 0, 0.15);
+  transition: 0.15s;
+}
+/* Burbuja del contador */
+.cart-count {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+
+  background: #ff6000;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+
+  min-width: 18px;
+  height: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 2px;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(255, 96, 0, 0.4);
+}
+
