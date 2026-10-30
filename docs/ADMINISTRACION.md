@@ -24,6 +24,8 @@ La separación de cookies no sustituye la protección contra XSS: ambas áreas s
 
 Se permiten cinco intentos para la cuenta administrativa y 30 por IP en ventanas de 15 minutos. Cambiar el usuario enviado o eliminar cookies no reinicia el contador. Los prefijos HMAC separan estos contadores de los de clientes: un bloqueo en un ámbito no bloquea el otro.
 
+El limitador toma un bloqueo exclusivo sobre cada contador y reintenta la transacción completa hasta tres veces ante un interbloqueo o agotamiento de espera de bloqueo. Cada reintento vuelve a comprobar los límites; si persiste el error, el acceso se rechaza con 503.
+
 Al entrar correctamente se elimina el contador de la cuenta; se conserva el de IP. Al alcanzar el límite se devuelve 429 con `Retry-After: 900`. Las credenciales incorrectas reciben un error genérico 401; los formularios malformados, 422; un problema de configuración o disponibilidad impide entrar y devuelve 503.
 
 La IP procede de `REMOTE_ADDR`; la resolución de proxies de confianza debe configurarse en el servidor. Se conserva la limpieza acotada de contadores de más de un día descrita en [la guía de cuentas](CUENTAS_CLIENTE.md). Los contadores no guardan usuario ni IP en claro. Los logs del servidor tienen su propia retención.

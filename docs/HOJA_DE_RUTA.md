@@ -20,7 +20,8 @@ Estado actual: prototipo funcional en desarrollo. Todavía no está preparado pa
 - [ ] Verificación de correo y recuperación de contraseña.
 - [x] Retirar contraseñas en claro de la sesión de checkout.
 - [x] Caducidad y renovación de sesiones de clientes, límites de intentos y depuración desactivada por defecto.
-- [ ] Límites equivalentes para el acceso administrativo y revisión de la configuración de producción.
+- [x] Sesión independiente, caducidad y límites de intentos para el acceso administrativo.
+- [ ] MFA, roles y revisión de la configuración de producción.
 - [x] Validar variantes, productos activos, cantidades y stock en el servidor; rechazar datos de compra no escalares.
 - [x] Reservar o descontar stock de forma transaccional, evitando sobreventa.
 - [x] Pruebas locales de regresión automatizadas.
@@ -93,3 +94,9 @@ Los escenarios cubren concurrencia funcional, no carga sostenida, fallos de red 
 Se completan acceso, salida, historial, detalle autorizado por cliente, caducidad de sesiones y límites compartidos de acceso/checkout. Se añade una migración aditiva, configuración externa del secreto y revisión de patrones sensibles. Las tareas de cuenta y límites indicadas como pendientes en las iteraciones anteriores quedan cubiertas para clientes; recuperación/verificación de correo, protección equivalente del administrador y pagos continúan pendientes.
 
 Validación local: 115 comprobaciones correctas (41 + 45 + 29), 27 PHP sin errores de sintaxis y log sin avisos en PHP 8.3.6 / MariaDB 10.11.14. La misma suite pasa en PHP 8.3 y 8.4 con MariaDB 11.4 en [GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions/runs/41134720548). [Detalle del avance y muestra visual](PROGRESO.md). [Instrucciones de actualización](CUENTAS_CLIENTE.md).
+
+## Quinta iteración — protección administrativa
+
+El panel incorpora sesión y cookie independientes de la cuenta de cliente, renovación de identificador y CSRF, caducidad, invalidación al cambiar configuración y límites por cuenta/IP. Los contadores administrativos y de clientes se mantienen separados. Se corrigen respuestas ante identificadores de pedido malformados y se extrae el limitador común sin cambiar las claves de clientes.
+
+Validación local: 163 comprobaciones correctas (41 + 45 + 48 + 29), 31 PHP sin errores de sintaxis y logs sin avisos. [Resultados de CI y detalle](PROGRESO.md). [Guía de actualización](ADMINISTRACION.md). El panel sigue teniendo una única cuenta; MFA, roles y revisión final de producción permanecen pendientes.

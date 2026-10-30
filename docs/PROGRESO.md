@@ -2,6 +2,22 @@
 
 Registro técnico de cambios verificables en `develop`. La rama `original` conserva la entrega recuperada. El proyecto sigue siendo un prototipo: no procesa pagos ni envía correos reales.
 
+## Panel de administración — nueva iteración
+
+- Sesión propia `TIENDAADMIN`, con cookie limitada al directorio administrativo. Cerrar la administración conserva la cuenta y el carrito del cliente, y cerrar la cuenta no cierra el panel.
+- Renovación de identificador y CSRF; caducidad tras 15 minutos de inactividad o cuatro horas totales. La huella de configuración invalida sesiones cuando cambia la contraseña o el secreto.
+- Límites persistidos por cuenta e IP, separados de los de clientes. Cambiar el usuario enviado no reinicia el contador; una autenticación correcta conserva el contador por IP.
+- Páginas sin caché, mensajes genéricos y 404 para pedidos inexistentes o identificadores malformados.
+- Actualización de `actions/checkout` a [v7.0.1](https://github.com/actions/checkout/releases/tag/v7.0.1), fijada a su commit y con Node.js 24, conservando permisos de solo lectura y `persist-credentials: false`.
+- Limitador común extraído a `auth.php`, conservando las claves de contadores y el comportamiento de los clientes. Se reutiliza la migración 002.
+- La prueba de dos intentos detectó un 503 transitorio: se incorpora bloqueo exclusivo desde la lectura/alta del contador y reintento acotado de la transacción completa, conservando el límite y su rechazo 429.
+
+Validación local con PHP 8.3.6 y MariaDB 10.11.14: **163 comprobaciones correctas** (41 de compra, 45 de cuenta, 48 administrativas y 29 de concurrencia), 31 PHP sin errores de sintaxis y log sin avisos. [Ejecución en GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions/runs/41137901221), sobre `6c80fe2a20361b5f92f0dd9cc5bd602536823b5d`: **163 comprobaciones correctas en cada versión**, PHP 8.3 y 8.4 con MariaDB 11.4 (326 ejecuciones, no 326 casos distintos), sintaxis correcta y logs sin avisos PHP.
+
+![GitHub Actions: validación administrativa correcta en ambos entornos](capturas/ci-administracion-20261030.jpg)
+
+[Configuración, límites y actualización del panel](ADMINISTRACION.md). Al desplegar esta mejora los administradores deben volver a iniciar sesión; no se admiten las sesiones antiguas. La administración sigue usando una única cuenta, sin MFA ni roles múltiples. La separación de cookies no sustituye las defensas contra XSS en el mismo origen.
+
 ## Cuenta de cliente e historial privado
 
 Implementado:
@@ -27,7 +43,7 @@ Se ha revisado visualmente la pantalla de acceso en escritorio. La revisión com
 ## Siguiente trabajo
 
 - Verificación del correo y recuperación de contraseña con tokens de un solo uso y caducidad.
-- Protección equivalente del acceso administrativo.
+- MFA y roles administrativos, con revisión de despliegue y acceso restringido.
 - Búsqueda y filtros del catálogo; revisión completa del checkout en móvil y con teclado.
 - Reservas y estados de pago antes de conectar una pasarela en modo de pruebas.
 
