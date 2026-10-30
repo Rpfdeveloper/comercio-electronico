@@ -403,7 +403,7 @@ VALUES
 (5,  'img/products/Hombre/ember-wood-edp.jpg',      'Ember Wood EDP',        1, 1),
 (6,  'img/products/Hombre/iron-harbor-edt.jpg',     'Iron Harbor EDT',       1, 1),
 (7,  'img/products/Hombre/night-compass-edt.jpg',   'Night Compass EDT',     1, 1),
-(8,  'img/products/Hombre/ocean-graphite-edp.jpg',  'Ocean Graphite EDP',    1, 1),
+(8,  'img/products/Hombre/ocean-graphite-edt.jpg',  'Ocean Graphite EDT',    1, 1),
 (9,  'img/products/Hombre/royal-leather-edp.jpg',   'Royal Leather EDP',     1, 1),
 (10, 'img/products/Hombre/urban-vetiver-edp.jpg',   'Urban Vetiver EDP',     1, 1),
 -- Mujer
