@@ -1,4 +1,6 @@
-# Pruebas de integración y concurrencia
+# Pruebas de integración, cuenta y concurrencia
+
+Estado actual: 41 comprobaciones de compra, 44 de cuenta/privacidad y 29 de concurrencia: **114 por entorno**, más sintaxis y revisión de archivos sensibles. Validación local de esta iteración con PHP 8.3.6 y MariaDB 10.11.14. Los resultados anteriores se conservan más abajo como referencia.
 
 Esta suite usa peticiones HTTP reales, sesiones independientes y una base MariaDB/MySQL desechable cuyo nombre termina en `_test`. No utiliza pagos ni correo reales.
 
@@ -27,6 +29,7 @@ $env:TIENDA_DB_NAME='tienda_perfumes_test'
 $env:TIENDA_DB_USER='tienda_test_user'
 $env:TIENDA_ADMIN_PASS='CLAVE_ADMIN_SOLO_DE_PRUEBAS'
 $env:TIENDA_DEBUG='true'
+$env:TIENDA_AUTH_SECRET='clave-ficticia-solo-pruebas-con-mas-de-32-bytes'
 New-Item -ItemType Directory -Force tests/sessions | Out-Null
 $sessionPath=(Resolve-Path tests/sessions).Path
 php -d "session.save_path=$sessionPath" -d output_buffering=0 -S 127.0.0.1:8080 -t tienda
@@ -39,6 +42,8 @@ En otra consola, definir las mismas variables `TIENDA_TEST_DSN`, `TIENDA_TEST_US
 $env:TIENDA_TEST_URL='http://127.0.0.1:8080'
 $env:TIENDA_TEST_ADMIN_PASS='CLAVE_ADMIN_SOLO_DE_PRUEBAS'
 php tests/integration.php
+php tests/customer.php
+python3 tests/privacy.py
 ```
 
 La URL y el DSN deben apuntar a la misma instalación. La cuenta de pruebas consulta y prepara datos; el servidor usa el usuario de aplicación. Con la clave administrativa definida deben pasar 41 comprobaciones. Si se omite, no se ejecuta el recorrido administrativo completo.
@@ -60,7 +65,9 @@ En otra terminal, con las mismas variables de pruebas:
 
 ```bash
 php tests/integration.php
+php tests/customer.php
 php tests/concurrency.php
+python3 tests/privacy.py
 ```
 
 El servidor integrado de PHP admite múltiples procesos desde PHP 7.4 y no soporta esa opción en Windows. En Windows, usa WSL o ejecuta las pruebas mediante GitHub Actions. Un servidor secuencial debe fallar en la prueba de concurrencia: no basta con lanzar dos peticiones que se atiendan una detrás de otra.
@@ -84,5 +91,11 @@ El workflow solo tiene permisos de lectura del repositorio; sus contraseñas fic
 Referencias técnicas: [servidor integrado de PHP](https://www.php.net/manual/en/features.commandline.webserver.php) y [bloqueos observables en MariaDB](https://mariadb.com/docs/server/reference/system-tables/information-schema/information-schema-tables/information-schema-innodb-tables/information-schema-innodb_lock_waits-table).
 
 ## Variables de la aplicación
-`TIENDA_DB_HOST`, `TIENDA_DB_PORT`, `TIENDA_DB_NAME`, `TIENDA_DB_USER`, `TIENDA_DB_PASS`, `TIENDA_ADMIN_PASS` y `TIENDA_DEBUG` se leen del entorno del proceso PHP. No se carga automáticamente un archivo `.env`. La depuración está desactivada por defecto.
+`TIENDA_DB_HOST`, `TIENDA_DB_PORT`, `TIENDA_DB_NAME`, `TIENDA_DB_USER`, `TIENDA_DB_PASS`, `TIENDA_ADMIN_PASS`, `TIENDA_AUTH_SECRET` y `TIENDA_DEBUG` se leen del entorno del proceso PHP. No se carga automáticamente un archivo `.env`. La depuración está desactivada por defecto. Servidor y suites deben compartir `TIENDA_AUTH_SECRET`; para la cuenta se requiere la migración 002, aplicada por `prepare_database.php`.
+
+## Cuenta y privacidad
+
+`tests/customer.php` comprueba autorización del historial/detalle, pedidos ajenos e invitados, paginación, escape HTML, cabeceras de caché, CSRF, renovación e invalidación de sesiones, cierre de sesión conservando el carrito, checkout autenticado, límite compartido entre endpoints, vencimiento y limpieza de contadores y límites de contraseñas. La caducidad temporal se comprueba llamando al validador con marcas de tiempo controladas. El límite por IP se prepara en la BD para comprobar el rechazo del siguiente intento. Elimina sus clientes/pedidos y limpia los contadores de la base desechable; ejecutar las suites secuencialmente y sin usuarios reales.
+
+`python3 tests/privacy.py` revisa archivos versionados y nuevos no ignorados: rechaza ficheros de entorno, sesiones, logs, claves privadas, algunos formatos de tokens y correos fuera de los dominios de ejemplo o `noreply`. No imprime el contenido sospechoso. Esta revisión es acotada, no detecta todos los secretos ni revisa exhaustivamente binarios o commits anteriores. Revisar también el diff antes de publicar.
 

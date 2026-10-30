@@ -25,13 +25,22 @@ class TestBrowser {
     private $curl;
     public $token = '';
     public $status;
+    public $headers = [];
     public function __construct() {
         $this->curl = curl_init();
         curl_setopt_array($this->curl, [CURLOPT_COOKIEFILE => '', CURLOPT_RETURNTRANSFER => true,
             CURLOPT_FOLLOWLOCATION => false, CURLOPT_TIMEOUT => 20]);
+        curl_setopt($this->curl, CURLOPT_HEADERFUNCTION, function ($handle, string $header): int {
+            if (strpos($header, ':') !== false) {
+                [$name, $value] = explode(':', $header, 2);
+                $this->headers[strtolower(trim($name))] = trim($value);
+            }
+            return strlen($header);
+        });
     }
     public function prepare(string $path, ?array $post = null, bool $withToken = true) {
         global $base;
+        $this->headers = [];
         if ($post !== null && $withToken) { $post['csrf_token'] = $this->token; }
         curl_setopt($this->curl, CURLOPT_URL, $base . '/' . $path);
         if ($post !== null) {

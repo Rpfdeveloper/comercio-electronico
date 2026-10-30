@@ -21,4 +21,7 @@ $sql = preg_replace('/^\xEF\xBB\xBF/', '', $sql);
 $sql = str_replace(['tienda_perfumes', 'tienda_user', "'CAMBIAR_ANTES_DE_IMPORTAR'"],
     [$database, 'tienda_test_user', $pdo->quote($password)], $sql);
 $pdo->exec($sql);
+foreach (glob(__DIR__ . '/../tienda/sql/migrations/*.sql') as $migration) {
+    $pdo->exec(file_get_contents($migration));
+}
 echo "Base de pruebas preparada: $database; usuario de aplicación: tienda_test_user\n";
