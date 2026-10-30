@@ -1,5 +1,13 @@
 # Comercio electrónico · Tienda de perfumes
 
+## Último avance: cuenta e historial privado
+
+`develop` incorpora acceso de clientes, cierre de sesión, historial paginado y detalle de pedidos propios, límites de intentos y compra con los datos de la cuenta. Validación local: **114 comprobaciones correctas** (41 de compra, 44 de cuenta y privacidad, 29 de concurrencia), con PHP 8.3 y MariaDB 10.11; la matriz de CI comprueba PHP 8.3/8.4 y MariaDB 11.4.
+
+[Registro de progreso](docs/PROGRESO.md) · [Actualizar la instalación y configurar el secreto de acceso](docs/CUENTAS_CLIENTE.md) · [Resultados en GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions)
+
+Las instrucciones siguientes sobre recuperación y las cifras de iteraciones anteriores son antecedentes. Ver el registro de progreso para el estado actual y sus limitaciones.
+
 Proyecto académico de Comercio Electrónico de la UOC, desarrollado en PHP y MySQL/MariaDB.
 
 ## Objetivo y desarrollo
