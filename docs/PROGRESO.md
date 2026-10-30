@@ -1,6 +1,12 @@
 # Progreso de la tienda
 
-Registro técnico de cambios verificables en `develop`. La rama `original` conserva la entrega recuperada. El proyecto sigue siendo un prototipo: no procesa pagos ni envía correos reales.
+Registro técnico de cambios verificables en `develop` y de entregas integradas en `main`. La rama `original` conserva la entrega recuperada. El proyecto sigue siendo un prototipo: no procesa pagos ni envía correos reales.
+
+## Primera integración en main (31 de octubre de 2026)
+
+El [PR #1](https://github.com/Rpfdeveloper/comercio-electronico/pull/1) se fusionó en `main` mediante `7938cfd8f265fbbea11f7dac87d941658f3cc0c1`. El árbol integrado coincide con la entrega corregida de `develop`; se verificó el correo privado del commit. La [ejecución del PR](https://github.com/Rpfdeveloper/comercio-electronico/actions/runs/41145403545) pasó en PHP 8.3 y 8.4 con MariaDB 11.4, con 239 comprobaciones por entorno.
+
+`main` muestra ahora `tienda`, `tests` y la documentación. La integración del repositorio no equivale a un despliegue público: continúa disponible la vista previa de desarrollo y sigue pendiente preparar el alojamiento de producción.
 
 ## Revisión del PR #1 — categorías inactivas (31 de octubre de 2026)
 

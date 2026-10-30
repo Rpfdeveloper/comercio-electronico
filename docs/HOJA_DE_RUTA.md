@@ -7,7 +7,7 @@ Estado actual: prototipo funcional en desarrollo. Todavía no está preparado pa
 ## Organización
 - `original`: entrega recuperada, conservada como referencia.
 - `develop`: desarrollo de la tienda y correcciones.
-- `main`: presentación del proyecto.
+- `main`: tienda, pruebas y documentación integradas mediante pull request.
 - Publicar cambios pequeños, comprobar cada publicación y ejecutar pruebas acordes al cambio.
 - Probar con datos ficticios y servicios de pago en modo de pruebas.
 
@@ -106,3 +106,9 @@ Validación local: 163 comprobaciones correctas (41 + 45 + 48 + 29), 31 PHP sin 
 Búsqueda por nombre, marca y descripción, filtros combinables, ordenación estable y paginación de doce productos. Los precios y la disponibilidad distinguen variantes activas, agotadas e inactivas, y las fichas no muestran productos ocultos. Se conservan las URL de categorías.
 
 Validación: 222 comprobaciones por entorno, incluidas 59 de catálogo, 35 archivos PHP sin errores y logs sin avisos. PHP 8.3 y 8.4 con MariaDB 11.4 pasan en [GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions/runs/41141911642). [Detalle y captura](PROGRESO.md) · [Uso y límites](CATALOGO.md). Quedan pendientes pruebas con catálogos grandes, móvil real y auditoría completa de accesibilidad.
+
+## Séptima iteración — revisión e integración en main (31 de octubre de 2026)
+
+Corregida la compra de productos de categorías retiradas, tanto desde carritos anteriores como mediante POST directo y durante confirmaciones simultáneas. La validación transaccional mantiene un bloqueo compartido de la categoría.
+
+239 comprobaciones correctas por entorno (41 + 45 + 48 + 73 + 32), con PHP 8.3 y 8.4 y MariaDB 11.4. El [PR #1](https://github.com/Rpfdeveloper/comercio-electronico/pull/1) se fusionó tras corregir la revisión y superar sus comprobaciones. `main` incluye ahora el código de la tienda. Las copias `backup/2026-10-31-main-85fbc66` y `backup/2026-10-31-develop-e300be6` conservan el estado previo; `original` no cambia.
