@@ -10,7 +10,9 @@ El objetivo es actualizar progresivamente esta práctica hasta convertirla en un
 
 El proyecto está en desarrollo: todavía no está preparado para operar con clientes ni cobrar pagos reales. Las mejoras se publican en lotes pequeños y comprobados.
 
-Primeras mejoras en `develop`: comprobación de contraseña para cuentas existentes, conservación de su hash y corrección de la imagen Ocean Graphite EDT. Se han probado localmente compras como invitado, con cuenta nueva y con cuenta existente.
+Mejoras publicadas en `develop`: protección CSRF, comprobación de credenciales sin almacenar contraseñas en claro en la sesión, validación del carrito y de variantes, comprobación de precios y descuento transaccional de stock, además de la corrección de la imagen Ocean Graphite EDT.
+
+**41 comprobaciones locales de integración correctas.** [Ver las pruebas y cómo ejecutarlas](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/tests/README.md). Las pruebas incluyen compras como invitado, altas y cuentas existentes, intentos de manipulación, cambios de precio y stock, confirmaciones repetidas y acceso administrativo. No equivalen a una auditoría de seguridad ni a pruebas de carga.
 
 ## Código de la tienda
 
