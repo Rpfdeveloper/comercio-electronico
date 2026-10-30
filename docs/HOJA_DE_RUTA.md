@@ -16,9 +16,11 @@ Estado actual: prototipo funcional en desarrollo. Todavía no está preparado pa
 - [x] Conservar el hash de contraseña de cuentas existentes.
 - [x] Corregir la imagen Ocean Graphite y añadir migración para instalaciones existentes.
 - [x] Protección CSRF en todas las operaciones que modifican datos.
-- [ ] Inicio y cierre de sesión de clientes; verificación de correo y recuperación de contraseña.
+- [x] Inicio y cierre de sesión de clientes.
+- [ ] Verificación de correo y recuperación de contraseña.
 - [x] Retirar contraseñas en claro de la sesión de checkout.
-- [ ] Endurecer sesiones, limitar intentos de acceso y desactivar depuración en producción.
+- [x] Caducidad y renovación de sesiones de clientes, límites de intentos y depuración desactivada por defecto.
+- [ ] Límites equivalentes para el acceso administrativo y revisión de la configuración de producción.
 - [x] Validar variantes, productos activos, cantidades y stock en el servidor; rechazar datos de compra no escalares.
 - [x] Reservar o descontar stock de forma transaccional, evitando sobreventa.
 - [x] Pruebas locales de regresión automatizadas.
@@ -29,7 +31,8 @@ Estado actual: prototipo funcional en desarrollo. Todavía no está preparado pa
 - [ ] Carrito persistente y actualización clara de cantidades.
 - [ ] Checkout accesible, adaptable a móviles y con errores comprensibles.
 - [ ] Política de precios, impuestos, gastos de envío y totales coherentes.
-- [ ] Historial y seguimiento de pedidos.
+- [x] Historial y detalle privado de pedidos propios.
+- [ ] Seguimiento del transportista.
 
 ## 3. Operación comercial
 - [ ] Administración de productos, variantes, imágenes, categorías, stock y pedidos.
@@ -84,3 +87,9 @@ Pendiente inmediato: límites de intentos de acceso, cuenta de cliente independi
 Evidencia: [ejecución correcta en GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions/runs/41126154248), sobre el commit `887c0720d0c4f519ea2af62814ce6ce017ae6674`. Se verificó por lectura posterior el contenido de cada lote publicado.
 
 Los escenarios cubren concurrencia funcional, no carga sostenida, fallos de red ni recuperación tras una caída del servidor. La cuenta de cliente independiente, límites de intentos, recuperación/verificación de correo y pagos siguen pendientes.
+
+## Cuarta iteración — cuenta e historial privado
+
+Se completan acceso, salida, historial, detalle autorizado por cliente, caducidad de sesiones y límites compartidos de acceso/checkout. Se añade una migración aditiva, configuración externa del secreto y revisión de patrones sensibles. Las tareas de cuenta y límites indicadas como pendientes en las iteraciones anteriores quedan cubiertas para clientes; recuperación/verificación de correo, protección equivalente del administrador y pagos continúan pendientes.
+
+Validación local: 114 comprobaciones correctas (41 + 44 + 29), 27 PHP sin errores de sintaxis y log sin avisos en PHP 8.3.6 / MariaDB 10.11.14. [Detalle y evidencia posterior de CI](PROGRESO.md). [Instrucciones de actualización](CUENTAS_CLIENTE.md).
