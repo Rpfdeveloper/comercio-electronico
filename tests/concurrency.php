@@ -14,11 +14,16 @@ function raceConnection(): PDO {
 }
 
 function raceBrowser(array $cart, string $email): TestBrowser {
+    global $pdo;
     $browser = new TestBrowser();
-    $browser->request('public/carrito.php');
+    $product = $pdo->prepare('SELECT slug FROM producto WHERE id=?');
+    $product->execute([$cart[0]['id_producto']]);
+    $browser->request('public/producto.php?p=' . urlencode((string)$product->fetchColumn()));
     foreach ($cart as $item) {
         $browser->request('public/carrito.php', $item + ['action' => 'add', 'cantidad' => 1]);
-        if ($browser->status !== 303) { throw new RuntimeException('No se pudo preparar el carrito'); }
+        if ($browser->status !== 303) {
+            throw new RuntimeException('No se pudo preparar el carrito: HTTP ' . $browser->status);
+        }
     }
     $body = $browser->request('public/checkout.php', [
         'step' => 'form', 'tipo' => 'invitado', 'email' => $email, 'nombre' => 'Prueba concurrente',
