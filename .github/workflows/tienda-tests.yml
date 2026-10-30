@@ -84,6 +84,8 @@ jobs:
         run: php tests/integration.php
       - name: Privacidad y cuenta de cliente
         run: php tests/customer.php
+      - name: Aislamiento y acceso administrativo
+        run: php tests/admin.php
       - name: Compras simultáneas
         run: php tests/concurrency.php
       - name: Comprobar log PHP
