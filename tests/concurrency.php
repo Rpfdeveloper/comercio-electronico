@@ -56,10 +56,14 @@ function raceConfirm(array $browsers, ?int $barrierProduct = null): array {
         }
         $deadline = microtime(true) + 15;
         $barrierDeadline = microtime(true) + 8;
+        $nextObservation = 0.0;
         do {
             $result = curl_multi_exec($multi, $running);
             if ($result !== CURLM_OK) { throw new RuntimeException(curl_multi_strerror($result)); }
-            if ($guard !== null && $guard->inTransaction()) {
+            if ($guard !== null && $guard->inTransaction() && microtime(true) >= $nextObservation) {
+                // InnoDB conserva el snapshot si lo leemos cada menos de 100 ms.
+                // Separar las observaciones permite que publique los nuevos bloqueos.
+                $nextObservation = microtime(true) + 0.25;
                 // Dos transacciones deben esperar el mismo registro, incluso si el motor
                 // encadena el segundo comprador detrás del primero en la cola de bloqueo.
                 // Un servidor que atienda secuencialmente NO puede superar esta condición.
@@ -73,10 +77,6 @@ function raceConfirm(array $browsers, ?int $barrierProduct = null): array {
                 if ($waiting >= count($browsers)) {
                     $guard->commit();
                 } elseif (microtime(true) > $barrierDeadline) {
-                    fwrite(STDERR, json_encode($observer->query('SELECT ID,USER,DB,COMMAND,TIME,STATE,INFO FROM information_schema.PROCESSLIST')->fetchAll()) . "\n");
-                    fwrite(STDERR, json_encode($observer->query('SELECT trx_id,trx_state,trx_mysql_thread_id,trx_query FROM information_schema.INNODB_TRX')->fetchAll()) . "\n");
-                    fwrite(STDERR, json_encode($observer->query('SELECT * FROM information_schema.INNODB_LOCK_WAITS')->fetchAll()) . "\n");
-                    fwrite(STDERR, json_encode($observer->query('SELECT lock_id,lock_table,lock_index,lock_data FROM information_schema.INNODB_LOCKS')->fetchAll()) . "\n");
                     throw new RuntimeException('No hubo dos transacciones simultáneas (observadas: ' . $waiting . '). Usa al menos dos workers PHP y una cuenta de pruebas con PROCESS.');
                 }
             }
