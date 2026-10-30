@@ -29,7 +29,7 @@ if (!empty($_SESSION['cart']) && is_array($_SESSION['cart'])) {
   <title><?= h(APP_NAME) ?></title>
 
   <!-- Hoja de estilos principal de la tienda -->
-  <link rel="stylesheet" href="<?= asset('css/style.css?v=1.1') ?>">
+  <link rel="stylesheet" href="<?= asset('css/style.css?v=1.2') ?>">
 </head>
 <body>
 
@@ -58,6 +58,8 @@ if (!empty($_SESSION['cart']) && is_array($_SESSION['cart'])) {
 
     </div>
 
+    <div class="header-actions">
+    <a href="<?= url('cuenta.php') ?>" class="account-nav-link">Mi cuenta</a>
     <!-- DERECHA: BOTÓN CARRITO -->
     <a href="<?= url('carrito.php') ?>" class="cart-button">
       <span class="cart-icon">🛒</span>
@@ -68,6 +70,7 @@ if (!empty($_SESSION['cart']) && is_array($_SESSION['cart'])) {
 
       <span class="cart-label">Carrito</span>
     </a>
+    </div>
 
   </div>
 </header>
