@@ -12,7 +12,11 @@ El proyecto está en desarrollo: todavía no está preparado para operar con cli
 
 Mejoras publicadas en `develop`: protección CSRF, comprobación de credenciales sin almacenar contraseñas en claro en la sesión, validación del carrito y de variantes, comprobación de precios y descuento transaccional de stock, además de la corrección de la imagen Ocean Graphite EDT.
 
-**41 comprobaciones locales de integración correctas.** [Ver las pruebas y cómo ejecutarlas](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/tests/README.md). Las pruebas incluyen compras como invitado, altas y cuentas existentes, intentos de manipulación, cambios de precio y stock, confirmaciones repetidas y acceso administrativo. No equivalen a una auditoría de seguridad ni a pruebas de carga.
+**70 comprobaciones correctas en cada versión de PHP (8.3 y 8.4), con MariaDB 11.4 en GitHub Actions:** 41 de integración y 29 de concurrencia. [Ver ejecución verificada](https://github.com/Rpfdeveloper/comercio-electronico/actions/runs/41126154248) · [Ejecutar las pruebas](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/tests/README.md).
+
+Las pruebas incluyen compras, cuentas nuevas y existentes, formularios, precios, stock y administración. Las nuevas comprobaciones fuerzan compras simultáneas de la última unidad, carritos con productos en orden inverso y doble confirmación de una misma sesión: verifican pedidos completos y el descuento exacto de stock. Se han comprobado además 21 archivos PHP sin errores de sintaxis y los logs sin avisos, errores ni deprecaciones. No equivalen a una auditoría de seguridad ni a pruebas de carga.
+
+Las comprobaciones se ejecutan automáticamente al modificar el código o las pruebas. La confirmación devuelve un conflicto HTTP 409 cuando cambia el stock o el carrito y ya no promete un correo que la tienda todavía no envía.
 
 ## Código de la tienda
 

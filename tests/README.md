@@ -1,4 +1,4 @@
-# Pruebas locales de integración
+# Pruebas de integración y concurrencia
 
 Esta suite usa peticiones HTTP reales, sesiones independientes y una base MariaDB/MySQL desechable cuyo nombre termina en `_test`. No utiliza pagos ni correo reales.
 
@@ -45,7 +45,43 @@ La URL y el DSN deben apuntar a la misma instalación. La cuenta de pruebas cons
 
 La suite prueba tokens ausentes, inválidos y de otra sesión; cantidades inválidas; productos y variantes no disponibles; relación producto-variante; altas, cambios y borrado del carrito; pedidos y descuento de stock; confirmaciones repetidas; cambios de precio y disponibilidad; acceso con cuentas nuevas y existentes; autenticación administrativa y cierre de sesión. Restaura el stock y elimina sus pedidos y clientes al terminar, también ante errores.
 
-Las pruebas simulan un cambio de stock entre resumen y confirmación. Todavía no constituyen una prueba de carga ni de peticiones concurrentes. La inspección visual, accesibilidad, pagos y correo siguen pendientes.
+La suite de integración simula un cambio de stock entre resumen y confirmación. La suite independiente `tests/concurrency.php` comprueba además peticiones simultáneas reales. Ninguna de las dos es una prueba de carga. La inspección visual, accesibilidad, pagos y correo siguen pendientes.
+
+## Compras simultáneas (Linux / macOS)
+
+Requiere MariaDB, la extensión cURL y al menos dos procesos HTTP. La cuenta `TIENDA_TEST_USER` necesita el permiso `PROCESS` para observar `INNODB_LOCK_WAITS`; la cuenta de la aplicación no necesita ese permiso. Con las variables anteriores configuradas y desde la raíz:
+
+```bash
+mkdir -p tests/sessions
+PHP_CLI_SERVER_WORKERS=4 php -d session.save_path="$PWD/tests/sessions" -d output_buffering=0 -S 127.0.0.1:8080 -t tienda
+```
+
+En otra terminal, con las mismas variables de pruebas:
+
+```bash
+php tests/integration.php
+php tests/concurrency.php
+```
+
+El servidor integrado de PHP admite múltiples procesos desde PHP 7.4 y no soporta esa opción en Windows. En Windows, usa WSL o ejecuta las pruebas mediante GitHub Actions. Un servidor secuencial debe fallar en la prueba de concurrencia: no basta con lanzar dos peticiones que se atiendan una detrás de otra.
+
+La prueba mantiene temporalmente un bloqueo de base de datos. Inicia la segunda confirmación cuando la primera ya está esperando y no libera el bloqueo hasta observar dos transacciones distintas esperando a la vez. Las observaciones se separan 250 ms para permitir que InnoDB actualice su información de bloqueos. Después comprueba las respuestas HTTP, los pedidos, sus líneas y el stock:
+
+- Última unidad de una variante: una compra y un conflicto 409.
+- Última unidad de un producto sin variantes: mismo resultado.
+- Dos productos añadidos en orden inverso, con una unidad de cada uno: un pedido completo y ninguna compra parcial.
+- Los mismos carritos, con dos unidades disponibles: ambos pedidos completos.
+- Dos confirmaciones simultáneas de la misma sesión: un solo pedido y un solo descuento.
+
+Utiliza correos `example.invalid`, restaura el stock y elimina sus pedidos y el producto temporal al terminar, también ante un fallo controlado. No ejecutar las dos suites en paralelo sobre la misma base.
+
+## GitHub Actions
+
+`.github/workflows/tienda-tests.yml` ejecuta ambas suites cuando cambian la aplicación, las pruebas o el workflow en `develop` o `main`, y en pull requests hacia esas ramas. La matriz prueba PHP 8.3 y 8.4 con MariaDB 11.4 en una base desechable por job. También comprueba la sintaxis de todos los PHP y rechaza avisos, errores y deprecaciones del log.
+
+El workflow solo tiene permisos de lectura del repositorio; sus contraseñas ficticias sirven exclusivamente para los servicios temporales de CI. Las acciones se fijan a commits concretos. Resultado verificado el 30 de octubre de 2026: **41 comprobaciones de integración + 29 de concurrencia por versión de PHP**, ambas ejecuciones correctas; 21 archivos PHP sin errores de sintaxis y logs sin avisos. [Ejecución verificada](https://github.com/Rpfdeveloper/comercio-electronico/actions/runs/41126154248). Los resultados posteriores aparecen en [GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions).
+
+Referencias técnicas: [servidor integrado de PHP](https://www.php.net/manual/en/features.commandline.webserver.php) y [bloqueos observables en MariaDB](https://mariadb.com/docs/server/reference/system-tables/information-schema/information-schema-tables/information-schema-innodb-tables/information-schema-innodb_lock_waits-table).
 
 ## Variables de la aplicación
 `TIENDA_DB_HOST`, `TIENDA_DB_PORT`, `TIENDA_DB_NAME`, `TIENDA_DB_USER`, `TIENDA_DB_PASS`, `TIENDA_ADMIN_PASS` y `TIENDA_DEBUG` se leen del entorno del proceso PHP. No se carga automáticamente un archivo `.env`. La depuración está desactivada por defecto.
