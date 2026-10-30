@@ -112,6 +112,8 @@ try {
     for ($i=0;$i<5;++$i) { $probe=new TestBrowser(); $login($probe,$emails[1],'incorrect-password'); }
     $probe=new TestBrowser(); $login($probe,strtoupper($emails[1]),$password);
     check($probe->status===429 && ($probe->headers['retry-after']??'')==='900', 'limite por correo resiste nuevas cookies y cambios de mayusculas');
+    $alias=new TestBrowser(); $login($alias,str_replace('cuenta','cuéntá',$emails[1]),$password);
+    check($alias->status===401, 'alias Unicode de la colacion SQL no elude el limite de la cuenta');
     $probe->request('public/carrito.php',$add);
     $limited=$form; $limited['email']=$emails[1]; $limited['password']=$password;
     $probe->request('public/checkout.php',$limited);

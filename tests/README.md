@@ -1,6 +1,6 @@
 # Pruebas de integración, cuenta y concurrencia
 
-Estado actual: 41 comprobaciones de compra, 44 de cuenta/privacidad y 29 de concurrencia: **114 por entorno**, más sintaxis y revisión de archivos sensibles. Validación local de esta iteración con PHP 8.3.6 y MariaDB 10.11.14. Los resultados anteriores se conservan más abajo como referencia.
+Estado actual: 41 comprobaciones de compra, 45 de cuenta/privacidad y 29 de concurrencia: **115 por entorno**, más sintaxis y revisión de archivos sensibles. Validación local de esta iteración con PHP 8.3.6 y MariaDB 10.11.14. Los resultados anteriores se conservan más abajo como referencia.
 
 Esta suite usa peticiones HTTP reales, sesiones independientes y una base MariaDB/MySQL desechable cuyo nombre termina en `_test`. No utiliza pagos ni correo reales.
 
