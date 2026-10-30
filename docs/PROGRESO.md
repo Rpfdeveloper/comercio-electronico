@@ -2,6 +2,22 @@
 
 Registro técnico de cambios verificables en `develop`. La rama `original` conserva la entrega recuperada. El proyecto sigue siendo un prototipo: no procesa pagos ni envía correos reales.
 
+## Catálogo — búsqueda, filtros y paginación
+
+- Nueva página `catalogo.php` con búsqueda por nombre, marca y descripción corta; filtros combinables por categoría, marca, precio y disponibilidad.
+- Orden por nombre, precio ascendente/descendente o incorporación reciente, con desempate estable y doce resultados por página. Las URL conservan los filtros; aplicar filtros reinicia la paginación.
+- Se mantienen las URL de categorías. Parámetros no escalares o inválidos reciben 422; recursos o páginas inexistentes, 404 antes de emitir HTML. Las búsquedas sin resultados reciben 200 con una explicación.
+- Precios efectivos coherentes con el carrito: una capacidad agotada no determina el precio «desde» mientras haya otras comprables. Las variantes inactivas no permiten reutilizar stock o precio base.
+- Fichas de productos/categorías inactivos ocultas, capacidades agotadas deshabilitadas y primera capacidad disponible seleccionada por precio. Botón de compra deshabilitado cuando no hay stock.
+- Navegación al catálogo, controles etiquetados, foco visible y estilos adaptables. Revisión visual en escritorio: búsqueda, precio máximo, categoría, orden y segunda página.
+- CI ampliada a ramas `mejora/**` para comprobar las entregas antes de incorporarlas a `develop`. La conexión de las fixtures utiliza UTF-8 explícito; la nueva suite detectó y permitió corregir la normalización incorrecta de `page=0`.
+
+Validación local: **222 comprobaciones** (41 + 45 + 48 + 59 + 29), 35 PHP sin errores de sintaxis y logs sin avisos, con PHP 8.3.6 y MariaDB 10.11.14. [GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions/runs/41141911642), sobre `1dfc6bdad1bbe4c2dbc91800a54139e65fd1869e`: **222 comprobaciones correctas en cada versión**, PHP 8.3 y 8.4 con MariaDB 11.4; 444 ejecuciones, 222 casos distintos. Sintaxis, revisión de patrones sensibles y logs correctos en ambos entornos. Las publicaciones posteriores a ese commit solo añaden documentación y evidencia visual.
+
+![Búsqueda por nombre y categoría, ordenada por precio](capturas/catalogo-20261030.jpg)
+
+[Comportamiento, instalación y límites](CATALOGO.md). No requiere cambios en la base de datos. La búsqueda es por fragmentos y los filtros de precio se aplican al importe «desde»; faltan pruebas de rendimiento con catálogos grandes, móvil real y revisión completa de accesibilidad.
+
 ## Panel de administración — nueva iteración
 
 - Sesión propia `TIENDAADMIN`, con cookie limitada al directorio administrativo. Cerrar la administración conserva la cuenta y el carrito del cliente, y cerrar la cuenta no cierra el panel.
@@ -44,7 +60,7 @@ Se ha revisado visualmente la pantalla de acceso en escritorio. La revisión com
 
 - Verificación del correo y recuperación de contraseña con tokens de un solo uso y caducidad.
 - MFA y roles administrativos, con revisión de despliegue y acceso restringido.
-- Búsqueda y filtros del catálogo; revisión completa del checkout en móvil y con teclado.
+- Carrito persistente y revisión completa del checkout en móvil y con teclado.
 - Reservas y estados de pago antes de conectar una pasarela en modo de pruebas.
 
 ## Criterio para registrar avances

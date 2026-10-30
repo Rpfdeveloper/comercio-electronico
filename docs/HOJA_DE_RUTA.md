@@ -28,7 +28,7 @@ Estado actual: prototipo funcional en desarrollo. Todavía no está preparado pa
 - [x] Ejecutar las pruebas automáticamente en GitHub.
 
 ## 2. Experiencia de compra
-- [ ] Búsqueda, filtros, ordenación y paginación.
+- [x] Búsqueda, filtros, ordenación y paginación.
 - [ ] Carrito persistente y actualización clara de cantidades.
 - [ ] Checkout accesible, adaptable a móviles y con errores comprensibles.
 - [ ] Política de precios, impuestos, gastos de envío y totales coherentes.
@@ -100,3 +100,9 @@ Validación local: 115 comprobaciones correctas (41 + 45 + 29), 27 PHP sin error
 El panel incorpora sesión y cookie independientes de la cuenta de cliente, renovación de identificador y CSRF, caducidad, invalidación al cambiar configuración y límites por cuenta/IP. Los contadores administrativos y de clientes se mantienen separados. Se corrigen respuestas ante identificadores de pedido malformados y se extrae el limitador común sin cambiar las claves de clientes.
 
 Validación local: 163 comprobaciones correctas (41 + 45 + 48 + 29), 31 PHP sin errores de sintaxis y logs sin avisos. [Resultados de CI y detalle](PROGRESO.md). [Guía de actualización](ADMINISTRACION.md). El panel sigue teniendo una única cuenta; MFA, roles y revisión final de producción permanecen pendientes.
+
+## Sexta iteración — catálogo con filtros
+
+Búsqueda por nombre, marca y descripción, filtros combinables, ordenación estable y paginación de doce productos. Los precios y la disponibilidad distinguen variantes activas, agotadas e inactivas, y las fichas no muestran productos ocultos. Se conservan las URL de categorías.
+
+Validación: 222 comprobaciones por entorno, incluidas 59 de catálogo, 35 archivos PHP sin errores y logs sin avisos. PHP 8.3 y 8.4 con MariaDB 11.4 pasan en [GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions/runs/41141911642). [Detalle y captura](PROGRESO.md) · [Uso y límites](CATALOGO.md). Quedan pendientes pruebas con catálogos grandes, móvil real y auditoría completa de accesibilidad.
