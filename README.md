@@ -2,11 +2,21 @@
 
 Proyecto académico de Comercio Electrónico de la UOC, desarrollado en PHP y MySQL/MariaDB.
 
+## Objetivo y desarrollo
+
+El objetivo es actualizar progresivamente esta práctica hasta convertirla en una **tienda de comercio electrónico real y completa**, con compras seguras, pagos, gestión de pedidos y stock, accesibilidad y un despliegue mantenible.
+
+**[Ver la versión en desarrollo](https://github.com/Rpfdeveloper/comercio-electronico/tree/develop)** · **[Consultar la hoja de ruta](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/HOJA_DE_RUTA.md)**
+
+El proyecto está en desarrollo: todavía no está preparado para operar con clientes ni cobrar pagos reales. Las mejoras se publican en lotes pequeños y comprobados.
+
+Primeras mejoras en `develop`: comprobación de contraseña para cuentas existentes, conservación de su hash y corrección de la imagen Ocean Graphite EDT. Se han probado localmente compras como invitado, con cuenta nueva y con cuenta existente.
+
 ## Código de la tienda
 
 **[Abrir la tienda en la rama `original`](https://github.com/Rpfdeveloper/comercio-electronico/tree/original/tienda)**
 
-La rama `main` contiene la presentación del repositorio. La rama `original` conserva los 43 archivos de la tienda recuperados de la entrega académica; las futuras correcciones funcionales se mantendrán separadas.
+La rama `main` contiene la presentación del repositorio. La rama `original` conserva los 43 archivos de la tienda recuperados de la entrega académica; las mejoras funcionales se desarrollan en la rama `develop`.
 
 La tienda incluye catálogo de perfumes, categorías, fichas de producto, carrito, proceso de compra y un panel de administración de pedidos.
 
