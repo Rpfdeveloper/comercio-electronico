@@ -6,23 +6,23 @@ Proyecto académico de Comercio Electrónico de la UOC, desarrollado en PHP y My
 
 [Ver el código actualizado](https://github.com/Rpfdeveloper/comercio-electronico/tree/develop) · [Registro de progreso](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/PROGRESO.md) · [Hoja de ruta](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/HOJA_DE_RUTA.md)
 
-## Último avance: protección del panel de administración
+## Último avance: catálogo con búsqueda y filtros
 
-- Sesión administrativa independiente de la cuenta de cliente, con renovación de cookie y CSRF al entrar y salir.
-- Caducidad tras 15 minutos de inactividad o cuatro horas totales; cambio de contraseña o secreto invalida la sesión.
-- Límites por cuenta e IP, con contadores separados de clientes y sin guardar identificadores en claro.
-- Páginas administrativas sin caché, errores genéricos de acceso y rechazo controlado de identificadores de pedido malformados.
-- Se conservan la cuenta e historial privado de clientes, el carrito y las protecciones de compra y stock.
+- Búsqueda por nombre, marca o descripción; filtros por categoría, marca, precio y disponibilidad.
+- Ordenación por nombre, precio o incorporación reciente; doce perfumes por página conservando filtros.
+- Precios «desde» basados en capacidades disponibles, ofertas coherentes con el carrito y etiquetas de agotado.
+- Fichas que ocultan productos inactivos y evitan seleccionar capacidades agotadas.
+- Formularios sin dependencia de JavaScript, navegación accesible y estilos adaptables.
 
-Validación: **163 comprobaciones por entorno**: 41 de compra, 45 de cuenta/privacidad, 48 de administración y 29 de concurrencia. [Consultar la ejecución de GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions/runs/41137901221), con PHP 8.3 y 8.4 y MariaDB 11.4. También se comprueban 31 archivos PHP, patrones sensibles y los logs del servidor. Las pruebas no equivalen a una auditoría de seguridad ni a una prueba de carga sostenida.
+Validación: **222 comprobaciones por entorno**: 41 de compra, 45 de cuenta/privacidad, 48 de administración, 59 de catálogo y 29 de concurrencia. [Consultar la ejecución de GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions/runs/41141911642), con PHP 8.3 y 8.4 y MariaDB 11.4. Los 35 archivos PHP pasan sintaxis y los logs no presentan avisos PHP. Las pruebas se ejecutan también en ramas de mejora antes de integrar.
 
-[Actualizar el acceso administrativo](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/ADMINISTRACION.md) · [Configurar las cuentas de clientes](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/CUENTAS_CLIENTE.md) · [Ejecutar las pruebas](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/tests/README.md)
+[Uso y límites del catálogo](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/CATALOGO.md) · [Acceso administrativo](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/ADMINISTRACION.md) · [Cuentas de clientes](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/CUENTAS_CLIENTE.md) · [Ejecutar las pruebas](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/tests/README.md)
 
 ## Funcionalidad y siguientes pasos
 
 La tienda incluye catálogo, categorías, fichas, carrito, compra invitada o registrada y administración de pedidos. Las mejoras anteriores incorporaron CSRF, validación de cantidades y variantes, relectura de precios, descuento transaccional de stock y pruebas de compras simultáneas.
 
-Pendientes principales: verificación de correo, recuperación de contraseña, MFA administrativo, búsqueda y filtros, reservas y pagos en modo de pruebas, envío real de correos y revisión de producción.
+Pendientes principales: verificación de correo, recuperación de contraseña, MFA administrativo, carrito persistente, reservas y pagos en modo de pruebas, envío real de correos y revisión de producción.
 
 ## Ramas y recuperación
 
