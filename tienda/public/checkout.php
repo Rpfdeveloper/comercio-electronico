@@ -3,11 +3,18 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../config/init.php';
 require_once __DIR__ . '/../src/lib/cart.php';
+require_once __DIR__ . '/../src/lib/customer.php';
+customer_no_cache();
 foreach (['step', 'tipo', 'email', 'nombre', 'direccion', 'cp', 'poblacion', 'provincia', 'pais', 'password'] as $field) {
     if (isset($_POST[$field]) && !is_string($_POST[$field])) {
         http_response_code(422);
         exit('Los datos del formulario no son válidos.');
     }
+}
+
+if (isset($_POST['password']) && (strlen($_POST['password']) > 4096 || strpos($_POST['password'], "\0") !== false)) {
+    http_response_code(422);
+    exit('Los datos del formulario no son válidos.');
 }
 
 // Carrito obligatorio
@@ -22,6 +29,7 @@ if (empty($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
 }
 
 $pdo = db();
+$currentCustomer = customer_current($pdo);
 $cart =& $_SESSION['cart'];
 
 // Volver a validar en servidor; nunca aceptar precios ni stock del formulario.
@@ -52,10 +60,10 @@ $step   = $_POST['step'] ?? 'form';
 $errors = [];
 
 // Datos del formulario (cargamos de POST o de sesión para no perderlos)
-$stored = $_SESSION['checkout'] ?? [];
+$stored = $_SESSION['checkout'] ?? ($currentCustomer ?? []);
 
 $data = [
-    'tipo'      => $_POST['tipo']      ?? ($stored['tipo']      ?? 'invitado'),
+    'tipo'      => $_POST['tipo']      ?? ($stored['tipo']      ?? ($currentCustomer ? 'registrado' : 'invitado')),
     'email'     => trim($_POST['email']     ?? ($stored['email']     ?? '')),
     'nombre'    => trim($_POST['nombre']    ?? ($stored['nombre']    ?? '')),
     'direccion' => trim($_POST['direccion'] ?? ($stored['direccion'] ?? '')),
@@ -98,7 +106,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step === 'form') {
         $errors['pais'] = 'Introduce el país.';
     }
 
-    if ($data['tipo'] === 'registrado' && $data['password'] === '') {
+    if ($data['tipo'] === 'registrado' && $data['password'] === '' &&
+        !($currentCustomer && strcasecmp($currentCustomer['email'], $data['email']) === 0)) {
         $errors['password'] = 'Introduce una contraseña para el usuario registrado.';
     }
 
@@ -106,24 +115,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step === 'form') {
     $accountProof = null;
     $newPasswordHash = null;
     if (!$errors && $data['tipo'] === 'registrado') {
-        $st = $pdo->prepare(
-            'SELECT c.id, cr.password_hash FROM cliente c
-             LEFT JOIN cliente_registrado cr ON cr.id_cliente = c.id WHERE c.email = ?'
-        );
-        $st->execute([$data['email']]);
-        $existing = $st->fetch();
-        if ($existing) {
-            if (empty($existing['password_hash']) ||
-                !password_verify($data['password'], $existing['password_hash'])) {
-                $errors['password'] = 'No se ha podido autenticar la cuenta.';
+        try {
+            if ($currentCustomer && strcasecmp($currentCustomer['email'], $data['email']) === 0) {
+                $existing = $currentCustomer;
+                $authenticated = true;
             } else {
-                $accountProof = [
-                    'id' => (int)$existing['id'],
-                    'hash' => hash('sha256', $existing['password_hash']),
-                ];
+                customer_take_attempt($pdo, $data['email']);
+                $existing = customer_find($pdo, $data['email']);
+                $authenticated = customer_password_matches($existing, $data['password']);
             }
-        } else {
-            $newPasswordHash = password_hash($data['password'], PASSWORD_DEFAULT);
+            if ($existing) {
+                if (!$authenticated) {
+                    $errors['password'] = 'No se ha podido autenticar la cuenta.';
+                } else {
+                    customer_clear_attempts($pdo, $data['email']);
+                    $accountProof = [
+                        'id' => (int)$existing['id'],
+                        'hash' => hash('sha256', $existing['password_hash']),
+                    ];
+                }
+            } elseif (!customer_valid_new_password($data['password'])) {
+                $errors['password'] = 'Usa al menos 15 caracteres y como máximo 72 bytes para crear tu cuenta.';
+            } else {
+                $newPasswordHash = password_hash($data['password'], PASSWORD_DEFAULT);
+            }
+        } catch (CustomerRateLimit $e) {
+            http_response_code(429);
+            header('Retry-After: 900');
+            $errors['general'] = $e->getMessage();
+        } catch (Throwable $e) {
+            http_response_code(503);
+            $errors['general'] = 'El acceso de clientes no está disponible. Inténtalo más tarde.';
         }
     }
 
@@ -341,6 +363,11 @@ require_once __DIR__ . '/includes/header.php';
 
   <?php if ($step === 'form'): ?>
     <h3>Datos del comprador</h3>
+    <?php if ($currentCustomer): ?>
+      <p>Has accedido como <?= h($currentCustomer['email']) ?>. Puedes comprar con esta cuenta sin repetir la contraseña.</p>
+    <?php else: ?>
+      <p>¿Ya tienes cuenta? <a href="acceso.php">Accede para consultar tus pedidos</a>.</p>
+    <?php endif; ?>
 
     <form method="post" action="checkout.php" style="max-width:480px;">
       <?= csrf_field() ?>
@@ -422,8 +449,9 @@ require_once __DIR__ . '/includes/header.php';
 
       <div id="password-block">
         <p>
-          <label>Contraseña (solo para usuario registrado)<br>
-            <input type="password" name="password" value="">
+          <label>Contraseña (para acceder o crear una cuenta)<br>
+            <input type="password" name="password" value="" autocomplete="current-password" aria-describedby="password-help">
+            <small id="password-help">Para cuentas nuevas: al menos 15 caracteres, máximo 72 bytes.</small>
           </label><br>
           <?php if (!empty($errors['password'])): ?>
             <small style="color:red;"><?= h($errors['password']) ?></small>
