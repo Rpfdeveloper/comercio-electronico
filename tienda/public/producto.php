@@ -1,6 +1,5 @@
-﻿<?php
+<?php
 require_once __DIR__ . '/../config/init.php';      // Configuración + sesión
-require_once __DIR__ . '/includes/header.php';     // Cabecera común
 
 // Slug del producto recibido por GET (identificador único)
 $slug = $_GET['p'] ?? '';
@@ -21,6 +20,7 @@ $prod = $st->fetch();
 // Si el producto no existe → 404
 if (!$prod) {
     http_response_code(404);
+    require_once __DIR__ . '/includes/header.php';
     echo '<p>Producto no encontrado</p>';
     require __DIR__ . '/includes/footer.php';
     exit;
@@ -49,6 +49,7 @@ $vars = db()->prepare(
 );
 $vars->execute([':id' => $prod['id']]);
 $vars = $vars->fetchAll();
+require_once __DIR__ . '/includes/header.php';
 ?>
 
 <article class="card">
@@ -67,6 +68,7 @@ $vars = $vars->fetchAll();
 
   <!-- Formulario para añadir al carrito -->
   <form method="post" action="carrito.php" style="margin-top:1rem;">
+      <?= csrf_field() ?>
     <input type="hidden" name="action" value="add">
     <input type="hidden" name="id_producto" value="<?= (int)$prod['id'] ?>">
 

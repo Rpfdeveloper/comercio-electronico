@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
 
-session_start();                                   // Sesión para el panel admin
 require_once __DIR__ . '/../config/init.php';      // Config + conexión BD
 
 // Si no está logueado, redirigir al login
@@ -30,7 +29,10 @@ $pedidos = $st->fetchAll();                         // Array con todos los pedid
 <h2>Listado de pedidos</h2>
 
 <!-- Enlace para cerrar sesión -->
-<p><a href="logout.php">Cerrar sesión</a></p>
+<form method="post" action="logout.php">
+  <?= csrf_field() ?>
+  <button type="submit">Cerrar sesión</button>
+</form>
 
 <!-- Tabla de pedidos -->
 <table border="1" cellpadding="5" cellspacing="0">

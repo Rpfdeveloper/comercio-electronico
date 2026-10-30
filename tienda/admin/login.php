@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-session_start();                         // Inicia la sesión para el área admin
+require_once __DIR__ . '/../config/init.php';
 
 // Credenciales fijas del panel (demo/PRA)
 const ADMIN_USER = 'admin';
@@ -22,6 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Comprobación simple de usuario/contraseña
     if (ADMIN_PASS !== '' && $user === ADMIN_USER && $pass === ADMIN_PASS) {
+        session_regenerate_id(true);
         $_SESSION['admin_logged'] = true;    // Marca sesión de admin
         header('Location: pedidos.php');     // Redirige al panel
         exit;
@@ -46,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <!-- Formulario de acceso -->
   <form method="post">
+      <?= csrf_field() ?>
     <label>Usuario<br>
       <input type="text" name="user" required>
     </label>

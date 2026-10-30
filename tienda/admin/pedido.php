@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
 
-session_start();                                   // Sesión para el panel admin
 require_once __DIR__ . '/../config/init.php';      // Configuración + BD
 
 // Restringir acceso al panel admin

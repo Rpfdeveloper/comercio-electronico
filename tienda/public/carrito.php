@@ -1,134 +1,92 @@
-﻿<?php
+<?php
 require_once __DIR__ . '/../config/init.php';
-require_once __DIR__ . '/includes/header.php';
-
-// Aseguramos estructura del carrito en sesión
-if (!isset($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
-    $_SESSION['cart'] = [];
-}
-$cart =& $_SESSION['cart'];
-
-// Gestión de acciones (add, update, remove)
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $action = $_POST['action'] ?? '';
-
-    if ($action === 'add') {
-        $idProd = (int)($_POST['id_producto'] ?? 0);
-        $idVar  = isset($_POST['id_variante']) && $_POST['id_variante'] !== ''
-            ? (int)$_POST['id_variante']
-            : null;
-        $qty    = max(1, (int)($_POST['cantidad'] ?? 1));
-
-        if ($idProd > 0) {
-            $key = $idVar ? ('v' . $idVar) : ('p' . $idProd);
-
-            if (isset($cart[$key])) {
-                $cart[$key]['cantidad'] += $qty;
-            } else {
-                $cart[$key] = [
-                    'id_producto' => $idProd,
-                    'id_variante' => $idVar,
-                    'cantidad'    => $qty,
-                ];
-            }
-        }
-
-        header('Location: carrito.php');
-        exit;
-    }
-
-    if ($action === 'update') {
-        $cantidades = $_POST['cantidad'] ?? [];
-        foreach ($cantidades as $key => $q) {
-            $q = (int)$q;
-            //si la cantidad se pone a cero, se elimina
-            if ($q <= 0) {
-                unset($cart[$key]);
-            } elseif (isset($cart[$key])) {
-                $cart[$key]['cantidad'] = $q;
-            }
-        }
-
-        header('Location: carrito.php');
-        exit;
-    }
-}
+require_once __DIR__ . '/../src/lib/cart.php';
 
 if (isset($_GET['remove'])) {
-    $key = $_GET['remove'];
-    if (isset($cart[$key])) {
-        unset($cart[$key]);
-    }
-    header('Location: carrito.php');
-    exit;
+    header('Allow: POST');
+    http_response_code(405);
+    exit('Eliminar un producto requiere enviar el formulario.');
 }
-
-// Construimos los datos de líneas desde la BD
-$items = [];
-$importeProductos = 0.0;
-
-if ($cart) {
-    $pdo = db();
-
-    foreach ($cart as $key => $item) {
-        $idProd = (int)$item['id_producto'];
-        $idVar  = $item['id_variante'] !== null ? (int)$item['id_variante'] : null;
-        $qty    = (int)$item['cantidad'];
-
-        if ($idVar) {
-            $st = $pdo->prepare(
-                "SELECT p.id AS id_producto,
-                        p.nombre,
-                        v.id AS id_variante,
-                        v.capacidad_ml,
-                        COALESCE(NULLIF(v.precio_oferta,0.00), v.precio) AS precio
-                 FROM producto_variante v
-                 JOIN producto p ON p.id = v.id_producto
-                 WHERE v.id = :id"
-            );
-            $st->execute([':id' => $idVar]);
+$cart = $_SESSION['cart'] ?? [];
+$error = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    try {
+        $next = $cart;
+        $action = isset($_POST['remove']) ? 'remove' : ($_POST['action'] ?? '');
+        if ($action === 'add') {
+            $id = cart_integer($_POST['id_producto'] ?? null);
+            $variant = isset($_POST['id_variante']) && $_POST['id_variante'] !== ''
+                ? cart_integer($_POST['id_variante']) : null;
+            $qty = cart_integer($_POST['cantidad'] ?? null);
+            $key = $variant !== null ? 'v' . $variant : 'p' . $id;
+            $next[$key] = [
+                'id_producto' => $id,
+                'id_variante' => $variant,
+                'cantidad' => ($next[$key]['cantidad'] ?? 0) + $qty,
+            ];
+        } elseif ($action === 'update') {
+            $quantities = $_POST['cantidad'] ?? null;
+            if (!is_array($quantities)) {
+                throw new DomainException('Las cantidades no son válidas.');
+            }
+            foreach ($quantities as $key => $value) {
+                if (!isset($next[$key])) {
+                    throw new DomainException('El producto no está en el carrito.');
+                }
+                $qty = cart_integer($value, 0);
+                if ($qty === 0) {
+                    unset($next[$key]);
+                } else {
+                    $next[$key]['cantidad'] = $qty;
+                }
+            }
+        } elseif ($action === 'remove') {
+            $key = $_POST['remove'];
+            if (!is_string($key) || !isset($next[$key])) {
+                throw new DomainException('El producto no está en el carrito.');
+            }
+            unset($next[$key]);
         } else {
-            $st = $pdo->prepare(
-                "SELECT p.id AS id_producto,
-                        p.nombre,
-                        NULL AS id_variante,
-                        NULL AS capacidad_ml,
-                        COALESCE(NULLIF(p.precio_oferta,0.00), p.precio) AS precio
-                 FROM producto p
-                 WHERE p.id = :id"
-            );
-            $st->execute([':id' => $idProd]);
+            throw new DomainException('La acción solicitada no es válida.');
         }
-
-        $row = $st->fetch();
-        if (!$row) {
-            continue;
+        if ($action !== 'remove' && !($action === 'update' && !$next)) {
+            cart_items(db(), $next); // Validar antes de modificar la sesión.
         }
-
-        $precio   = (float)$row['precio'];
-        $subtotal = $precio * $qty;
-        $importeProductos += $subtotal;
-
-        $items[$key] = [
-            'key'          => $key,
-            'id_producto'  => (int)$row['id_producto'],
-            'id_variante'  => $row['id_variante'] !== null ? (int)$row['id_variante'] : null,
-            'nombre'       => $row['nombre'],
-            'capacidad_ml' => $row['capacidad_ml'] !== null ? (int)$row['capacidad_ml'] : null,
-            'precio'       => $precio,
-            'cantidad'     => $qty,
-            'subtotal'     => $subtotal,
-        ];
+        $_SESSION['cart'] = $next;
+        unset($_SESSION['checkout']);
+        header('Location: carrito.php', true, 303);
+        exit;
+    } catch (DomainException $e) {
+        http_response_code(422);
+        $error = $e->getMessage();
     }
 }
+try {
+    $items = cart_items(db(), $cart);
+} catch (DomainException $e) {
+    $items = [];
+    $error = $e->getMessage();
+}
+$importeProductos = array_sum(array_column($items, 'subtotal'));
+require_once __DIR__ . '/includes/header.php';
 ?>
 <section class="container" style="margin-top:2rem;">
   <h2>Carrito de la compra</h2>
+  <?php if ($error): ?><p role="alert"><?= h($error) ?></p><?php endif; ?>
 
   <?php if (!$items): ?>
-    <p>Tu carrito está vacío.</p>
+    <?php if ($cart): ?>
+      <p>Revisa o elimina los productos que ya no están disponibles.</p>
+      <?php foreach ($cart as $key => $entry): ?>
+        <form method="post" action="carrito.php">
+          <?= csrf_field() ?>
+          <button type="submit" name="remove" value="<?= h((string)$key) ?>">Eliminar producto #<?= (int)$entry['id_producto'] ?></button>
+        </form>
+      <?php endforeach; ?>
+    <?php else: ?><p>Tu carrito está vacío.</p><?php endif; ?>
   <?php else: ?>
     <form method="post" action="carrito.php">
+      <?= csrf_field() ?>
       <input type="hidden" name="action" value="update">
 
       <table style="width:100%; border-collapse:collapse; margin-top:1rem;">
@@ -166,7 +124,7 @@ if ($cart) {
               <?= number_format($it['subtotal'], 2) ?> €
             </td>
             <td style="text-align:center;">
-              <a href="carrito.php?remove=<?= urlencode($it['key']) ?>">Eliminar</a>
+              <button type="submit" name="remove" value="<?= h($it['key']) ?>">Eliminar</button>
             </td>
           </tr>
         <?php endforeach; ?>

@@ -18,6 +18,7 @@ function db(): PDO
 
         // Construcción del DSN
         $dsn = "mysql:host=" . DB_HOST .
+               ";port=" . DB_PORT .
                ";dbname=" . DB_NAME .
                ";charset=" . DB_CHARSET;
 

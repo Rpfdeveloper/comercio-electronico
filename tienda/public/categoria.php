@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once __DIR__ . '/../config/init.php';      // Configuración general y sesión
 require_once __DIR__ . '/includes/header.php';     // Cabecera común de la web
 

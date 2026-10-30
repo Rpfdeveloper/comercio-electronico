@@ -5,13 +5,11 @@ declare(strict_types=1);
  * Arranque de la aplicación (sesión + configuración + helpers).
  */
 
-// Iniciar sesión si no existe
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+require_once __DIR__ . '/../src/lib/security.php';
 
 // Cargar configuración y conexión
 require_once __DIR__ . '/config.php';
+ini_set('display_errors', APP_DEBUG ? '1' : '0');
 require_once __DIR__ . '/database.php';
 
 // Funciones auxiliares (escape, etc.)

@@ -1,4 +1,4 @@
-﻿    </main>
+    </main>
 
     <!-- Pie de página con créditos y contexto académico -->
     <footer class="container"
