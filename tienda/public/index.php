@@ -13,7 +13,8 @@ $cats = $stmt->fetchAll();
 ?>
 
 <section class="container" style="margin-top:2rem;">
-  <h2>Categorías</h2>
+  <div class="catalog-summary"><h2>Explora nuestras fragancias</h2>
+    <a class="btn" href="<?= url('catalogo.php') ?>">Ver todos los perfumes</a></div>
 
   <div class="grid">
     <?php foreach ($cats as $c): ?>

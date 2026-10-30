@@ -1,111 +1,53 @@
 <?php
-require_once __DIR__ . '/../config/init.php';      // Configuración + sesión
-
-// Slug del producto recibido por GET (identificador único)
+require_once __DIR__ . '/../config/init.php';
 $slug = $_GET['p'] ?? '';
-
-
-// Cargar datos principales del producto
-$st = db()->prepare(
-    "SELECT id, nombre, slug, descripcion_larga,
-            COALESCE(NULLIF(precio_oferta,0.00), precio) AS precio_base,
-            imagen_principal
-     FROM producto
-     WHERE slug = :s
-     LIMIT 1"
-);
-$st->execute([':s' => $slug]);
-$prod = $st->fetch();
-
-// Si el producto no existe → 404
+$prod = false;
+if (is_string($slug) && strlen($slug) <= 200 && preg_match('//u', $slug)) {
+    $st = db()->prepare('SELECT p.id, p.nombre, p.slug, p.descripcion_larga, p.stock,
+        CASE WHEN p.precio_oferta > 0 THEN p.precio_oferta ELSE p.precio END AS precio_base,
+        p.imagen_principal, (SELECT COUNT(*) FROM producto_variante v WHERE v.id_producto = p.id) AS variantes
+        FROM producto p JOIN categoria c ON c.id = p.id_categoria
+        WHERE p.slug = ? AND p.activo = 1 AND c.activa = 1 LIMIT 1');
+    $st->execute([$slug]);
+    $prod = $st->fetch();
+}
 if (!$prod) {
     http_response_code(404);
-    require_once __DIR__ . '/includes/header.php';
+    require __DIR__ . '/includes/header.php';
     echo '<p>Producto no encontrado</p>';
     require __DIR__ . '/includes/footer.php';
     exit;
 }
-
-// Imágenes adicionales del producto
- 
-$imgs = db()->prepare(
-    "SELECT url, alt, es_principal
-     FROM producto_imagen
-     WHERE id_producto = :id
-     ORDER BY es_principal DESC, orden, id"
-);
-$imgs->execute([':id' => $prod['id']]);
-$imgs = $imgs->fetchAll();
-
-
-// Variantes del producto (capacidad, precio…)
-$vars = db()->prepare(
-    "SELECT id, capacidad_ml,
-            COALESCE(NULLIF(precio_oferta,0.00), precio) AS precio,
-            stock
-     FROM producto_variante
-     WHERE id_producto = :id AND activo = 1
-     ORDER BY capacidad_ml"
-);
-$vars->execute([':id' => $prod['id']]);
-$vars = $vars->fetchAll();
-require_once __DIR__ . '/includes/header.php';
+$st = db()->prepare('SELECT id, capacidad_ml,
+    CASE WHEN precio_oferta > 0 THEN precio_oferta ELSE precio END AS precio, stock
+    FROM producto_variante WHERE id_producto = ? AND activo = 1
+    ORDER BY stock > 0 DESC, precio, capacidad_ml, id');
+$st->execute([$prod['id']]);
+$vars = $st->fetchAll();
+$available = $prod['variantes'] ? count(array_filter($vars, static function ($v) { return $v['stock'] > 0; })) > 0 : $prod['stock'] > 0;
+require __DIR__ . '/includes/header.php';
 ?>
-
+<p><a href="<?= h(url('catalogo.php')) ?>">← Volver al catálogo</a></p>
 <article class="card">
   <h2><?= h($prod['nombre']) ?></h2>
-  <!-- Imagen principal -->
-  <?php if (!empty($prod['imagen_principal'])): ?>
-    <img
-      src="<?= h($prod['imagen_principal']) ?>"
-      alt="<?= h($prod['nombre']) ?>"
-      style="width:280px;height:auto"
-    >
-  <?php endif; ?>
-
-  <!-- Descripción larga del producto -->
+  <?php if ($prod['imagen_principal']): ?><img src="<?= h($prod['imagen_principal']) ?>" alt="<?= h($prod['nombre']) ?>" style="max-width:280px;height:auto"><?php endif; ?>
   <p><?= nl2br(h($prod['descripcion_larga'] ?? '')) ?></p>
-
-  <!-- Formulario para añadir al carrito -->
-  <form method="post" action="carrito.php" style="margin-top:1rem;">
-      <?= csrf_field() ?>
+  <?php if (!$available): ?><p class="account-error" role="status">Agotado. Este perfume no tiene unidades disponibles.</p><?php endif; ?>
+  <form method="post" action="carrito.php" class="account-form">
+    <?= csrf_field() ?>
     <input type="hidden" name="action" value="add">
     <input type="hidden" name="id_producto" value="<?= (int)$prod['id'] ?>">
-
-    <!-- Variantes disponibles -->
     <?php if ($vars): ?>
       <label for="var">Capacidad</label>
-      <select id="var" name="id_variante">
-        <?php foreach ($vars as $v): ?>
-          <option value="<?= (int)$v['id'] ?>">
-            <?= (int)$v['capacidad_ml'] ?> ml — <?= number_format((float)$v['precio'], 2) ?> €
-          </option>
-        <?php endforeach; ?>
+      <select id="var" name="id_variante" <?= $available ? '' : 'disabled' ?>>
+        <?php foreach ($vars as $v): ?><option value="<?= (int)$v['id'] ?>" <?= $v['stock'] > 0 ? '' : 'disabled' ?>><?= (int)$v['capacidad_ml'] ?> ml — <?= number_format((float)$v['precio'], 2, ',', '.') ?> €<?= $v['stock'] > 0 ? '' : ' — Agotado' ?></option><?php endforeach; ?>
       </select>
-
-    <!-- Si no hay variantes, mostrar el precio base -->
-    <?php else: ?>
-      <div class="price">
-        <?= number_format((float)$prod['precio_base'], 2) ?> €
-      </div>
+    <?php elseif (!$prod['variantes']): ?>
+      <div class="price"><?= number_format((float)$prod['precio_base'], 2, ',', '.') ?> €</div>
     <?php endif; ?>
-
-    <!-- Cantidad -->
-    <label for="qty" style="margin-left:0.5rem;">Cantidad</label>
-    <input
-      type="number"
-      id="qty"
-      name="cantidad"
-      min="1"
-      value="1"
-      style="width:80px;"
-    >
-
-    <!-- Botón añadir -->
-    <button type="submit" style="margin-left:0.5rem;">
-      Añadir al carrito
-    </button>
+    <label for="qty">Cantidad</label>
+    <input type="number" id="qty" name="cantidad" min="1" max="999" value="1" <?= $available ? '' : 'disabled' ?>>
+    <button type="submit" <?= $available ? '' : 'disabled' ?>>Añadir al carrito</button>
   </form>
 </article>
-
-<?php require_once __DIR__ . '/includes/footer.php'; ?>
+<?php require __DIR__ . '/includes/footer.php'; ?>
