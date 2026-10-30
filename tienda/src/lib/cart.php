@@ -20,12 +20,20 @@ function cart_product(PDO $pdo, int $productId, ?int $variantId, bool $lock = fa
 {
     $suffix = $lock ? ' FOR UPDATE' : '';
     $st = $pdo->prepare(
-        'SELECT id AS id_producto, nombre, precio, precio_oferta, stock, activo
+        'SELECT id AS id_producto, id_categoria, nombre, precio, precio_oferta, stock, activo
          FROM producto WHERE id = ?' . $suffix
     );
     $st->execute([$productId]);
     $p = $st->fetch();
     if (!$p || !(int)$p['activo']) {
+        throw new DomainException('Uno de los productos ya no está disponible.');
+    }
+    // Mantener la categoría activa hasta confirmar la transacción. El bloqueo
+    // compartido permite compras simultáneas de productos de la misma categoría.
+    $category = $pdo->prepare('SELECT activa FROM categoria WHERE id = ?' .
+        ($lock ? ' LOCK IN SHARE MODE' : ''));
+    $category->execute([$p['id_categoria']]);
+    if ((int)$category->fetchColumn() !== 1) {
         throw new DomainException('Uno de los productos ya no está disponible.');
     }
     if ($variantId !== null) {
