@@ -104,6 +104,9 @@ function customer_take_attempt(PDO $pdo, string $email): void
 
 function customer_find(PDO $pdo, string $email): ?array
 {
+    // Usar el mismo formato que el alta: la colación SQL puede igualar acentos.
+    // Rechazar alias Unicode impide eludir el contador del correo original.
+    if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) { return null; }
     $q = $pdo->prepare('SELECT c.id,c.email,c.nombre,cr.password_hash FROM cliente c
         LEFT JOIN cliente_registrado cr ON cr.id_cliente=c.id WHERE c.email=?');
     $q->execute([$email]);
