@@ -38,6 +38,7 @@ function raceBrowser(array $cart, string $email): TestBrowser {
 function raceConfirm(array $browsers, ?int $barrierProduct = null): array {
     $multi = curl_multi_init();
     $handles = [];
+    $activeHandles = [];
     $guard = null;
     $observer = null;
     $waiting = 0;
@@ -52,7 +53,10 @@ function raceConfirm(array $browsers, ?int $barrierProduct = null): array {
         foreach ($browsers as $browser) {
             $handle = $browser->prepare('public/checkout.php', ['step' => 'confirm']);
             $handles[] = $handle;
-            curl_multi_add_handle($multi, $handle);
+            if ($barrierProduct === null || count($handles) === 1) {
+                curl_multi_add_handle($multi, $handle);
+                $activeHandles[] = $handle;
+            }
         }
         $deadline = microtime(true) + 15;
         $barrierDeadline = microtime(true) + 8;
@@ -74,7 +78,13 @@ function raceConfirm(array $browsers, ?int $barrierProduct = null): array {
                      WHERE l.lock_table=' . $observer->quote($lockedTable) .
                      " AND l.lock_index='PRIMARY' AND l.lock_data=" . $observer->quote((string)$barrierProduct)
                 )->fetchColumn();
-                if ($waiting >= count($browsers)) {
+                if ($waiting >= count($activeHandles) && count($activeHandles) < count($handles)) {
+                    // Arrancar la segunda petición cuando el primer worker ya está
+                    // bloqueado evita que acepte y encole ambas conexiones él solo.
+                    $next = $handles[count($activeHandles)];
+                    curl_multi_add_handle($multi, $next);
+                    $activeHandles[] = $next;
+                } elseif ($waiting >= count($browsers)) {
                     $guard->commit();
                 } elseif (microtime(true) > $barrierDeadline) {
                     throw new RuntimeException('No hubo dos transacciones simultáneas (observadas: ' . $waiting . '). Usa al menos dos workers PHP y una cuenta de pruebas con PROCESS.');
@@ -99,7 +109,7 @@ function raceConfirm(array $browsers, ?int $barrierProduct = null): array {
             curl_multi_exec($multi, $running);
             if ($running && curl_multi_select($multi, 0.05) === -1) { usleep(10000); }
         } while ($running && microtime(true) < $drainUntil);
-        foreach ($handles as $handle) { curl_multi_remove_handle($multi, $handle); }
+        foreach ($activeHandles as $handle) { curl_multi_remove_handle($multi, $handle); }
         curl_multi_close($multi);
     }
 }
