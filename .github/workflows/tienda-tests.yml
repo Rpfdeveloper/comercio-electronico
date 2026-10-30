@@ -2,7 +2,7 @@ name: Pruebas de la tienda
 
 on:
   push:
-    branches: [develop, main]
+    branches: [develop, main, 'mejora/**']
     paths: ['tienda/**', 'tests/**', '.github/workflows/tienda-tests.yml']
   pull_request:
     branches: [develop, main]
@@ -86,6 +86,8 @@ jobs:
         run: php tests/customer.php
       - name: Aislamiento y acceso administrativo
         run: php tests/admin.php
+      - name: Catálogo y filtros
+        run: php tests/catalog.php
       - name: Compras simultáneas
         run: php tests/concurrency.php
       - name: Comprobar log PHP
