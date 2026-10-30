@@ -6,23 +6,23 @@ Proyecto académico de Comercio Electrónico de la UOC, desarrollado en PHP y My
 
 [Ver el código actualizado](https://github.com/Rpfdeveloper/comercio-electronico/tree/develop) · [Registro de progreso](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/PROGRESO.md) · [Hoja de ruta](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/HOJA_DE_RUTA.md)
 
-## Último avance: cuenta e historial privado
+## Último avance: protección del panel de administración
 
-- Acceso de clientes, cierre de sesión y consulta paginada de sus pedidos.
-- Detalle autorizado por cliente: cambiar el identificador no permite ver pedidos ajenos. Las compras invitadas se mantienen separadas, aunque coincida el correo.
-- Compra con los datos de la cuenta, renovación y caducidad de sesiones y límites compartidos de intentos entre acceso y checkout.
-- Contraseñas nuevas de al menos 15 caracteres, migración aditiva y secreto de acceso definido fuera del repositorio.
-- Comprobación automática de archivos y patrones sensibles; pruebas con datos ficticios.
+- Sesión administrativa independiente de la cuenta de cliente, con renovación de cookie y CSRF al entrar y salir.
+- Caducidad tras 15 minutos de inactividad o cuatro horas totales; cambio de contraseña o secreto invalida la sesión.
+- Límites por cuenta e IP, con contadores separados de clientes y sin guardar identificadores en claro.
+- Páginas administrativas sin caché, errores genéricos de acceso y rechazo controlado de identificadores de pedido malformados.
+- Se conservan la cuenta e historial privado de clientes, el carrito y las protecciones de compra y stock.
 
-Validación: **115 comprobaciones por entorno**: 41 de compra, 45 de cuenta/privacidad y 29 de concurrencia. [Consultar la ejecución de GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions/runs/41134720548), con PHP 8.3 y 8.4 y MariaDB 11.4. También se comprueban 27 archivos PHP, patrones sensibles y los logs del servidor. Las pruebas no equivalen a una auditoría de seguridad ni a una prueba de carga sostenida.
+Validación: **163 comprobaciones por entorno**: 41 de compra, 45 de cuenta/privacidad, 48 de administración y 29 de concurrencia. [Consultar la ejecución de GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions/runs/41137901221), con PHP 8.3 y 8.4 y MariaDB 11.4. También se comprueban 31 archivos PHP, patrones sensibles y los logs del servidor. Las pruebas no equivalen a una auditoría de seguridad ni a una prueba de carga sostenida.
 
-[Ver la nueva pantalla de acceso](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/capturas/acceso-cliente-20261030.jpg) · [Instalar la mejora de cuentas](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/CUENTAS_CLIENTE.md) · [Ejecutar las pruebas](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/tests/README.md)
+[Actualizar el acceso administrativo](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/ADMINISTRACION.md) · [Configurar las cuentas de clientes](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/CUENTAS_CLIENTE.md) · [Ejecutar las pruebas](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/tests/README.md)
 
 ## Funcionalidad y siguientes pasos
 
 La tienda incluye catálogo, categorías, fichas, carrito, compra invitada o registrada y administración de pedidos. Las mejoras anteriores incorporaron CSRF, validación de cantidades y variantes, relectura de precios, descuento transaccional de stock y pruebas de compras simultáneas.
 
-Pendientes principales: verificación de correo, recuperación de contraseña, límites del acceso administrativo, búsqueda y filtros, reservas y pagos en modo de pruebas, envío real de correos y revisión de producción.
+Pendientes principales: verificación de correo, recuperación de contraseña, MFA administrativo, búsqueda y filtros, reservas y pagos en modo de pruebas, envío real de correos y revisión de producción.
 
 ## Ramas y recuperación
 
