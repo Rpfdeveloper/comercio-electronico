@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__ . '/support.php';
+require_once __DIR__ . '/../tienda/src/lib/cart.php';
 
 $prefix = 'catalog-' . bin2hex(random_bytes(5));
 $products = []; $categories = []; $brands = [];
+$checkoutEmail = $prefix . '@example.invalid';
 $makeProduct = function (string $name, float $price, int $stock = 5, int $active = 1, ?int $category = null, ?int $brand = null) use ($pdo, &$products, &$categories, &$brands, $prefix): array {
     $slug = $prefix . '-' . count($products);
     $pdo->prepare('INSERT INTO producto(id_categoria,id_marca,nombre,slug,descripcion_corta,precio,stock,activo) VALUES (?,?,?,?,?,?,?,?)')
@@ -127,8 +129,68 @@ try {
         $body = $b->request('public/producto.php?p='.$product['slug']);
         check(strpos($body, '<button type="submit" disabled>') !== false && strpos($body, 'Agotado.') !== false, 'ficha agotada bloquea boton de compra');
     }
+    // Categoría retirada después de preparar un carrito y un resumen válidos.
+    foreach ([[$basic[0], null], [$mixed, $buyable]] as [$product, $variantId]) {
+        $buyer = new TestBrowser(); $direct = new TestBrowser();
+        $buyer->request('public/producto.php?p='.$product['slug']);
+        $direct->request('public/producto.php?p='.$product['slug']);
+        $add = ['action'=>'add','id_producto'=>$product['id'],'cantidad'=>1];
+        if ($variantId !== null) { $add['id_variante'] = $variantId; }
+        $key = $variantId === null ? 'p'.$product['id'] : 'v'.$variantId;
+        $table = $variantId === null ? 'producto' : 'producto_variante';
+        $stockId = $variantId ?? $product['id'];
+        $beforeStock = (int)$pdo->query("SELECT stock FROM $table WHERE id=$stockId")->fetchColumn();
+        $buyer->request('public/carrito.php', $add);
+        $body = $buyer->request('public/checkout.php', ['step'=>'form','tipo'=>'invitado',
+            'email'=>$checkoutEmail,'nombre'=>'Prueba de categoría','direccion'=>'Dirección ficticia',
+            'cp'=>'00000','poblacion'=>'Prueba','pais'=>'Prueba']);
+        check(strpos($body, 'Confirmar pedido') !== false, 'categoria activa permite preparar resumen');
+        $pdo->prepare('UPDATE categoria SET activa=0 WHERE id=?')->execute([$categories[0]]);
+        $direct->request('public/carrito.php', $add);
+        check($direct->status === 422, 'POST directo no anade productos de categoria inactiva');
+        $buyer->request('public/carrito.php', ['action'=>'update','cantidad'=>[$key=>2]]);
+        check($buyer->status === 422, 'carrito existente no acepta actualizar categoria inactiva');
+        $buyer->request('public/checkout.php');
+        check($buyer->status === 409, 'categoria inactiva bloquea entrada al checkout');
+        $buyer->request('public/checkout.php', ['step'=>'confirm']);
+        $orders = $pdo->prepare('SELECT COUNT(*) FROM pedido WHERE email=?'); $orders->execute([$checkoutEmail]);
+        check($buyer->status === 409 && (int)$orders->fetchColumn() === 0 &&
+            (int)$pdo->query("SELECT stock FROM $table WHERE id=$stockId")->fetchColumn() === $beforeStock,
+            'retirar categoria tras resumen impide pedido y conserva stock');
+        $buyer->request('public/carrito.php', ['remove'=>$key]);
+        check($buyer->status === 303, 'producto de categoria inactiva sigue siendo eliminable');
+        $pdo->prepare('UPDATE categoria SET activa=1 WHERE id=?')->execute([$categories[0]]);
+    }
+    // Comprobar que la validación transaccional conserva el bloqueo de categoría.
+    $other = new PDO($dsn, getenv('TIENDA_TEST_USER') ?: 'root', getenv('TIENDA_TEST_PASS') ?: '',
+        [PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION]);
+    $other->exec('SET SESSION innodb_lock_wait_timeout=1');
+    $pdo->beginTransaction();
+    try {
+        cart_product($pdo, $basic[0]['id'], null, true);
+        $blocked = false;
+        try {
+            $other->prepare('UPDATE categoria SET activa=0 WHERE id=?')->execute([$categories[0]]);
+        } catch (PDOException $e) {
+            if ((int)($e->errorInfo[1] ?? 0) !== 1205) { throw $e; }
+            $blocked = true;
+        }
+        check($blocked, 'categoria no puede desactivarse mientras se confirma la compra');
+    } finally { $pdo->rollBack(); }
+    $other->prepare('UPDATE categoria SET activa=0 WHERE id=?')->execute([$categories[0]]);
+    try {
+        $pdo->beginTransaction();
+        $rejected = false;
+        try { cart_product($pdo, $basic[0]['id'], null, true); }
+        catch (DomainException $e) { $rejected = true; }
+        check($rejected, 'validacion transaccional relee categoria retirada');
+    } finally { $pdo->rollBack(); }
+    $pdo->prepare('UPDATE categoria SET activa=1 WHERE id=?')->execute([$categories[0]]);
     echo "PASS $checks comprobaciones de catalogo\n";
 } finally {
+    if ($pdo->inTransaction()) { $pdo->rollBack(); }
+    $pdo->prepare('DELETE FROM linea_pedido WHERE id_pedido IN (SELECT id FROM pedido WHERE email=?)')->execute([$checkoutEmail]);
+    $pdo->prepare('DELETE FROM pedido WHERE email=?')->execute([$checkoutEmail]);
     foreach ($products as $id) { $pdo->prepare('DELETE FROM producto WHERE id=?')->execute([$id]); }
     foreach ($categories as $id) { $pdo->prepare('DELETE FROM categoria WHERE id=?')->execute([$id]); }
     foreach ($brands as $id) { $pdo->prepare('DELETE FROM marca WHERE id=?')->execute([$id]); }

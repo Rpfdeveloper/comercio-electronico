@@ -35,7 +35,7 @@ function raceBrowser(array $cart, string $email): TestBrowser {
     return $browser;
 }
 
-function raceConfirm(array $browsers, ?int $barrierProduct = null): array {
+function raceConfirm(array $browsers, ?int $barrierProduct = null, ?callable $beforeRelease = null): array {
     $multi = curl_multi_init();
     $handles = [];
     $activeHandles = [];
@@ -85,6 +85,7 @@ function raceConfirm(array $browsers, ?int $barrierProduct = null): array {
                     curl_multi_add_handle($multi, $next);
                     $activeHandles[] = $next;
                 } elseif ($waiting >= count($browsers)) {
+                    if ($beforeRelease !== null) { $beforeRelease($guard); }
                     $guard->commit();
                 } elseif (microtime(true) > $barrierDeadline) {
                     throw new RuntimeException('No hubo dos transacciones simultáneas (observadas: ' . $waiting . '). Usa al menos dos workers PHP y una cuenta de pruebas con PROCESS.');
@@ -187,6 +188,28 @@ try {
             check((int)$pdo->query("SELECT stock FROM $table WHERE id=$id")->fetchColumn() === $available - $expected,
                 'stock exacto y nunca negativo para ' . $table . ':' . $id);
         }
+    }
+
+    // Retirar una categoría después de la validación inicial, con ambas
+    // confirmaciones detenidas en el bloqueo del producto. La relectura debe fallar.
+    $categoryId = (int)$pdo->query('SELECT id_categoria FROM producto WHERE id='.$a['id_producto'])->fetchColumn();
+    $categoryActive = (int)$pdo->query('SELECT activa FROM categoria WHERE id='.$categoryId)->fetchColumn();
+    $pdo->exec('UPDATE producto_variante SET stock=2 WHERE id='.$a['id_variante']);
+    $caseEmails = [$prefix.'-categoria-a@example.invalid', $prefix.'-categoria-b@example.invalid'];
+    $emails = array_merge($emails, $caseEmails);
+    try {
+        $browsers = [raceBrowser([$a], $caseEmails[0]), raceBrowser([$a], $caseEmails[1])];
+        raceConfirm($browsers, $a['id_producto'], static function (PDO $guard) use ($categoryId): void {
+            $guard->exec('UPDATE categoria SET activa=0 WHERE id='.$categoryId);
+        });
+        check($browsers[0]->status === 409 && $browsers[1]->status === 409,
+            'retirar categoria durante confirmaciones simultaneas rechaza ambas compras');
+        $orders = $pdo->prepare('SELECT COUNT(*) FROM pedido WHERE email IN (?,?)'); $orders->execute($caseEmails);
+        check((int)$orders->fetchColumn() === 0 &&
+            (int)$pdo->query('SELECT stock FROM producto_variante WHERE id='.$a['id_variante'])->fetchColumn() === 2,
+            'retirada concurrente conserva stock y no crea pedidos parciales');
+    } finally {
+        $pdo->exec('UPDATE categoria SET activa='.$categoryActive.' WHERE id='.$categoryId);
     }
 
     // Dos envíos del mismo resumen y sesión: debe existir un solo pedido.

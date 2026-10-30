@@ -1,6 +1,6 @@
 # Pruebas de la tienda
 
-Estado actual: 41 comprobaciones de compra, 45 de cuenta/privacidad, 48 de administración, 59 de catálogo y 29 de concurrencia: **222 por entorno**, más sintaxis y revisión de archivos sensibles. Validación local de esta iteración con PHP 8.3.6 y MariaDB 10.11.14. Los resultados anteriores se conservan más abajo como referencia.
+Estado actual: 41 comprobaciones de compra, 45 de cuenta/privacidad, 48 de administración, 73 de catálogo y 32 de concurrencia: **239 por entorno**, más sintaxis y revisión de archivos sensibles. Validación local de esta iteración con PHP 8.3.6 y MariaDB 10.11.14. Los resultados anteriores se conservan más abajo como referencia.
 
 Esta suite usa peticiones HTTP reales, sesiones independientes y una base MariaDB/MySQL desechable cuyo nombre termina en `_test`. No utiliza pagos ni correo reales.
 
@@ -113,3 +113,9 @@ Referencias técnicas: [servidor integrado de PHP](https://www.php.net/manual/en
 `tests/catalog.php` crea categorías, marcas, productos y variantes ficticios y comprueba búsqueda literal, acentos, escape HTML, filtros combinados, precios de oferta, disponibilidad, ordenación estable, paginación con filtros conservados y errores 404/422. Contrasta el precio de una variante con el carrito y comprueba las fichas ocultas o agotadas. Elimina sus fixtures al terminar, también ante un fallo controlado. La conexión de pruebas utiliza UTF-8 explícito para no alterar las fixtures con acentos.
 
 No es una prueba de rendimiento con catálogos grandes. [Comportamiento y límites del catálogo](../docs/CATALOGO.md).
+
+## Categorías retiradas durante una compra
+
+La suite de catálogo comprueba el rechazo de altas directas al carrito, cambios de cantidades, entrada al checkout y confirmaciones de resúmenes anteriores cuando la categoría está inactiva, con y sin variantes. También verifica que el artículo se pueda eliminar y que no se creen pedidos ni se descuente stock. Dos conexiones comprueban que el bloqueo compartido conserva la categoría hasta terminar la transacción.
+
+La suite de concurrencia retira una categoría mientras dos confirmaciones ya han pasado la validación inicial y esperan el producto: ambas deben devolver 409, conservar stock y no registrar pedidos. Las pruebas anteriores siguen comprobando que dos compras de la misma categoría pueden completarse cuando hay existencias suficientes.
