@@ -1,19 +1,13 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . '/../config/init.php';      // Configuración + BD
+require_once __DIR__ . '/bootstrap.php';
+admin_require();
 
-// Restringir acceso al panel admin
-if (empty($_SESSION['admin_logged'])) {
-    header('Location: login.php');
-    exit;
-}
-
-// Validar ID del pedido
-$id = $_GET['id'] ?? null;
-if (!$id || !ctype_digit($id)) {                   // Solo números enteros válidos
-    echo "ID de pedido inválido.";
-    exit;
+$id = filter_var($_GET['id'] ?? null, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
+if ($id === false || $id === null) {
+    http_response_code(404);
+    exit('Pedido no encontrado.');
 }
 
 // ----------------------------------------------------
@@ -24,6 +18,7 @@ $st->execute([':id' => $id]);
 $pedido = $st->fetch();
 
 if (!$pedido) {                                    // Pedido inexistente
+    http_response_code(404);
     echo "Pedido no encontrado.";
     exit;
 }

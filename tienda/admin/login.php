@@ -1,33 +1,39 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__ . '/bootstrap.php';
 
-require_once __DIR__ . '/../config/init.php';
-
-// Credenciales fijas del panel (demo/PRA)
-const ADMIN_USER = 'admin';
-define('ADMIN_PASS', getenv('TIENDA_ADMIN_PASS') ?: '');
-
-// Si ya está logueado, ir directamente al listado de pedidos
-if (!empty($_SESSION['admin_logged'])) {
-    header('Location: pedidos.php');
-    exit;
-}
-
+if (admin_current()) { header('Location: pedidos.php', true, 302); exit; }
 $error = '';
-
-// Procesar envío del formulario de login
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $_POST['user'] ?? '';
     $pass = $_POST['pass'] ?? '';
-
-    // Comprobación simple de usuario/contraseña
-    if (ADMIN_PASS !== '' && $user === ADMIN_USER && $pass === ADMIN_PASS) {
-        session_regenerate_id(true);
-        $_SESSION['admin_logged'] = true;    // Marca sesión de admin
-        header('Location: pedidos.php');     // Redirige al panel
-        exit;
+    if (!is_string($user) || !is_string($pass) || strlen($user)>64 || strlen($pass)>4096 ||
+        strpos($pass, "\0")!==false) {
+        http_response_code(422);
+        $error = 'Los datos del formulario no son válidos.';
     } else {
-        $error = 'Credenciales incorrectas.';
+        try {
+            admin_proof(); // Rechazar configuración incompleta antes de autorizar.
+            $pdo = db();
+            $keys = admin_attempt_keys((string)($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
+            auth_take_attempts($pdo, $keys);
+            $validPassword = hash_equals(hash('sha256', getenv('TIENDA_ADMIN_PASS')), hash('sha256', $pass));
+            if ($validPassword && $user === 'admin') {
+                $pdo->prepare('DELETE FROM acceso_intento WHERE clave=?')->execute([array_key_first($keys)]);
+                admin_sign_in();
+                header('Location: pedidos.php', true, 302);
+                exit;
+            }
+            http_response_code(401);
+            $error = 'Credenciales incorrectas.';
+        } catch (AuthRateLimit $e) {
+            http_response_code(429);
+            header('Retry-After: 900');
+            $error = $e->getMessage();
+        } catch (Throwable $e) {
+            http_response_code(503);
+            $error = 'El acceso no está disponible en este momento. Inténtalo más tarde.';
+        }
     }
 }
 ?>
@@ -35,31 +41,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Admin - Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acceso al panel de administración</title>
 </head>
 <body>
-  <h2>Panel de administración</h2>
-
-  <!-- Mensaje de error, si lo hay -->
-  <?php if ($error): ?>
-    <p style="color:red;"><?= htmlspecialchars($error) ?></p>
-  <?php endif; ?>
-
-  <!-- Formulario de acceso -->
-  <form method="post">
+  <main>
+    <h1>Panel de administración</h1>
+    <?php if ($error !== ''): ?><p role="alert"><?= h($error) ?></p><?php endif; ?>
+    <form method="post" action="login.php">
       <?= csrf_field() ?>
-    <label>Usuario<br>
-      <input type="text" name="user" required>
-    </label>
-    <br><br>
-
-    <label>Contraseña<br>
-      <input type="password" name="pass" required>
-    </label>
-    <br><br>
-
-    <button type="submit">Entrar</button>
-  </form>
-
+      <p><label for="admin-user">Usuario</label><br>
+      <input id="admin-user" type="text" name="user" autocomplete="username" maxlength="64" required></p>
+      <p><label for="admin-pass">Contraseña</label><br>
+      <input id="admin-pass" type="password" name="pass" autocomplete="current-password" required></p>
+      <button type="submit">Entrar</button>
+    </form>
+  </main>
 </body>
 </html>

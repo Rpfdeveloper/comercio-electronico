@@ -1,13 +1,8 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . '/../config/init.php';      // Config + conexión BD
-
-// Si no está logueado, redirigir al login
-if (empty($_SESSION['admin_logged'])) {
-    header('Location: login.php');
-    exit;
-}
+require_once __DIR__ . '/bootstrap.php';
+admin_require();
 
 // Obtener todos los pedidos ordenados por fecha
 $st = db()->query(
