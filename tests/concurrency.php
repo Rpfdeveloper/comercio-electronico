@@ -73,6 +73,8 @@ function raceConfirm(array $browsers, ?int $barrierProduct = null): array {
                 if ($waiting >= count($browsers)) {
                     $guard->commit();
                 } elseif (microtime(true) > $barrierDeadline) {
+                    fwrite(STDERR, json_encode($observer->query('SELECT ID,USER,DB,COMMAND,TIME,STATE,INFO FROM information_schema.PROCESSLIST')->fetchAll()) . "\n");
+                    fwrite(STDERR, json_encode($observer->query('SELECT trx_id,trx_state,trx_mysql_thread_id,trx_query FROM information_schema.INNODB_TRX')->fetchAll()) . "\n");
                     fwrite(STDERR, json_encode($observer->query('SELECT * FROM information_schema.INNODB_LOCK_WAITS')->fetchAll()) . "\n");
                     fwrite(STDERR, json_encode($observer->query('SELECT lock_id,lock_table,lock_index,lock_data FROM information_schema.INNODB_LOCKS')->fetchAll()) . "\n");
                     throw new RuntimeException('No hubo dos transacciones simultáneas (observadas: ' . $waiting . '). Usa al menos dos workers PHP y una cuenta de pruebas con PROCESS.');
