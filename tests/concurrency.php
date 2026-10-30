@@ -44,10 +44,10 @@ function raceConfirm(array $browsers, ?int $barrierProduct = null): array {
     try {
         if ($barrierProduct !== null) {
             $guard = raceConnection();
-            $guardId = (int)$guard->query('SELECT CONNECTION_ID()')->fetchColumn();
             $guard->beginTransaction();
             $guard->query('SELECT id FROM producto WHERE id=' . $barrierProduct . ' FOR UPDATE')->fetch();
             $observer = raceConnection();
+            $lockedTable = '`' . $observer->query('SELECT DATABASE()')->fetchColumn() . '`.`producto`';
         }
         foreach ($browsers as $browser) {
             $handle = $browser->prepare('public/checkout.php', ['step' => 'confirm']);
@@ -60,18 +60,22 @@ function raceConfirm(array $browsers, ?int $barrierProduct = null): array {
             $result = curl_multi_exec($multi, $running);
             if ($result !== CURLM_OK) { throw new RuntimeException(curl_multi_strerror($result)); }
             if ($guard !== null && $guard->inTransaction()) {
-                // Dos transacciones diferentes deben estar bloqueadas por nuestra conexión.
+                // Dos transacciones deben esperar el mismo registro, incluso si el motor
+                // encadena el segundo comprador detrás del primero en la cola de bloqueo.
                 // Un servidor que atienda secuencialmente NO puede superar esta condición.
                 $waiting = (int)$observer->query(
                     'SELECT COUNT(DISTINCT w.requesting_trx_id)
                      FROM information_schema.INNODB_LOCK_WAITS w
-                     JOIN information_schema.INNODB_TRX b ON b.trx_id=w.blocking_trx_id
-                     WHERE b.trx_mysql_thread_id=' . $guardId
+                     JOIN information_schema.INNODB_LOCKS l ON l.lock_id=w.requested_lock_id
+                     WHERE l.lock_table=' . $observer->quote($lockedTable) .
+                     " AND l.lock_index='PRIMARY' AND l.lock_data=" . $observer->quote((string)$barrierProduct)
                 )->fetchColumn();
                 if ($waiting >= count($browsers)) {
                     $guard->commit();
                 } elseif (microtime(true) > $barrierDeadline) {
-                    throw new RuntimeException('No hubo dos transacciones simultáneas. Usa al menos dos workers PHP y una cuenta de pruebas con PROCESS.');
+                    fwrite(STDERR, json_encode($observer->query('SELECT * FROM information_schema.INNODB_LOCK_WAITS')->fetchAll()) . "\n");
+                    fwrite(STDERR, json_encode($observer->query('SELECT lock_id,lock_table,lock_index,lock_data FROM information_schema.INNODB_LOCKS')->fetchAll()) . "\n");
+                    throw new RuntimeException('No hubo dos transacciones simultáneas (observadas: ' . $waiting . '). Usa al menos dos workers PHP y una cuenta de pruebas con PROCESS.');
                 }
             }
             if (microtime(true) > $deadline) { throw new RuntimeException('Tiempo de espera de concurrencia agotado'); }
