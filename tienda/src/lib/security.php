@@ -9,7 +9,7 @@ if (session_status() === PHP_SESSION_NONE) {
         'httponly' => true,
         'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
         'samesite' => 'Lax',
-        'path' => '/',
+        'path' => defined('TIENDA_SESSION_PATH') ? TIENDA_SESSION_PATH : '/',
     ]);
     session_start();
 }

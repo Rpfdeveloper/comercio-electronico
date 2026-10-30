@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-class CustomerRateLimit extends RuntimeException {}
+require_once __DIR__ . '/auth.php';
+
+class CustomerRateLimit extends AuthRateLimit {}
 
 function customer_no_cache(): void
 {
-    header('Cache-Control: no-store, private, max-age=0');
-    header('Pragma: no-cache');
-    header('Referrer-Policy: same-origin');
+    auth_no_cache();
 }
 
 function customer_forget(): void
@@ -64,8 +64,7 @@ function customer_sign_in(array $customer): void
 // Los contadores no contienen correos ni IP en claro. El secreto debe ser externo.
 function customer_attempt_keys(string $email, string $ip): array
 {
-    $secret = getenv('TIENDA_AUTH_SECRET') ?: '';
-    if (strlen($secret) < 32) { throw new RuntimeException('Authentication configuration unavailable'); }
+    $secret = auth_secret();
     return [
         hash_hmac('sha256', 'email:' . strtolower(trim($email)), $secret) => 5,
         hash_hmac('sha256', 'ip:' . $ip, $secret) => 30,
@@ -76,29 +75,10 @@ function customer_take_attempt(PDO $pdo, string $email): void
 {
     // No confiar en X-Forwarded-For sin una configuración explícita de proxies.
     $keys = customer_attempt_keys($email, (string)($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
-    ksort($keys);
-    // Limpieza acotada: no conservar indefinidamente identificadores de intentos.
-    $pdo->exec('DELETE FROM acceso_intento WHERE ventana < UTC_TIMESTAMP() - INTERVAL 1 DAY LIMIT 100');
     try {
-        $pdo->beginTransaction();
-        foreach ($keys as $key => $limit) {
-            $q = $pdo->prepare('INSERT IGNORE INTO acceso_intento (clave,ventana,intentos) VALUES (?,UTC_TIMESTAMP(),0)');
-            $q->execute([$key]);
-            $q = $pdo->prepare('SELECT intentos,(ventana <= UTC_TIMESTAMP() - INTERVAL 15 MINUTE) AS vencido
-                FROM acceso_intento WHERE clave=? FOR UPDATE');
-            $q->execute([$key]);
-            $row = $q->fetch();
-            if ((int)$row['vencido']) {
-                $pdo->prepare('UPDATE acceso_intento SET intentos=0,ventana=UTC_TIMESTAMP() WHERE clave=?')->execute([$key]);
-            } elseif ((int)$row['intentos'] >= $limit) {
-                throw new CustomerRateLimit('Espera 15 minutos antes de volver a intentarlo.');
-            }
-            $pdo->prepare('UPDATE acceso_intento SET intentos=intentos+1 WHERE clave=?')->execute([$key]);
-        }
-        $pdo->commit();
-    } catch (Throwable $e) {
-        if ($pdo->inTransaction()) { $pdo->rollBack(); }
-        throw $e;
+        auth_take_attempts($pdo, $keys);
+    } catch (AuthRateLimit $e) {
+        throw new CustomerRateLimit($e->getMessage());
     }
 }
 
