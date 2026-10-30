@@ -29,7 +29,7 @@ if (!empty($_SESSION['cart']) && is_array($_SESSION['cart'])) {
   <title><?= h(APP_NAME) ?></title>
 
   <!-- Hoja de estilos principal de la tienda -->
-  <link rel="stylesheet" href="<?= asset('css/style.css?v=1.2') ?>">
+  <link rel="stylesheet" href="<?= asset('css/style.css?v=1.3') ?>">
 </head>
 <body>
 
@@ -48,7 +48,8 @@ if (!empty($_SESSION['cart']) && is_array($_SESSION['cart'])) {
       </h1>
 
       <!-- Menú de categorías -->
-      <nav id="menu" class="main-menu">
+      <nav id="menu" class="main-menu" aria-label="Navegación principal">
+        <a href="<?= url('catalogo.php') ?>">Catálogo</a>
         <?php foreach ($menuCategorias as $c): ?>
           <a href="<?= url('categoria.php?c=' . rawurlencode($c['slug'])) ?>">
             <?= h($c['nombre']) ?>
