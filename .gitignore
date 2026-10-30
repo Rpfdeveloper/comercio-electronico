@@ -1,0 +1,15 @@
+tests/sessions/
+# Configuración y datos locales; publicar únicamente ejemplos sin secretos.
+.env
+.env.*
+!.env.example
+*.log
+*.pem
+*.key
+*.p12
+*.pfx
+sess_*
+backups/
+dumps/
+.preview-runtime/
+.runtime/
