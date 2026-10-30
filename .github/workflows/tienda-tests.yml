@@ -53,6 +53,7 @@ jobs:
       TIENDA_DB_PASS: ci-app-only
       TIENDA_ADMIN_PASS: ci-admin-only
       TIENDA_DEBUG: 'true'
+      TIENDA_AUTH_SECRET: ci-only-authentication-key-with-at-least-32-bytes
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -64,6 +65,8 @@ jobs:
           coverage: none
       - name: Comprobar sintaxis
         run: find tienda tests -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Revisar archivos y patrones sensibles
+        run: python3 tests/privacy.py
       - name: Preparar base desechable
         run: php tests/prepare_database.php --reset
       - name: Arrancar servidor con cuatro procesos
@@ -79,6 +82,8 @@ jobs:
           exit 1
       - name: Regresiones HTTP
         run: php tests/integration.php
+      - name: Privacidad y cuenta de cliente
+        run: php tests/customer.php
       - name: Compras simultáneas
         run: php tests/concurrency.php
       - name: Comprobar log PHP
