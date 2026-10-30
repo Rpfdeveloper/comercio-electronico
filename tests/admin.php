@@ -168,7 +168,8 @@ try {
         foreach ($handles as $i=>$handle) { $pairs[$i]->receive(curl_multi_getcontent($handle)); }
         $statuses=[$pairs[0]->status,$pairs[1]->status]; sort($statuses);
         $q->execute([$accountKey]);
-        check($statuses===[401,429] && (int)$q->fetchColumn()===5, 'dos peticiones no consumen dos plazas cuando solo queda una');
+        $attempts=(int)$q->fetchColumn();
+        check($statuses===[401,429] && $attempts===5, 'dos peticiones no consumen dos plazas cuando solo queda una: HTTP '.implode(',', $statuses).'; contador '.$attempts);
     } finally {
         foreach ($handles as $handle) { curl_multi_remove_handle($multi,$handle); }
         curl_multi_close($multi);
