@@ -23,4 +23,6 @@ Una instalación nueva puede importar el esquema actualizado, que incluye la tab
 
 ## Límites actuales
 
-No se implementan todavía verificación del correo, recuperación de contraseña, MFA, límites del acceso administrativo ni envío de correos. El historial muestra el estado guardado del pedido, sin seguimiento del transportista. El acceso no prueba la propiedad del buzón. No se enlazan pedidos invitados por correo, pues esa coincidencia no acredita propiedad. Las pruebas no sustituyen una auditoría de seguridad, accesibilidad ni una prueba de carga sostenida.
+No se implementan todavía verificación del correo, recuperación de contraseña, MFA ni envío de correos. El historial muestra el estado guardado del pedido, sin seguimiento del transportista. El acceso no prueba la propiedad del buzón. No se enlazan pedidos invitados por correo, pues esa coincidencia no acredita propiedad. Las pruebas no sustituyen una auditoría de seguridad, accesibilidad ni una prueba de carga sostenida.
+
+La administración dispone ahora de [sesión y límites propios](ADMINISTRACION.md), separados de los de clientes.
