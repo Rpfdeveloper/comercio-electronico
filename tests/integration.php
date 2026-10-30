@@ -1,50 +1,8 @@
 <?php
 declare(strict_types=1);
 
-// Ejecutar únicamente contra una instalación local y una BD desechable *_test.
-$base = rtrim(getenv('TIENDA_TEST_URL') ?: '', '/');
-$dsn = getenv('TIENDA_TEST_DSN') ?: '';
-if (!in_array(parse_url($base, PHP_URL_HOST), ['127.0.0.1', 'localhost'], true) ||
-    !preg_match('/dbname=([a-zA-Z0-9_]+_test)(;|$)/', $dsn) ||
-    !preg_match('/host=(127\.0\.0\.1|localhost)(;|$)/', $dsn)) {
-    fwrite(STDERR, "Configura TIENDA_TEST_URL local y TIENDA_TEST_DSN con una base *_test.\n");
-    exit(2);
-}
-$pdo = new PDO($dsn, getenv('TIENDA_TEST_USER') ?: 'root', getenv('TIENDA_TEST_PASS') ?: '', [
-    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-]);
-$checks = 0;
-function check(bool $condition, string $message): void {
-    global $checks;
-    if (!$condition) { throw new RuntimeException($message); }
-    ++$checks;
-    echo "OK $message\n";
-}
-class TestBrowser {
-    private $curl;
-    public $token = '';
-    public $status;
-    public function __construct() {
-        $this->curl = curl_init();
-        curl_setopt_array($this->curl, [CURLOPT_COOKIEFILE => '', CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_FOLLOWLOCATION => false, CURLOPT_TIMEOUT => 10]);
-    }
-    public function request(string $path, ?array $post = null, bool $withToken = true): string {
-        global $base;
-        if ($post !== null && $withToken) { $post['csrf_token'] = $this->token; }
-        curl_setopt($this->curl, CURLOPT_URL, $base . '/' . $path);
-        curl_setopt($this->curl, CURLOPT_POST, $post !== null);
-        if ($post !== null) { curl_setopt($this->curl, CURLOPT_POSTFIELDS, http_build_query($post)); }
-        $body = curl_exec($this->curl);
-        if ($body === false) { throw new RuntimeException(curl_error($this->curl)); }
-        $this->status = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
-        if (preg_match('/name="csrf_token" value="([a-f0-9]+)"/', $body, $m)) { $this->token = $m[1]; }
-        if (preg_match('/Fatal error|Warning:/', $body)) { throw new RuntimeException('Error PHP en ' . $path); }
-        return $body;
-    }
-    public function __destruct() { curl_close($this->curl); }
-}
+require_once __DIR__ . '/support.php';
+
 $emailPrefix = 'qa-' . bin2hex(random_bytes(5));
 $emails = [$emailPrefix . '@example.invalid', $emailPrefix . '-new@example.invalid'];
 $variant = $pdo->query('SELECT v.*, p.slug FROM producto_variante v JOIN producto p ON p.id=v.id_producto WHERE p.activo=1 AND v.activo=1 ORDER BY v.id LIMIT 1')->fetch();

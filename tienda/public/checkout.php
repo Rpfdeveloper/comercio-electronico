@@ -312,7 +312,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step === 'confirm') {
         echo '<section class="container" style="margin-top:2rem;">
                 <h2>Pedido realizado</h2>
                 <p>Tu pedido se ha registrado correctamente con el número <strong>#' . (int)$idPedido . '</strong>.</p>
-                <p>Recibirás un resumen en el correo: <strong>' . h($data['email']) . '</strong>.</p>
+                <p>Correo de contacto del pedido: <strong>' . h($data['email']) . '</strong>.</p>
               </section>';
 
         require_once __DIR__ . '/includes/footer.php';
@@ -322,6 +322,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step === 'confirm') {
         if ($pdo->inTransaction()) {
             $pdo->rollBack();
         }
+        http_response_code($e instanceof DomainException ? 409 : 500);
         $errors['general'] = $e instanceof DomainException
             ? $e->getMessage()
             : 'Se ha producido un error al registrar el pedido. Inténtalo de nuevo más tarde.';
@@ -335,7 +336,7 @@ require_once __DIR__ . '/includes/header.php';
   <h2>Proceso de compra</h2>
 
   <?php if (!empty($errors['general'])): ?>
-    <p style="color:red;"><?= h($errors['general']) ?></p>
+    <p role="alert" style="color:red;"><?= h($errors['general']) ?></p>
   <?php endif; ?>
 
   <?php if ($step === 'form'): ?>
