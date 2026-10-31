@@ -88,6 +88,8 @@ jobs:
         run: php tests/admin.php
       - name: Catálogo y filtros
         run: php tests/catalog.php
+      - name: Carrito y formulario de compra
+        run: php tests/checkout.php
       - name: Compras simultáneas
         run: php tests/concurrency.php
       - name: Comprobar log PHP
