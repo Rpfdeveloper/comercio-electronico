@@ -2,6 +2,20 @@
 
 Registro técnico de cambios verificables en `develop` y de entregas integradas en `main`. La rama `original` conserva la entrega recuperada. El proyecto sigue siendo un prototipo: no procesa pagos ni envía correos reales.
 
+## Favoritos vinculados a cuenta (31 de octubre de 2026)
+
+Los favoritos pueden recuperarse al iniciar sesión desde otro dispositivo. La selección invitada no se importa automáticamente: se ofrece una unión explícita, sin duplicados y solo para productos activos. Cerrar sesión no copia la lista de la cuenta al navegador. «Mi cuenta» incorpora acceso y contador; «Mis favoritos» identifica el destino del guardado.
+
+La migración aditiva e idempotente `003_customer_favorites.sql` debe aplicarse antes del código. La identidad procede de la sesión, y una transacción bloquea la cuenta y vuelve a validar la credencial antes de escribir. El límite de 24 está protegido ante concurrencia. Se conservan la cookie invitada, CSRF, noindex, ausencia de caché compartida y las reglas de stock/precios.
+
+**438 comprobaciones locales correctas**, incluidas 45 nuevas: aislamiento entre clientes, sesiones independientes, unión, límites, fallo SQL y reintento, revocación durante espera y cuatro escenarios con dos transacciones HTTP realmente solapadas. PHP 8.3.6/MariaDB 10.11.14; 50 PHP con sintaxis correcta, revisión de patrones sensibles y logs sin avisos. CI para PHP 8.3, 8.4 y 8.5/MariaDB 11.4.
+
+Revisión visual de HTML generado por PHP con datos ficticios en escritorio y marcos de 320, 390 y 768 px: sin desbordamiento horizontal ni imágenes rotas. Se ajustó el contraste del acceso desde «Mi cuenta». Las pruebas funcionales usan HTTP real; la vista de revisión solo comprueba el diseño.
+
+Copia previa verificada: `backup/2026-10-31-antes-favoritos-cuenta-f67dcfb`, sobre `f67dcfbda04a4323fd2bdcdab9e3dbca30a962bb`. La copia de GitHub conserva código; no incluye datos de instalaciones. La migración no borra datos existentes.
+
+[Uso, actualización, pruebas y límites](FAVORITOS_CUENTA.md). El alta independiente, correo verificado, pagos y lanzamiento público siguen pendientes.
+
 ## Favoritos y preparación SEO (31 de octubre de 2026)
 
 Colección personal de 24 perfumes sin registro, conservada 180 días desde el último cambio en ese navegador. Guardado desde todas las superficies del catálogo, retorno con filtros, retirada y vaciado, precios/stock releídos y ocultación de productos o categorías retirados. Funciona sin JavaScript; no reserva stock ni sincroniza dispositivos.

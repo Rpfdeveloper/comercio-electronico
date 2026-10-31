@@ -49,7 +49,7 @@ require __DIR__ . '/includes/header.php';
     <span class="store-discovery-mark" aria-hidden="true">P.</span>
   </section>
   <section class="store-section favorites-invitation" aria-labelledby="save-title">
-    <div><p class="store-eyebrow">DESCUBRE HOY. ELIGE A TU RITMO.</p><h2 id="save-title">Una colección que empieza contigo.</h2><p>Guarda lo que te gusta y retómalo en tu próxima visita desde este navegador.</p></div>
+    <div><p class="store-eyebrow">DESCUBRE HOY. ELIGE A TU RITMO.</p><h2 id="save-title">Una colección que empieza contigo.</h2><p>Guarda lo que te gusta. Retómalo en este navegador o inicia sesión para llevar tu colección contigo.</p></div>
     <a class="store-text-link" href="<?= h(url('favoritos.php')) ?>">Mi colección de favoritos <span aria-hidden="true">♡</span></a>
   </section>
   <section class="store-section" aria-labelledby="latest-title">

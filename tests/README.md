@@ -1,6 +1,6 @@
 # Pruebas de la tienda
 
-Estado actual: 41 comprobaciones de compra, 45 de cuenta/privacidad, 48 de administración, 73 de catálogo, 47 de checkout, 30 de portada/descubrimiento 32 de concurrencia, 38 de favoritos y 39 de SEO: **393 por entorno**, más sintaxis y revisión de archivos sensibles. Validación local de esta iteración con PHP 8.3.6 y MariaDB 10.11.14. CI configurada para PHP 8.3, 8.4 y 8.5; los resultados anteriores se conservan como referencia.
+Estado actual: 41 comprobaciones de compra, 45 de cuenta/privacidad, 48 de administración, 73 de catálogo, 47 de checkout, 30 de portada/descubrimiento, 32 de concurrencia, 38 de favoritos invitados, 39 de SEO y 45 de favoritos de cuenta: **438 por entorno**, más sintaxis y revisión de archivos sensibles. Validación local de esta iteración con PHP 8.3.6 y MariaDB 10.11.14. CI configurada para PHP 8.3, 8.4 y 8.5; los resultados anteriores se conservan como referencia.
 
 Esta suite usa peticiones HTTP reales, sesiones independientes y una base MariaDB/MySQL desechable cuyo nombre termina en `_test`. No utiliza pagos ni correo reales.
 
@@ -48,6 +48,7 @@ php tests/catalog.php
 php tests/checkout.php
 php tests/storefront.php
 php tests/favorites.php
+php tests/favorites_account.php
 php tests/seo.php
 python3 tests/privacy.py
 ```
@@ -92,14 +93,14 @@ Utiliza correos `example.invalid`, restaura el stock y elimina sus pedidos y el 
 
 ## GitHub Actions
 
-`.github/workflows/tienda-tests.yml` ejecuta las nueve suites cuando cambian la aplicación, las pruebas o el workflow en `develop`, `main` o ramas `mejora/**`, y en pull requests hacia esas ramas. La matriz prueba PHP 8.3, 8.4 y 8.5 con MariaDB 11.4 en una base desechable por job. También comprueba la sintaxis de todos los PHP y rechaza avisos, errores y deprecaciones del log.
+`.github/workflows/tienda-tests.yml` ejecuta las diez suites cuando cambian la aplicación, las pruebas o el workflow en `develop`, `main` o ramas `mejora/**`, y en pull requests hacia esas ramas. La matriz prueba PHP 8.3, 8.4 y 8.5 con MariaDB 11.4 en una base desechable por job. También comprueba la sintaxis de todos los PHP y rechaza avisos, errores y deprecaciones del log.
 
 El workflow solo tiene permisos de lectura del repositorio; sus contraseñas ficticias sirven exclusivamente para los servicios temporales de CI. Las acciones se fijan a commits concretos. Resultado verificado el 30 de octubre de 2026: **41 comprobaciones de integración + 29 de concurrencia por versión de PHP**, ambas ejecuciones correctas; 21 archivos PHP sin errores de sintaxis y logs sin avisos. [Ejecución verificada](https://github.com/Rpfdeveloper/comercio-electronico/actions/runs/41126154248). Los resultados posteriores aparecen en [GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions).
 
 Referencias técnicas: [servidor integrado de PHP](https://www.php.net/manual/en/features.commandline.webserver.php) y [bloqueos observables en MariaDB](https://mariadb.com/docs/server/reference/system-tables/information-schema/information-schema-tables/information-schema-innodb-tables/information-schema-innodb_lock_waits-table).
 
 ## Variables de la aplicación
-`TIENDA_DB_HOST`, `TIENDA_DB_PORT`, `TIENDA_DB_NAME`, `TIENDA_DB_USER`, `TIENDA_DB_PASS`, `TIENDA_ADMIN_PASS`, `TIENDA_AUTH_SECRET` y `TIENDA_DEBUG` se leen del entorno del proceso PHP. No se carga automáticamente un archivo `.env`. La depuración está desactivada por defecto. Servidor y suites deben compartir `TIENDA_AUTH_SECRET`; para la cuenta se requiere la migración 002, aplicada por `prepare_database.php`.
+`TIENDA_DB_HOST`, `TIENDA_DB_PORT`, `TIENDA_DB_NAME`, `TIENDA_DB_USER`, `TIENDA_DB_PASS`, `TIENDA_ADMIN_PASS`, `TIENDA_AUTH_SECRET` y `TIENDA_DEBUG` se leen del entorno del proceso PHP. No se carga automáticamente un archivo `.env`. La depuración está desactivada por defecto. Servidor y suites deben compartir `TIENDA_AUTH_SECRET`; para la cuenta y sus favoritos se requieren las migraciones 002 y 003, aplicadas por `prepare_database.php`.
 
 ## Cuenta y privacidad
 
@@ -141,3 +142,9 @@ La CI incluye PHP 8.5, además de 8.3 y 8.4. Se libera el objeto cURL sin la lla
 `tests/seo.php` comprueba noindex por defecto y levanta temporalmente un segundo servidor PHP local con configuración de lanzamiento, dominio ficticio y la misma base desechable. Requiere `proc_open` y sockets TCP locales. La consola de pruebas debe recibir también las variables de aplicación `TIENDA_DB_*` indicadas para el servidor. Comprueba metadatos, paginación, exclusiones y que cada URL del sitemap coincide con una página indexable. Elimina el proceso, sesiones y fixtures al terminar; no conecta con el dominio ficticio ni con Google. El servidor habitual de pruebas debe conservar `TIENDA_DEBUG=true` y `TIENDA_INDEXABLE` desactivado.
 
 [Decisiones y fuentes](../docs/RETENCION_SEO.md).
+
+## Favoritos de cuenta
+
+`tests/favorites_account.php` usa dos clientes ficticios, sesiones independientes y cuatro escenarios concurrentes. Requiere al menos dos workers PHP; la cuenta de pruebas necesita PROCESS para observar bloqueos y TRIGGER para simular un fallo SQL durante una unión. La cuenta de aplicación no necesita estos permisos. La prueba elimina el trigger y sus fixtures también ante errores, y verifica el reintento tras la reversión.
+
+Comprueba unión elegida, identidad obtenida de la sesión, acceso/modificación ajenos, CSRF, cambio de sesión, cierre, precios/stock, límite, persistencia, migración repetida y cascadas de referencias. La barrera exige observar dos transacciones a la vez: no basta con lanzar solicitudes que se atiendan en serie. No es una prueba de carga ni de dispositivos físicos. Ejecutar las suites secuencialmente sobre la base desechable.

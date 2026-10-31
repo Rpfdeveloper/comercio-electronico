@@ -12,9 +12,9 @@ La investigación de Baymard observa fricción cuando guardar un producto exige 
 - «Mis favoritos» muestra hasta 24 perfumes, los más recientemente añadidos primero. La cookie dura 180 días desde el último cambio; no se prolonga por navegar.
 - Precios, capacidades disponibles y stock se consultan de nuevo en la base de datos. Guardar no reserva existencias ni conserva un precio anterior.
 - Los productos o categorías retirados se ocultan con un aviso. Los agotados siguen visibles para poder volver a consultarlos. La lista se puede vaciar.
-- La información se conserva en ese navegador: no se sincroniza con la cuenta ni entre dispositivos. Borrar cookies o cerrar una sesión privada puede eliminarla. No hay campañas, seguimiento publicitario ni envíos automáticos.
+- Sin iniciar sesión, la información se conserva en ese navegador. Con una cuenta abierta se guarda en su colección, recuperable desde otra sesión. La unión de la lista invitada requiere elegirla expresamente; borrar cookies solo afecta a la lista del navegador. [Funcionamiento y actualización](FAVORITOS_CUENTA.md). No hay campañas, seguimiento publicitario ni envíos automáticos.
 
-La cookie `perfume_favorites` contiene únicamente identificadores públicos; no datos de cuenta, precios ni autorizaciones. Se trata como entrada no fiable: tipos, tamaño, cantidad y rango validados, consulta preparada y filtrado de activos. Se marca HttpOnly, SameSite=Lax y Secure cuando PHP recibe HTTPS. El alcance es la carpeta pública. Las escrituras requieren POST y CSRF; la redirección solo permite rutas públicas conocidas. No hay migraciones de base de datos.
+La cookie `perfume_favorites` contiene únicamente identificadores públicos; no datos de cuenta, precios ni autorizaciones. Se trata como entrada no fiable: tipos, tamaño, cantidad y rango validados, consulta preparada y filtrado de activos. Se marca HttpOnly, SameSite=Lax y Secure cuando PHP recibe HTTPS. El alcance es la carpeta pública. Las escrituras requieren POST y CSRF; la redirección solo permite rutas públicas conocidas. La lista invitada no necesita tablas nuevas. La colección de cuenta requiere la migración aditiva 003.
 
 ## SEO preparado
 
@@ -36,9 +36,9 @@ El sitemap actual está pensado para el catálogo pequeño. Rechaza tamaños exc
 
 ## Siguiente sistema de fidelización
 
-Orden propuesto, pendiente de implementación y de tener operativa real:
+Estado y orden propuesto; los avisos y medidas comerciales requieren operativa real:
 
-1. Recuperar selecciones entre dispositivos mediante una cuenta, fusionando favoritos invitados de forma explícita.
+1. **Implementado:** recuperar selecciones entre dispositivos mediante una cuenta, uniendo favoritos invitados de forma explícita. El alta independiente de clientes sigue pendiente.
 2. Avisos de reposición solicitados por cada persona, con preferencias y baja. Requieren proveedor de correo y datos reales; no se han conectado.
 3. Guías originales por familias olfativas y ocasiones basadas en datos verificados. Medir qué búsquedas y fichas ayudan; evitar páginas automáticas casi idénticas.
 4. Asesor con IA que solo recomiende productos del catálogo y confirme precio/stock en el servidor, con alternativa por filtros. Requiere proveedor y presupuesto; sigue pendiente.
@@ -46,7 +46,7 @@ Orden propuesto, pendiente de implementación y de tener operativa real:
 
 ## Validación
 
-38 comprobaciones HTTP de favoritos y 39 de SEO, además de las 316 existentes: **393 comprobaciones por entorno**. Incluyen nueva sesión sin cuenta, cambios de precio/stock, productos retirados, límite de lista, cookie inválida, CSRF, redirecciones, prototipo no indexable, servidor local con configuración de lanzamiento y coherencia de todas las URLs del sitemap con sus páginas.
+38 comprobaciones HTTP de favoritos y 39 de SEO, además de las 316 existentes: **393 comprobaciones en aquella entrega**. La colección de cuenta añade otras 45: 438 en total. Incluyen nueva sesión sin cuenta, cambios de precio/stock, productos retirados, límite de lista, cookie inválida, CSRF, redirecciones, prototipo no indexable, servidor local con configuración de lanzamiento y coherencia de todas las URLs del sitemap con sus páginas.
 
 La revisión visual usa HTML renderizado por PHP con datos de prueba; no sustituye las pruebas HTTP funcionales. Quedan pendientes dispositivos reales, tecnologías de asistencia y la configuración del alojamiento final.
 

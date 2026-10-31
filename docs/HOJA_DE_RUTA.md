@@ -4,11 +4,15 @@ El objetivo es evolucionar esta práctica académica, mediante mejoras increment
 
 Estado actual: prototipo funcional en desarrollo. Todavía no está preparado para operar con clientes ni cobrar pagos reales.
 
+## Nueva entrega: favoritos de cuenta
+
+Colecciones privadas persistidas, unión elegida por el cliente y protección frente a cambios simultáneos. 438 comprobaciones locales correctas. Requiere la migración aditiva 003 antes del despliegue. [Instalación y límites](FAVORITOS_CUENTA.md).
+
 ## Retención y captación — 31 de octubre de 2026
 
 - [x] Favoritos sin registro, persistentes en el navegador y con precios actuales.
 - [x] Metadatos, canónicas y sitemap preparados, con indexación desactivada por defecto.
-- [ ] Sincronizar favoritos entre dispositivos mediante cuenta.
+- [x] Favoritos vinculados a cuenta y unión explícita desde el navegador; comprobados con sesiones independientes.
 - [ ] Avisos de reposición solicitados, con preferencias y baja.
 - [ ] Contenido original por familias olfativas y ocasiones, con datos verificados.
 - [ ] Lanzamiento real, Search Console y marcado Product/variantes.

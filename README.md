@@ -6,18 +6,18 @@ Proyecto académico de Comercio Electrónico de la UOC, desarrollado en PHP y My
 
 [Ver el código de la tienda](https://github.com/Rpfdeveloper/comercio-electronico/tree/main/tienda) · [Registro de progreso](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/PROGRESO.md) · [Hoja de ruta](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/HOJA_DE_RUTA.md)
 
-## Último avance: favoritos y preparación SEO
+## Último avance: favoritos que acompañan a la cuenta
 
-- Colección de hasta 24 favoritos sin cuenta, conservada en este navegador durante 180 días desde el último cambio.
-- Guardar desde catálogo, portada, guía o ficha; retomar con precios y disponibilidad actuales.
-- Diseño adaptable, controles accesibles y funcionamiento sin JavaScript.
-- Títulos y descripciones propios, canónicas, metadatos para compartir y sitemap dinámico.
-- Indexación desactivada hasta configurar y revisar un lanzamiento real; páginas personales y búsquedas internas excluidas.
-- «Contacto próximamente» y catálogo de perfumes conservados.
+- Favoritos sin registro conservados, y colección vinculada a la cuenta al iniciar sesión.
+- Recuperación desde otra sesión o dispositivo, con precios y disponibilidad actuales.
+- Unión explícita de favoritos del navegador, sin duplicados ni importación automática.
+- Listas de clientes aisladas y límite de 24 protegido incluso con cambios simultáneos.
+- Acceso desde «Mi cuenta» y diseño adaptable que indica dónde se guarda la selección.
+- SEO preparado y «Contacto próximamente» conservados; indexación pública desactivada.
 
-Validación local: **393 comprobaciones**, 49 archivos PHP sin errores de sintaxis y logs sin avisos. [Estado de GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions). CI para PHP 8.3, 8.4 y 8.5. La inspección visual usa HTML generado por PHP; faltan dispositivos reales y auditoría completa de accesibilidad.
+Validación local: **438 comprobaciones**, 50 archivos PHP con sintaxis correcta y logs sin avisos. [Estado de GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions). CI para PHP 8.3, 8.4 y 8.5. La sincronización se prueba con sesiones independientes; faltan dispositivos físicos y auditoría completa de accesibilidad.
 
-[Funcionamiento, estrategia de retención, SEO y fuentes](docs/RETENCION_SEO.md).
+**Actualización necesaria:** aplicar la migración aditiva `003_customer_favorites.sql` antes de desplegar este código. [Uso, instalación, pruebas y límites](docs/FAVORITOS_CUENTA.md) · [Retención y SEO](docs/RETENCION_SEO.md).
 
 La guía actual usa filtros del catálogo. El asesor con IA es una siguiente fase y todavía no está conectado a un modelo.
 
@@ -25,7 +25,7 @@ La guía actual usa filtros del catálogo. El asesor con IA es una siguiente fas
 
 ## Funcionalidad y siguientes pasos
 
-La tienda incluye catálogo, categorías, fichas, favoritos persistentes en el navegador, carrito, compra invitada o registrada y administración de pedidos. Las mejoras anteriores incorporaron CSRF, validación de cantidades y variantes, relectura de precios, descuento transaccional de stock y pruebas de compras simultáneas.
+La tienda incluye catálogo, categorías, fichas, favoritos en el navegador o vinculados a la cuenta, carrito, compra invitada o registrada y administración de pedidos. Las mejoras anteriores incorporaron CSRF, validación de cantidades y variantes, relectura de precios, descuento transaccional de stock y pruebas de compras simultáneas.
 
 Pendientes principales: verificación de correo, recuperación de contraseña, MFA administrativo, carrito persistente, reservas y pagos en modo de pruebas, envío real de correos y revisión de producción.
 

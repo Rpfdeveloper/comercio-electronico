@@ -20,6 +20,7 @@ if (!empty($_SESSION['cart']) && is_array($_SESSION['cart'])) {
         $cartCount += (int)$item['cantidad'];
     }
 }
+$favoritesContext = favorites_context(db());
 $pageIndexable = ($pageIndexable ?? false) && seo_ready() && http_response_code() < 400;
 $canonical = !empty($pageCanonical) ? seo_absolute($pageCanonical) : '';
 $robots = $pageIndexable ? 'index, follow' : 'noindex, follow';
@@ -45,7 +46,7 @@ header('Cache-Control: no-store, private, max-age=0');
 
   <!-- Hoja de estilos principal de la tienda -->
   <link rel="stylesheet" href="<?= asset('css/style.css?v=1.4') ?>">
-  <link rel="stylesheet" href="<?= asset('css/storefront.css?v=1.1') ?>">
+  <link rel="stylesheet" href="<?= asset('css/storefront.css?v=1.2') ?>">
 </head>
 <body>
 <a class="skip-link" href="#main-content">Saltar al contenido</a>
@@ -78,7 +79,7 @@ header('Cache-Control: no-store, private, max-age=0');
     </div>
 
     <div class="header-actions">
-    <a href="<?= h(url('favoritos.php')) ?>" class="favorites-nav-link">♡ Mis favoritos<?php if (favorites_ids()): ?> <span>(<?= count(favorites_ids()) ?>)</span><?php endif; ?></a>
+    <a href="<?= h(url('favoritos.php')) ?>" class="favorites-nav-link">♡ Mis favoritos<?php if ($favoritesContext['ids']): ?> <span>(<?= count($favoritesContext['ids']) ?>)</span><?php endif; ?></a>
     <a href="<?= url('cuenta.php') ?>" class="account-nav-link">Mi cuenta</a>
     <!-- DERECHA: BOTÓN CARRITO -->
     <a href="<?= url('carrito.php') ?>" class="cart-button">
