@@ -2,6 +2,20 @@
 
 Registro técnico de cambios verificables en `develop` y de entregas integradas en `main`. La rama `original` conserva la entrega recuperada. El proyecto sigue siendo un prototipo: no procesa pagos ni envía correos reales.
 
+## Consulta administrativa de pedidos (31 de octubre de 2026)
+
+Se sustituye el listado completo sin filtros por una consulta de 25 pedidos por página, con búsqueda por número exacto/nombre/correo, estado, fechas inclusivas y cuatro ordenaciones estables. El resumen agrega todos los resultados filtrados. El detalle conserva filtros al volver y muestra observaciones escapadas. Acceso, listado y detalle comparten una interfaz adaptable.
+
+Corregida una incoherencia de la vista anterior: el estado inicial `1` se mostraba como «Confirmado», aunque `estado_pedido` lo define como `pending`. Ahora se consultan las descripciones guardadas; no se alteran pedidos ni se presume que se haya cobrado.
+
+Se mantienen la sesión administrativa separada, caducidad, CSRF y no-store/noindex. Las consultas son preparadas, con opciones de orden/estado acotadas y validación de filtros. La cabecera no-referrer evita enviar las búsquedas al navegar. Las URL de búsqueda aún pueden figurar en el historial y los logs; la configuración de producción debe controlar su conservación.
+
+Validación local: **502 comprobaciones correctas** (64 nuevas de consulta administrativa + 438 regresiones), **53 PHP** con sintaxis correcta, revisión de archivos sensibles y log PHP sin avisos, con PHP 8.3.6/MariaDB 10.11.14. Revisión visual del HTML generado con datos ficticios en escritorio y marcos de 320, 390 y 768 px; sin desbordamiento horizontal. Se amplían los filtros a una columna en móvil para que las fechas sean legibles. No equivale a una auditoría de accesibilidad o dispositivos físicos.
+
+Copia previa verificada: `backup/2026-10-31-antes-panel-pedidos-69b2890`, sobre `69b2890e63169828d796cd483546fd1e29bfd927`. Sin nueva migración. La configuración privada de acceso de la vista previa queda fuera de GitHub. [Instalación, pruebas y límites](ADMINISTRACION.md).
+
+Pendiente: edición de estados y catálogo, pagos, correo, MFA/roles y validación de producción. El panel implementado es de consulta.
+
 ## Favoritos vinculados a cuenta (31 de octubre de 2026)
 
 Los favoritos pueden recuperarse al iniciar sesión desde otro dispositivo. La selección invitada no se importa automáticamente: se ofrece una unión explícita, sin duplicados y solo para productos activos. Cerrar sesión no copia la lista de la cuenta al navegador. «Mi cuenta» incorpora acceso y contador; «Mis favoritos» identifica el destino del guardado.

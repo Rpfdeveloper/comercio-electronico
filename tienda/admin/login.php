@@ -36,26 +36,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+admin_page_start('Acceso al panel', false);
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Acceso al panel de administración</title>
-</head>
-<body>
-  <main>
-    <h1>Panel de administración</h1>
-    <?php if ($error !== ''): ?><p role="alert"><?= h($error) ?></p><?php endif; ?>
-    <form method="post" action="login.php">
-      <?= csrf_field() ?>
-      <p><label for="admin-user">Usuario</label><br>
-      <input id="admin-user" type="text" name="user" autocomplete="username" maxlength="64" required></p>
-      <p><label for="admin-pass">Contraseña</label><br>
-      <input id="admin-pass" type="password" name="pass" autocomplete="current-password" required></p>
-      <button type="submit">Entrar</button>
-    </form>
-  </main>
-</body>
-</html>
+<section class="panel login-panel" aria-labelledby="login-title">
+  <p class="eyebrow">Espacio privado</p>
+  <h1 id="login-title">Administración</h1>
+  <p class="muted">Accede para consultar los pedidos de la tienda.</p>
+  <?php if ($error !== ''): ?><p class="notice" role="alert"><?= h($error) ?></p><?php endif; ?>
+  <form method="post" action="login.php">
+    <?= csrf_field() ?>
+    <div class="field"><label for="admin-user">Usuario</label><input id="admin-user" type="text" name="user" autocomplete="username" maxlength="64" required></div>
+    <div class="field"><label for="admin-pass">Contraseña</label><input id="admin-pass" type="password" name="pass" autocomplete="current-password" required></div>
+    <button class="button" type="submit">Entrar al panel</button>
+  </form>
+</section>
+<?php admin_page_end(); ?>

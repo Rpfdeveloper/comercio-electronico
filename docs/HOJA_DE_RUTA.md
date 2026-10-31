@@ -4,9 +4,9 @@ El objetivo es evolucionar esta práctica académica, mediante mejoras increment
 
 Estado actual: prototipo funcional en desarrollo. Todavía no está preparado para operar con clientes ni cobrar pagos reales.
 
-## Nueva entrega: favoritos de cuenta
+## Nueva entrega: consulta administrativa de pedidos
 
-Colecciones privadas persistidas, unión elegida por el cliente y protección frente a cambios simultáneos. 438 comprobaciones locales correctas. Requiere la migración aditiva 003 antes del despliegue. [Instalación y límites](FAVORITOS_CUENTA.md).
+Búsqueda, estado, fechas, resumen, ordenación y paginación privada, con interfaz adaptable y estados fieles a la base de datos. 502 comprobaciones locales correctas. Sin migración nueva ni cambios sobre los pedidos. [Uso y límites](ADMINISTRACION.md).
 
 ## Retención y captación — 31 de octubre de 2026
 
@@ -58,7 +58,8 @@ Colecciones privadas persistidas, unión elegida por el cliente y protección fr
 - [ ] Seguimiento del transportista.
 
 ## 3. Operación comercial
-- [ ] Administración de productos, variantes, imágenes, categorías, stock y pedidos.
+- [x] Consulta administrativa de pedidos con búsqueda, filtros, resumen y paginación.
+- [ ] Edición administrativa de productos, variantes, imágenes, categorías, stock y estados de pedidos.
 - [ ] Integración de pagos en modo de pruebas; webhooks verificados e idempotencia.
 - [ ] Confirmaciones por correo realmente enviadas y registradas.
 - [ ] Envíos, cancelaciones, devoluciones y reembolsos.

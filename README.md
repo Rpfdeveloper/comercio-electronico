@@ -6,18 +6,18 @@ Proyecto académico de Comercio Electrónico de la UOC, desarrollado en PHP y My
 
 [Ver el código de la tienda](https://github.com/Rpfdeveloper/comercio-electronico/tree/main/tienda) · [Registro de progreso](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/PROGRESO.md) · [Hoja de ruta](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/HOJA_DE_RUTA.md)
 
-## Último avance: favoritos que acompañan a la cuenta
+## Último avance: consulta de pedidos desde el panel
 
-- Favoritos sin registro conservados, y colección vinculada a la cuenta al iniciar sesión.
-- Recuperación desde otra sesión o dispositivo, con precios y disponibilidad actuales.
-- Unión explícita de favoritos del navegador, sin duplicados ni importación automática.
-- Listas de clientes aisladas y límite de 24 protegido incluso con cambios simultáneos.
-- Acceso desde «Mi cuenta» y diseño adaptable que indica dónde se guarda la selección.
-- SEO preparado y «Contacto próximamente» conservados; indexación pública desactivada.
+- Búsqueda por número exacto, nombre o correo, combinada con estado y fechas.
+- Paginación de 25 pedidos y ordenación por fecha o importe, con desempate estable.
+- Resumen de cantidades e importes de todos los resultados filtrados.
+- Estados obtenidos de la base de datos: el estado inicial se muestra como pendiente.
+- Acceso, listado y detalle adaptables; regreso al listado sin perder los filtros.
+- Consultas privadas sin caché, sin Referer y sin indexación.
 
-Validación local: **438 comprobaciones**, 50 archivos PHP con sintaxis correcta y logs sin avisos. [Estado de GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions). CI para PHP 8.3, 8.4 y 8.5. La sincronización se prueba con sesiones independientes; faltan dispositivos físicos y auditoría completa de accesibilidad.
+Validación local: **502 comprobaciones** (64 nuevas y 438 regresiones), 53 archivos PHP con sintaxis correcta y log sin avisos. [Estado de GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions). CI configurada para PHP 8.3, 8.4 y 8.5. Revisión visual con datos ficticios en escritorio y marcos de 320, 390 y 768 px; no sustituye una auditoría de accesibilidad ni dispositivos físicos.
 
-**Actualización necesaria:** aplicar la migración aditiva `003_customer_favorites.sql` antes de desplegar este código. [Uso, instalación, pruebas y límites](docs/FAVORITOS_CUENTA.md) · [Retención y SEO](docs/RETENCION_SEO.md).
+Esta mejora no necesita una migración nueva ni cambia pedidos. La instalación sigue requiriendo las migraciones previas, incluida `003_customer_favorites.sql`. [Panel: uso y límites](docs/ADMINISTRACION.md) · [Favoritos de cuenta](docs/FAVORITOS_CUENTA.md) · [Retención y SEO](docs/RETENCION_SEO.md).
 
 La guía actual usa filtros del catálogo. El asesor con IA es una siguiente fase y todavía no está conectado a un modelo.
 

@@ -28,6 +28,7 @@ function admin_current(): bool
 function admin_require(): void
 {
     auth_no_cache();
+    header('Referrer-Policy: no-referrer');
     if (!admin_current()) {
         header('Location: login.php', true, 302);
         exit;
