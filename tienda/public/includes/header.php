@@ -26,12 +26,16 @@ if (!empty($_SESSION['cart']) && is_array($_SESSION['cart'])) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><?= h(APP_NAME) ?></title>
+  <title><?= isset($pageTitle) ? h($pageTitle) . ' · ' : '' ?><?= h(APP_NAME) ?></title>
+  <meta name="description" content="<?= h($pageDescription ?? 'Explora las colecciones y el catálogo de Perfume Shop. Proyecto en desarrollo.') ?>">
+  <meta name="theme-color" content="#f8f5f0">
 
   <!-- Hoja de estilos principal de la tienda -->
   <link rel="stylesheet" href="<?= asset('css/style.css?v=1.4') ?>">
+  <link rel="stylesheet" href="<?= asset('css/storefront.css?v=1.0') ?>">
 </head>
 <body>
+<a class="skip-link" href="#main-content">Saltar al contenido</a>
 
 <!-- HEADER PRINCIPAL -->
 <header class="header-sticky">
@@ -41,18 +45,19 @@ if (!empty($_SESSION['cart']) && is_array($_SESSION['cart'])) {
     <div class="header-left">
 
       <!-- Título / Logo -->
-      <h1 class="shop-title">
+      <p class="shop-title">
         <a href="<?= url('/') ?>" class="shop-title-link">
           <?= h(APP_NAME) ?>
         </a>
-      </h1>
+      </p>
 
       <!-- Menú de categorías -->
       <nav id="menu" class="main-menu" aria-label="Navegación principal">
         <a href="<?= url('catalogo.php') ?>">Catálogo</a>
+        <a href="<?= url('descubrir.php') ?>">Encuentra tu perfume</a>
         <?php foreach ($menuCategorias as $c): ?>
           <a href="<?= url('categoria.php?c=' . rawurlencode($c['slug'])) ?>">
-            <?= h($c['nombre']) ?>
+            <?= h(category_label($c['nombre'])) ?>
           </a>
         <?php endforeach; ?>
       </nav>
@@ -77,4 +82,4 @@ if (!empty($_SESSION['cart']) && is_array($_SESSION['cart'])) {
 </header>
 
 <!-- Contenedor principal -->
-<main class="container">
+<main id="main-content" class="container" tabindex="-1">

@@ -21,3 +21,8 @@ function asset(string $path): string {
 function money_eur(float $amount): string {
     return number_format($amount, 2, ',', '.') . ' €';
 }
+
+// Traducción de las etiquetas originales; conserva nombres personalizados.
+function category_label(string $name): string {
+    return ['Women Perfumes' => 'Mujer', 'Men Perfumes' => 'Hombre'][$name] ?? $name;
+}

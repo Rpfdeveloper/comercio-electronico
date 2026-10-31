@@ -1,6 +1,6 @@
 # Pruebas de la tienda
 
-Estado actual: 41 comprobaciones de compra, 45 de cuenta/privacidad, 48 de administración, 73 de catálogo, 47 de checkout y 32 de concurrencia: **286 por entorno**, más sintaxis y revisión de archivos sensibles. Validación local de esta iteración con PHP 8.3.6 y MariaDB 10.11.14. Los resultados anteriores se conservan más abajo como referencia.
+Estado actual: 41 comprobaciones de compra, 45 de cuenta/privacidad, 48 de administración, 73 de catálogo, 47 de checkout, 30 de portada/descubrimiento y 32 de concurrencia: **316 por entorno**, más sintaxis y revisión de archivos sensibles. Validación local de esta iteración con PHP 8.3.6 y MariaDB 10.11.14. CI configurada para PHP 8.3, 8.4 y 8.5; los resultados anteriores se conservan como referencia.
 
 Esta suite usa peticiones HTTP reales, sesiones independientes y una base MariaDB/MySQL desechable cuyo nombre termina en `_test`. No utiliza pagos ni correo reales.
 
@@ -46,6 +46,7 @@ php tests/customer.php
 php tests/admin.php
 php tests/catalog.php
 php tests/checkout.php
+php tests/storefront.php
 python3 tests/privacy.py
 ```
 
@@ -124,3 +125,9 @@ La suite de concurrencia retira una categoría mientras dos confirmaciones ya ha
 ## Carrito y checkout
 
 `php tests/checkout.php` añade 47 comprobaciones HTTP: guardar cantidades al continuar, total e IVA coherentes hasta la base de datos, rechazo sin modificar el carrito, campos obligatorios y longitudes Unicode, controles y UTF-8 inválido, tipo de compra, contraseña, formularios malformados, invalidación de resúmenes anteriores, escape HTML, conservación de datos, provincia opcional, vaciado y recuperación ante falta de stock. Crea una compra ficticia y la elimina al terminar, restaurando el producto. El resto de suites conserva las comprobaciones de cuentas, permisos y concurrencia.
+
+## Portada y descubrimiento
+
+`php tests/storefront.php` añade 30 comprobaciones HTTP sobre portada, colecciones, precios de variantes, disponibilidad, búsqueda en descripción larga, entradas malformadas, escape HTML, estados vacíos y paginación. Prepara y elimina fixtures; modifica temporalmente categorías solo en la base desechable y restaura su estado. No ejecutar suites en paralelo sobre la misma base.
+
+La CI incluye PHP 8.5, además de 8.3 y 8.4. Se libera el objeto cURL sin la llamada obsoleta a `curl_close()`. [Detalles y límites de esta entrega](../docs/DESCUBRIMIENTO.md).

@@ -4,7 +4,7 @@
 
 ## Uso
 
-- Buscar por nombre, marca o descripción corta, hasta 100 caracteres. La colación del esquema permite buscar sin distinguir mayúsculas ni acentos. `%`, `_` y `!` se interpretan literalmente.
+- Buscar por nombre, marca o descripción corta/larga, hasta 100 caracteres. La colación del esquema permite buscar sin distinguir mayúsculas ni acentos. `%`, `_` y `!` se interpretan literalmente.
 - Combinar categoría, marca, precio mínimo/máximo y disponibilidad. Los precios admiten punto o coma decimal, con dos decimales como máximo.
 - Ordenar por nombre, precio ascendente/descendente o incorporación reciente. Los empates usan el identificador para que el orden sea estable.
 - Recorrer resultados de doce en doce conservando los filtros en la URL. Aplicar nuevos filtros vuelve a la primera página. Limpiar filtros mantiene la categoría en las páginas de categoría.

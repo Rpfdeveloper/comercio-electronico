@@ -2,6 +2,20 @@
 
 Registro técnico de cambios verificables en `develop` y de entregas integradas en `main`. La rama `original` conserva la entrega recuperada. El proyecto sigue siendo un prototipo: no procesa pagos ni envía correos reales.
 
+## Portada y guía de perfumes (31 de octubre de 2026)
+
+Se incorpora una portada con colecciones dinámicas, últimas incorporaciones disponibles y acceso a una guía por colección, palabra y presupuesto. La búsqueda incluye la descripción larga; conserva precios de variantes, disponibilidad y paginación del catálogo. El contacto queda como «Contacto próximamente».
+
+Diseño con CSS Grid, consultas de contenedor, dimensiones de imágenes, carga diferida y movimiento reducido. Se añaden salto al contenido, foco visible y metadatos por página. No se cargan fuentes remotas ni se envían preferencias a un servicio de IA. Las etiquetas originales de las colecciones se muestran en español; los nombres personalizados se conservan.
+
+**316 comprobaciones locales correctas**, incluidas 30 nuevas; PHP 8.3.6 y MariaDB 10.11.14. Los 42 PHP pasan sintaxis, el log no presenta avisos y la revisión de patrones sensibles pasa. Se amplía la matriz remota a PHP 8.3, 8.4 y 8.5, corrigiendo la llamada obsoleta a curl_close en el soporte de pruebas.
+
+Revisión visual de HTML generado por PHP en escritorio y marcos de 320, 390 y 768 px: sin desbordamiento horizontal del documento ni imágenes rotas en los marcos. Las pruebas funcionales usan HTTP real; la vista estática se emplea solo para inspección de diseño.
+
+Copia previa: `backup/2026-10-31-antes-portada-055b91a`, sobre `055b91a571ee39388a580e6d76f3a3ea5f916f57`. No hay migraciones de base de datos ni cambios en pagos. La integración de un modelo de IA permanece pendiente.
+
+[Detalles, límites y siguiente fase](DESCUBRIMIENTO.md).
+
 ## Carrito y checkout — PR #2 (31 de octubre de 2026)
 
 - «Continuar con la compra» guarda y valida las cantidades; cero elimina la línea y un carrito vacío vuelve al catálogo.
