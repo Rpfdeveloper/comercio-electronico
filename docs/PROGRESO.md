@@ -2,6 +2,14 @@
 
 Registro técnico de cambios verificables en `develop` y de entregas integradas en `main`. La rama `original` conserva la entrega recuperada. El proyecto sigue siendo un prototipo: no procesa pagos ni envía correos reales.
 
+## Consulta de inventario (31 de octubre de 2026)
+
+Nueva sección **Inventario** en el panel: referencias por formato, búsqueda por perfume/marca/SKU, filtros de stock y activación, tres ordenaciones estables, resumen de todos los resultados y paginación de 25 referencias. Muestra avisos de stock bajo (1–5), agotados y valores ausentes o negativos. No duplica el stock base de productos con variantes y mantiene sus precios propios. Es de consulta; no modifica datos ni requiere migración.
+
+Se conserva el acceso privado, no-store/noindex/no-referrer y la validación de filtros. Se añaden 50 comprobaciones HTTP a CI. Validación local: **552 comprobaciones correctas**, sintaxis válida en **56 PHP**, revisión de patrones sensibles y log PHP sin avisos. La primera ejecución quedó bloqueada en una barrera de concurrencia de favoritos: el servidor de pruebas asignó ambas conexiones al mismo proceso; la repetición completa terminó correctamente. Revisión visual en escritorio y marcos de 320/390/768 px, sin desbordamiento horizontal; no equivale a una auditoría completa de accesibilidad. [Uso y límites](ADMINISTRACION.md#inventario--31-de-octubre-de-2026).
+
+Copia previa verificada: `backup/2026-10-31-antes-inventario-63f7e20`, sobre `63f7e2053423bae30a7e99e448f5cdd3354a0a37`.
+
 ## Acceso visible a la administración (31 de octubre de 2026)
 
 Se añade «Administración» al pie común de la tienda, separado de «Mi cuenta» de clientes. El enlace lleva al acceso administrativo y conserva el prefijo de instalaciones en subdirectorios. Se ha comprobado la sintaxis PHP y el recorrido real desde la portada hasta la pantalla de usuario y contraseña. No cambia la autenticación ni publica credenciales.

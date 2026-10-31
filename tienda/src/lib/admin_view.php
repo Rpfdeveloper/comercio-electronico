@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-function admin_page_start(string $title, bool $signedIn = true): void
+function admin_page_start(string $title, bool $signedIn = true, string $section = 'pedidos'): void
 {
     ?>
 <!doctype html>
@@ -11,7 +11,7 @@ function admin_page_start(string $title, bool $signedIn = true): void
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
   <title><?= h($title) ?> · Administración · Perfume Shop</title>
-  <link rel="stylesheet" href="assets/admin.css?v=1">
+  <link rel="stylesheet" href="assets/admin.css?v=2">
 </head>
 <body>
 <a class="skip-link" href="#contenido">Saltar al contenido</a>
@@ -23,6 +23,10 @@ function admin_page_start(string $title, bool $signedIn = true): void
   </nav>
 </header>
 <main id="contenido" class="admin-main">
+<?php if ($signedIn): ?><nav class="admin-sections" aria-label="Secciones del panel">
+  <a href="pedidos.php"<?= $section === 'pedidos' ? ' aria-current="page"' : '' ?>>Pedidos</a>
+  <a href="inventario.php"<?= $section === 'inventario' ? ' aria-current="page"' : '' ?>>Inventario</a>
+</nav><?php endif; ?>
 <?php
 }
 

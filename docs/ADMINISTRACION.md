@@ -57,3 +57,11 @@ El límite de cuenta puede impedir temporalmente el acceso legítimo si otra per
 `tests/admin.php` prueba acceso restringido, errores genéricos, CSRF, renovación e invalidación de cookies, separación de sesiones, conservación del carrito, caducidad, cambio de credenciales/secreto, límites por cuenta/IP, independencia respecto de clientes, dos intentos que compiten por la última plaza y respuesta 404 ante identificadores malformados o inexistentes.
 
 Las pruebas usan una base local desechable y datos ficticios. La caducidad y rotación de configuración se comprueban con el validador y marcas de tiempo controladas; no simulan el reinicio de un servidor de producción. [Resultados y progreso](PROGRESO.md).
+
+## Inventario — 31 de octubre de 2026
+
+Desde la navegación del panel, **Inventario** abre `admin/inventario.php`. Consulta 25 referencias por página, con búsqueda literal por perfume, marca o SKU, filtros combinables de existencias y activación, y orden estable por nombre o stock. Una referencia representa una variante, o el producto base únicamente cuando no tiene variantes. No se suman existencias del producto base si hay variantes, aunque todas estén inactivas.
+
+Stock bajo significa entre 1 y 5 unidades; agotado, exactamente 0. Los valores nulos y negativos se señalan como datos por revisar y no se suman a las unidades. El resumen abarca todas las referencias filtradas, incluidas las inactivas cuando se muestran. Una referencia activa requiere producto, categoría y variante activos; esta etiqueta no garantiza disponibilidad. El precio respeta la oferta positiva y el precio propio del formato, como el carrito.
+
+La pantalla es de consulta: no modifica stock, productos ni variantes, ni requiere migración. Reutiliza la sesión administrativa y las cabeceras privadas. Los filtros inválidos devuelven 422 y los errores de base de datos, un mensaje genérico 503. Se incorpora `tests/admin_inventory.php` a CI con 50 comprobaciones HTTP de acceso, variantes, activación, precios, datos anómalos, búsqueda, filtros, paginación, SQL/XSS y conservación del inventario. Se mantienen los límites de volumen y paginación descritos para pedidos.
