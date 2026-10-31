@@ -2,6 +2,26 @@
 
 El panel continúa usando una única cuenta `admin`, con contraseña en `TIENDA_ADMIN_PASS`. Esta mejora protege el acceso existente; no añade roles, MFA, gestión de productos ni pagos.
 
+## Consulta de pedidos — 31 de octubre de 2026
+
+El panel permite combinar búsqueda por nombre o correo con estado y fechas. Una búsqueda compuesta solo por dígitos se interpreta como número exacto de pedido. `%`, `_` y `!` se buscan literalmente. Las fechas inicial y final incluyen todo el día, según la misma zona de la conexión de base de datos utilizada para mostrar las fechas; no se convierten a la zona del navegador.
+
+Se muestran 25 pedidos por página. Es posible ordenar por fecha o importe en ambos sentidos; el identificador desempata los valores iguales. Una página superior a las disponibles se ajusta a la última. Los enlaces de página y detalle conservan los filtros. Si se reciben filtros de retorno malformados en el detalle, se vuelve al listado general.
+
+El resumen cuenta y suma **todos los resultados filtrados**, no solo la página visible. Los importes son valores registrados en pedidos, no ingresos verificados. El listado y el detalle consultan `estado_pedido.descripcion`: `pending` se muestra como pendiente, `paid` como pago registrado, `processing` como en preparación, `shipped` como enviado y `canceled` como cancelado. Los estados personalizados se muestran con su descripción escapada y se agrupan bajo «Otros estados». Se corrige la etiqueta anterior, que llamaba «Confirmado» al estado inicial `1`, aunque en el esquema corresponde a `pending`. No se modifican los estados almacenados.
+
+El detalle conserva nombre de producto, variante, dirección e importes históricos y muestra las observaciones escapadas. El diseño adapta las tablas a tarjetas en pantallas pequeñas y conserva los encabezados. El acceso tiene etiquetas, autocompletado y foco visible.
+
+Los valores se validan antes de consultar y las búsquedas usan parámetros preparados. Estado y orden se restringen a opciones admitidas. Los filtros incorrectos devuelven 422 sin mostrar pedidos; un fallo de consulta del listado devuelve 503 con un mensaje genérico. Se mantiene la autenticación previa, CSRF, caducidad de sesiones, noindex y no-store. La administración utiliza `Referrer-Policy: no-referrer` para no transmitir los filtros al navegar.
+
+**Privacidad:** las búsquedas GET quedan en la URL y pueden aparecer en el historial local y en los logs de acceso del servidor. Evitar registrar la cadena de consulta del panel y aplicar la política de conservación correspondiente en el despliegue. No compartir enlaces que contengan nombres o correos. La cabecera Referer no sustituye estas medidas.
+
+**Instalación:** desplegar conjuntamente PHP y `tienda/admin/assets/admin.css`; no se añade ninguna migración. Mantener las migraciones 001–003 y la configuración externa existentes. La contraseña de una vista previa se configura fuera del repositorio: el código no incorpora una clave predeterminada.
+
+**Límites:** panel de consulta, sin edición de estados, productos ni stock; tampoco ejecuta pagos, envíos o correos. La paginación por desplazamiento y la búsqueda parcial no están probadas con volúmenes comerciales grandes. Nuevos pedidos durante la navegación pueden desplazar las páginas; no se ofrece una instantánea congelada. MFA, roles, auditoría completa de accesibilidad y dispositivos reales siguen pendientes.
+
+**Validación:** `tests/admin_orders.php` añade 64 comprobaciones HTTP con 30 pedidos ficticios: privacidad, acceso, búsqueda, caracteres literales, inyección SQL/XSS, los cinco estados y estados personalizados, fechas inclusivas, filtros combinados, resumen, ordenación, paginación, retorno y entradas inválidas. El conjunto suma 502 comprobaciones; sintaxis correcta en 53 PHP y log sin avisos en PHP 8.3.6/MariaDB 10.11.14. Revisión visual en escritorio y marcos de 320/390/768 px con HTML generado por PHP y formularios de muestra desactivados.
+
 ## Actualización
 
 - Configurar `TIENDA_ADMIN_PASS` y `TIENDA_AUTH_SECRET` en el entorno del servidor PHP. El secreto debe contener al menos 32 bytes aleatorios y mantenerse fuera del repositorio. Usar una contraseña administrativa larga y exclusiva. No hay contraseña de acceso predeterminada.

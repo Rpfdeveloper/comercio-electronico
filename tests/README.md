@@ -1,6 +1,6 @@
 # Pruebas de la tienda
 
-Estado actual: 41 comprobaciones de compra, 45 de cuenta/privacidad, 48 de administración, 73 de catálogo, 47 de checkout, 30 de portada/descubrimiento, 32 de concurrencia, 38 de favoritos invitados, 39 de SEO y 45 de favoritos de cuenta: **438 por entorno**, más sintaxis y revisión de archivos sensibles. Validación local de esta iteración con PHP 8.3.6 y MariaDB 10.11.14. CI configurada para PHP 8.3, 8.4 y 8.5; los resultados anteriores se conservan como referencia.
+Estado actual: 41 comprobaciones de compra, 45 de cuenta/privacidad, 48 de administración, 73 de catálogo, 47 de checkout, 30 de portada/descubrimiento, 32 de concurrencia, 38 de favoritos invitados, 39 de SEO, 45 de favoritos de cuenta y 64 de consulta administrativa: **502 por entorno**, más sintaxis y revisión de archivos sensibles. Validación local de esta iteración con PHP 8.3.6 y MariaDB 10.11.14. CI configurada para PHP 8.3, 8.4 y 8.5; los resultados anteriores se conservan como referencia.
 
 Esta suite usa peticiones HTTP reales, sesiones independientes y una base MariaDB/MySQL desechable cuyo nombre termina en `_test`. No utiliza pagos ni correo reales.
 
@@ -44,6 +44,7 @@ $env:TIENDA_TEST_ADMIN_PASS='CLAVE_ADMIN_SOLO_DE_PRUEBAS'
 php tests/integration.php
 php tests/customer.php
 php tests/admin.php
+php tests/admin_orders.php
 php tests/catalog.php
 php tests/checkout.php
 php tests/storefront.php
@@ -74,6 +75,7 @@ En otra terminal, con las mismas variables de pruebas:
 php tests/integration.php
 php tests/customer.php
 php tests/admin.php
+php tests/admin_orders.php
 php tests/catalog.php
 php tests/concurrency.php
 python3 tests/privacy.py
@@ -148,3 +150,7 @@ La CI incluye PHP 8.5, además de 8.3 y 8.4. Se libera el objeto cURL sin la lla
 `tests/favorites_account.php` usa dos clientes ficticios, sesiones independientes y cuatro escenarios concurrentes. Requiere al menos dos workers PHP; la cuenta de pruebas necesita PROCESS para observar bloqueos y TRIGGER para simular un fallo SQL durante una unión. La cuenta de aplicación no necesita estos permisos. La prueba elimina el trigger y sus fixtures también ante errores, y verifica el reintento tras la reversión.
 
 Comprueba unión elegida, identidad obtenida de la sesión, acceso/modificación ajenos, CSRF, cambio de sesión, cierre, precios/stock, límite, persistencia, migración repetida y cascadas de referencias. La barrera exige observar dos transacciones a la vez: no basta con lanzar solicitudes que se atiendan en serie. No es una prueba de carga ni de dispositivos físicos. Ejecutar las suites secuencialmente sobre la base desechable.
+
+## Consulta administrativa de pedidos
+
+`tests/admin_orders.php` incorpora 64 comprobaciones HTTP sobre 30 pedidos ficticios y un estado personalizado temporal. Comprueba orden y paginación estable, búsqueda por número/nombre/correo, caracteres literales, resumen de todo el resultado, estados, fechas inclusivas, filtros combinados, retorno desde el detalle, no-store/noindex/no-referrer, entradas malformadas, SQL/XSS y conservación de los registros. Elimina sus pedidos, líneas y estado temporal al finalizar. Se ejecuta sobre la misma base local desechable que las demás suites; no prepara datos de producción. La revisión visual utiliza muestras separadas y no demuestra funcionamiento de formularios: ese comportamiento lo verifican las peticiones HTTP.
