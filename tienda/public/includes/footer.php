@@ -16,6 +16,6 @@
     </footer>
 
     <!-- JavaScript principal de la tienda -->
-    <script src="<?= asset('js/main.js') ?>"></script>
+    <script src="<?= asset('js/main.js?v=1.4') ?>"></script>
   </body>
 </html>

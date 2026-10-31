@@ -29,7 +29,7 @@ if (!empty($_SESSION['cart']) && is_array($_SESSION['cart'])) {
   <title><?= h(APP_NAME) ?></title>
 
   <!-- Hoja de estilos principal de la tienda -->
-  <link rel="stylesheet" href="<?= asset('css/style.css?v=1.3') ?>">
+  <link rel="stylesheet" href="<?= asset('css/style.css?v=1.4') ?>">
 </head>
 <body>
 
