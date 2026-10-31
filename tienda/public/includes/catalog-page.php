@@ -3,7 +3,7 @@ require_once __DIR__ . '/../../config/init.php';
 require_once __DIR__ . '/../../src/lib/catalog.php';
 $categoryPage = $categoryPage ?? false;
 $path = $categoryPage ? 'categoria.php' : 'catalogo.php';
-$title = 'Encuentra tu perfume';
+$title = 'Explora nuestras fragancias';
 $error = '';
 $category = null;
 $categories = db()->query('SELECT nombre, slug FROM categoria WHERE activa = 1 ORDER BY orden, nombre')->fetchAll();

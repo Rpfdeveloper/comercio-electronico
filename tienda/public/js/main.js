@@ -26,3 +26,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   document.querySelector('[data-focus-on-load]')?.focus();
 });
+
+// La portada conserva una imagen local si el recurso del diseño no está disponible.
+document.querySelectorAll('img[data-image-fallback]').forEach(image => {
+  const fallback = () => {
+    const source = image.dataset.imageFallback;
+    if (!source) return;
+    delete image.dataset.imageFallback;
+    image.alt = image.dataset.fallbackAlt || image.alt;
+    image.src = source;
+  };
+  image.addEventListener('error', fallback, { once: true });
+  if (image.complete && image.naturalWidth === 0) fallback();
+});

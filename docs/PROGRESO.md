@@ -2,6 +2,16 @@
 
 Registro técnico de cambios verificables en `develop` y de entregas integradas en `main`. La rama `original` conserva la entrega recuperada. El proyecto sigue siendo un prototipo: no procesa pagos ni envía correos reales.
 
+## Diseño de Canva aplicado a la tienda (31 de octubre de 2026)
+
+Se adapta la propuesta **Perfume Shop — Interfaces web v2** a la portada y a los componentes públicos: paleta marfil/tinta/terracota, titulares serif, fotografía y mensaje del hero, navegación Inicio/Catálogo/Asesor/Contacto, colecciones y presentación del catálogo. La hoja `canva-theme.css` reúne la adaptación. Se conservan favoritos, cuenta, carrito, precios y existencias reales del prototipo, así como «Contacto próximamente». El asesor sigue siendo una guía por filtros, sin modelo de IA conectado.
+
+La fotografía de la propuesta se carga desde Pexels sin Referer y tiene sustitución por una imagen local si falla. Se usan fuentes del sistema; no se publican tokens ni enlaces privados de Canva. [Alcance y mantenimiento](DISENO_CANVA.md).
+
+Validación: **552 comprobaciones locales correctas**, sintaxis válida en **56 PHP**, JavaScript válido y revisión de patrones sensibles. Revisión visual de portada/catálogo/asesor en escritorio y marcos de 320/390/768 px, sin desbordamiento horizontal. Comprobada en el navegador la sustitución de la foto externa por la imagen local ante un fallo de carga. [Captura de la portada](capturas/canva-integrado-20261031.jpg).
+
+Copia previa verificada: `backup/2026-10-31-antes-diseno-canva-a3f949d`, sobre `a3f949ddd7b48f1f52395246a4387b737aa58735`. Sin migración ni cambios de credenciales.
+
 ## Consulta de inventario (31 de octubre de 2026)
 
 Nueva sección **Inventario** en el panel: referencias por formato, búsqueda por perfume/marca/SKU, filtros de stock y activación, tres ordenaciones estables, resumen de todos los resultados y paginación de 25 referencias. Muestra avisos de stock bajo (1–5), agotados y valores ausentes o negativos. No duplica el stock base de productos con variantes y mantiene sus precios propios. Es de consulta; no modifica datos ni requiere migración.

@@ -1,0 +1,85 @@
+/* Adaptación de «Perfume Shop — Interfaces web v2» a la tienda PHP.
+   Paleta original: marfil, tinta y terracota. Sin dependencia del editor de Canva. */
+:root {
+  --store-ink:#111827; --store-muted:#56564f; --store-paper:#f8f5f0;
+  --store-accent:#a63e00; --color-bg:#f8f5f0; --color-text:#111827;
+  --color-muted:#56564f; --color-primary:#a63e00; --color-primary-soft:#f1e8dc;
+  --color-border:#ddd6ca; --radius-card:3px;
+  --store-serif:Georgia,'Times New Roman',serif;
+}
+html { scroll-padding-top:140px; }
+body { background:var(--store-paper); color:var(--store-ink); }
+.container { max-width:1240px; }
+:where(a,button,input,select,summary):focus-visible { outline-color:var(--store-accent); }
+.header-sticky { background:var(--store-paper); border-bottom:1px solid var(--color-border); }
+.header-sticky .header-bar { padding-block:1.1rem; gap:1rem; }
+.header-left { flex:1; justify-content:space-between; gap:1.5rem; }
+.shop-title,.store-footer-brand { font-family:var(--store-serif); font-size:1.65rem; letter-spacing:-.045em; }
+#menu { gap:1.1rem; margin:0; }
+#menu a { padding:9px 2px; border:0; border-bottom:2px solid transparent; border-radius:0; color:var(--store-ink); font-size:.87rem; font-weight:600; background:none; }
+#menu a:hover,#menu a[aria-current=page] { color:var(--store-ink); background:none; border-bottom-color:var(--store-accent); box-shadow:none; }
+.header-actions { gap:1rem; margin-left:1.4rem; }
+.favorites-nav-link,.account-nav-link { color:var(--store-ink); font-size:.82rem; }
+.cart-button { color:var(--store-accent); background:none; border:1px solid var(--color-border); border-radius:3px; box-shadow:none; min-height:44px; }
+.cart-button:hover { background:var(--color-primary-soft); color:var(--store-accent); box-shadow:none; transform:none; }
+main.container { padding-top:2.5rem; }
+.store-hero { grid-template-columns:1fr 1.08fr; gap:clamp(2rem,5vw,5rem); padding:1rem 0 2rem; border-radius:0; }
+.store-hero h1 { font-size:clamp(2.6rem,4.5vw,4.4rem); line-height:1.08; font-family:var(--store-serif); letter-spacing:-.045em; max-width:12ch; }
+.store-lead { color:var(--store-ink); font-size:1.05rem; line-height:1.65; max-width:38ch; }
+.store-hero-image img { aspect-ratio:1.08; border-radius:0; width:100%; height:auto; object-fit:cover; }
+.store-hero-image figcaption { margin-top:.75rem; font-size:.76rem; }
+.store-actions { gap:.8rem; margin-block:1.8rem 1rem; }
+.storefront .btn,.storefront button,.catalog button { border-radius:3px; min-height:48px; padding:.8rem 1.25rem; }
+.storefront .store-secondary { border:1px solid var(--store-ink); color:var(--store-ink); background:transparent; }
+.storefront .store-secondary:hover { background:#ece7df; }
+.store-section { margin-block:5rem; }
+.store-section h2,.store-discovery h2,.catalog h1,.discovery-intro h1 { font-family:var(--store-serif); font-weight:400; letter-spacing:-.035em; }
+.store-section h2,.store-discovery h2 { font-size:clamp(2rem,3.5vw,3rem); }
+.store-collections { gap:1.5rem; }
+.store-collection { display:flex; align-items:flex-end; min-height:190px; border-radius:3px; border-color:var(--color-border); background:#eee4d8; }
+.store-collection:nth-child(3n+2) { background:#e6e7dd; }
+.store-collection:nth-child(3n+3) { background:#eaddcf; }
+.store-collection-copy { padding:1.5rem; width:100%; }
+.store-collection-copy strong { font-family:var(--store-serif); font-size:1.55rem; font-weight:400; }
+.store-discovery { background:#ede5d8; color:var(--store-ink); border:1px solid var(--color-border); border-radius:3px; padding:clamp(1.5rem,4vw,3rem); }
+.store-discovery .store-eyebrow { color:var(--store-accent); }
+.store-discovery p:not(.store-eyebrow) { color:var(--store-muted); max-width:62ch; }
+.store-discovery .btn { background:var(--store-accent); color:white; }
+.store-discovery .btn:hover { background:#842f00; }
+.store-product-grid .card,.catalog-grid .card,.discovery-form,.discovery-empty,.favorites-empty,.favorites-merge { border-radius:3px; border-color:var(--color-border); box-shadow:none; }
+.store-product-grid .card img,.catalog-grid .card img { border-radius:0; }
+.store-product-grid .card h3,.catalog-grid .card h3 { font-family:var(--store-serif); font-size:1.15rem; font-weight:400; }
+.catalog h1 { font-size:clamp(2.2rem,4.5vw,3.5rem); line-height:1.15; margin:.6rem 0 1rem; }
+.catalog-filters { border-radius:3px; border-color:var(--color-border); background:var(--store-paper); padding:1.5rem 0; border-inline:0; }
+.catalog-filters input:not([type=checkbox]),.catalog-filters select,.discovery-form input,.discovery-form select { border:1px solid #a8a49d; border-radius:3px; min-height:48px; background:#fff; }
+.catalog-summary { margin-block:1.8rem; }
+.discovery-form { background:#ede5d8; }
+.store-footer { border-top:1px solid var(--color-border); background:var(--store-paper); }
+.store-footer h2 { font-family:var(--store-serif); font-size:1.4rem; font-weight:400; }
+#contacto { scroll-margin-top:140px; }
+@media(max-width:1100px) {
+  .header-sticky .header-bar { flex-wrap:wrap; gap:.5rem 1rem; }
+  .header-left { width:100%; }
+  .header-actions { width:100%; justify-content:flex-end; margin-left:0; }
+}
+@media(max-width:700px) {
+  .store-hero { grid-template-columns:1fr; gap:1.5rem; }
+  .store-hero h1 { max-width:16ch; font-size:clamp(2.6rem,8vw,3.7rem); }
+  .store-hero-image img { aspect-ratio:4/3; }
+  .store-section { margin-block:3rem; }
+  .header-left { flex-wrap:wrap; gap:.5rem; }
+  #menu { gap:1rem; }
+  .header-actions { justify-content:flex-start; gap:1rem; }
+  main.container { padding-top:1.5rem; }
+  .store-actions { align-items:stretch; }
+  .store-actions .btn { flex:1; }
+}
+@media(max-width:480px) { .header-sticky { position:static; } html { scroll-padding-top:24px; } #contacto { scroll-margin-top:24px; } }
+@media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
+@media(max-width:380px) {
+  #menu { gap:.6rem; }
+  #menu a { font-size:.8rem; }
+  .header-actions { flex-wrap:nowrap; gap:.5rem; }
+  .favorites-nav-link,.account-nav-link,.cart-button { font-size:.75rem; }
+  .cart-button { padding:.4rem .55rem; }
+}

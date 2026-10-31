@@ -1,15 +1,7 @@
 <?php
 require_once __DIR__ . '/../../config/init.php';
 
-/**
- * Carga de categorías activas para el menú principal
- */
-$menuCategorias = db()->query("
-    SELECT id, nombre, slug
-    FROM categoria
-    WHERE activa = 1
-    ORDER BY orden, nombre
-")->fetchAll();
+$navPage = basename($_SERVER['SCRIPT_NAME'] ?? 'index.php');
 
 /**
  * Contador de unidades en el carrito (suma cantidades)
@@ -47,6 +39,7 @@ header('Cache-Control: no-store, private, max-age=0');
   <!-- Hoja de estilos principal de la tienda -->
   <link rel="stylesheet" href="<?= asset('css/style.css?v=1.4') ?>">
   <link rel="stylesheet" href="<?= asset('css/storefront.css?v=1.2') ?>">
+  <link rel="stylesheet" href="<?= asset('css/canva-theme.css?v=1') ?>">
 </head>
 <body>
 <a class="skip-link" href="#main-content">Saltar al contenido</a>
@@ -65,15 +58,11 @@ header('Cache-Control: no-store, private, max-age=0');
         </a>
       </p>
 
-      <!-- Menú de categorías -->
       <nav id="menu" class="main-menu" aria-label="Navegación principal">
-        <a href="<?= url('catalogo.php') ?>">Catálogo</a>
-        <a href="<?= url('descubrir.php') ?>">Encuentra tu perfume</a>
-        <?php foreach ($menuCategorias as $c): ?>
-          <a href="<?= url('categoria.php?c=' . rawurlencode($c['slug'])) ?>">
-            <?= h(category_label($c['nombre'])) ?>
-          </a>
-        <?php endforeach; ?>
+        <a href="<?= h(url('index.php')) ?>"<?= $navPage === 'index.php' ? ' aria-current="page"' : '' ?>>Inicio</a>
+        <a href="<?= h(url('catalogo.php')) ?>"<?= in_array($navPage, ['catalogo.php','categoria.php','producto.php'], true) ? ' aria-current="page"' : '' ?>>Catálogo</a>
+        <a href="<?= h(url('descubrir.php')) ?>"<?= $navPage === 'descubrir.php' ? ' aria-current="page"' : '' ?>>Asesor</a>
+        <a href="#contacto">Contacto</a>
       </nav>
 
     </div>

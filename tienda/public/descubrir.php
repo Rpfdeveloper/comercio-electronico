@@ -26,9 +26,9 @@ require __DIR__ . '/includes/header.php';
 ?>
 <div class="storefront discovery-page">
   <section class="discovery-intro" aria-labelledby="guide-title">
-    <p class="store-eyebrow">UNA GUÍA PARA EMPEZAR</p>
+    <p class="store-eyebrow">TU ASESOR DE PERFUMES</p>
     <h1 id="guide-title">Encuentra tu perfume.</h1>
-    <p class="store-lead">Tú eliges las preferencias. Nosotros buscamos coincidencias en el catálogo.</p>
+    <p class="store-lead">Cuéntanos qué buscas. Explora perfumes disponibles según tus preferencias y presupuesto.</p>
   </section>
   <?php if ($error): ?><div class="account-error" role="alert" tabindex="-1" data-focus-on-load><p><?= h($error) ?></p><a href="<?= h(url('descubrir.php')) ?>">Reiniciar la búsqueda</a></div><?php endif; ?>
   <form class="discovery-form" method="get" action="<?= h(url('descubrir.php')) ?>" aria-label="Preferencias de perfume">

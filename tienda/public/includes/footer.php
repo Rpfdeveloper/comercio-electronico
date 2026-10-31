@@ -5,8 +5,8 @@
         <nav aria-label="Enlaces de la tienda"><a href="<?= h(url('catalogo.php')) ?>">Explorar catálogo</a><a href="<?= h(url('descubrir.php')) ?>">Encuentra tu perfume</a><a href="<?= h(url('favoritos.php')) ?>">Mis favoritos</a><a href="<?= h(url('cuenta.php')) ?>">Mi cuenta</a><a href="../admin/login.php" rel="nofollow">Administración</a></nav>
         <section id="contacto" aria-labelledby="contact-title"><h2 id="contact-title">Contacto próximamente</h2><p>Estamos preparando nuestro canal de atención.</p></section>
       </div>
-      <div class="container store-footer-bottom"><p>&copy; <?= date('Y') ?> <?= h(APP_NAME) ?> · Proyecto académico de Comercio Electrónico.</p><p>Imágenes del catálogo conservadas del proyecto original.</p></div>
+      <div class="container store-footer-bottom"><p>&copy; <?= date('Y') ?> <?= h(APP_NAME) ?> · Proyecto académico de Comercio Electrónico.</p><p>Diseño adaptado de la propuesta de Canva.</p></div>
     </footer>
-    <script src="<?= asset('js/main.js?v=1.4') ?>" defer></script>
+    <script src="<?= asset('js/main.js?v=1.5') ?>" defer></script>
   </body>
 </html>
