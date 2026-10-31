@@ -92,6 +92,10 @@ jobs:
         run: php tests/checkout.php
       - name: Portada y descubrimiento de perfumes
         run: php tests/storefront.php
+      - name: Favoritos persistentes sin cuenta
+        run: php tests/favorites.php
+      - name: SEO y sitemap
+        run: php tests/seo.php
       - name: Compras simultáneas
         run: php tests/concurrency.php
       - name: Comprobar log PHP

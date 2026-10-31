@@ -14,3 +14,5 @@ require_once __DIR__ . '/database.php';
 
 // Funciones auxiliares (escape, etc.)
 require_once __DIR__ . '/../src/lib/helpers.php';
+require_once __DIR__ . '/../src/lib/favorites.php';
+require_once __DIR__ . '/../src/lib/seo.php';

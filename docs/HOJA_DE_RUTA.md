@@ -4,6 +4,18 @@ El objetivo es evolucionar esta práctica académica, mediante mejoras increment
 
 Estado actual: prototipo funcional en desarrollo. Todavía no está preparado para operar con clientes ni cobrar pagos reales.
 
+## Retención y captación — 31 de octubre de 2026
+
+- [x] Favoritos sin registro, persistentes en el navegador y con precios actuales.
+- [x] Metadatos, canónicas y sitemap preparados, con indexación desactivada por defecto.
+- [ ] Sincronizar favoritos entre dispositivos mediante cuenta.
+- [ ] Avisos de reposición solicitados, con preferencias y baja.
+- [ ] Contenido original por familias olfativas y ocasiones, con datos verificados.
+- [ ] Lanzamiento real, Search Console y marcado Product/variantes.
+- [ ] Medir retorno y recompra antes de diseñar un programa de puntos o descuentos.
+
+[Entrega, investigación y límites](RETENCION_SEO.md). Favoritos y SEO no prueban por sí solos un aumento de retención o tráfico.
+
 ## Organización
 - `original`: entrega recuperada, conservada como referencia.
 - `develop`: desarrollo de la tienda y correcciones.
