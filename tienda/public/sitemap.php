@@ -6,13 +6,13 @@ if (!seo_ready()) {
     echo '<?xml version="1.0" encoding="UTF-8"?><error>Mapa desactivado durante la preparación de la tienda.</error>';
     exit;
 }
-$paths = ['index.php', 'descubrir.php'];
+$paths = ['index.php', 'descubrir.php', 'ayuda.php'];
 $categories = db()->query('SELECT c.slug, COUNT(p.id) AS total FROM categoria c
     JOIN producto p ON p.id_categoria=c.id AND p.activo=1 WHERE c.activa=1 GROUP BY c.id,c.slug ORDER BY c.id')->fetchAll();
 $total = array_sum(array_column($categories, 'total'));
 if ($total > 0) { $paths[] = 'catalogo.php'; }
 // Una instalación que supere el límite necesita un índice de sitemaps dividido.
-if ($total + count($categories) + 3 > 45000) { http_response_code(503); echo '<error>Dividir el sitemap antes de activarlo.</error>'; exit; }
+if ($total + count($categories) + 4 > 45000) { http_response_code(503); echo '<error>Dividir el sitemap antes de activarlo.</error>'; exit; }
 $pages = max(1, (int)ceil($total / 12));
 for ($page = 2; $page <= $pages; ++$page) { $paths[] = 'catalogo.php?page=' . $page; }
 foreach ($categories as $category) {

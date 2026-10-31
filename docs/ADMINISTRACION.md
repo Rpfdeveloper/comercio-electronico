@@ -1,6 +1,12 @@
 # Protección del acceso administrativo
 
-El panel continúa usando una única cuenta `admin`, con contraseña en `TIENDA_ADMIN_PASS`. Esta mejora protege el acceso existente; no añade roles, MFA, gestión de productos ni pagos.
+El panel continúa usando una única cuenta `admin`, con contraseña en `TIENDA_ADMIN_PASS`. Incluye resumen, consulta de pedidos e inventario y gestión del catálogo. No añade roles, MFA ni pagos.
+
+## Gestión del catálogo — 31 de octubre de 2026
+
+Después de entrar se abre **Resumen**. **Catálogo** permite crear perfumes inactivos y editar sus fichas, precios, ofertas y stock; también añadir formatos. **Inventario** enlaza cada perfume con su editor. Los cambios se guardan junto con su historial en una transacción; un formulario antiguo devuelve 409 y exige recargar los datos. [Funcionamiento, migración 004, validación y límites](GESTION_CATALOGO.md).
+
+Las secciones siguientes documentan también entregas anteriores: sus cifras y requisitos de instalación corresponden a esas iteraciones. Para actualizar a la versión actual se requiere además la migración 004.
 
 ## Consulta de pedidos — 31 de octubre de 2026
 
@@ -18,7 +24,7 @@ Los valores se validan antes de consultar y las búsquedas usan parámetros prep
 
 **Instalación:** desplegar conjuntamente PHP y `tienda/admin/assets/admin.css`; no se añade ninguna migración. Mantener las migraciones 001–003 y la configuración externa existentes. La contraseña de una vista previa se configura fuera del repositorio: el código no incorpora una clave predeterminada.
 
-**Límites:** panel de consulta, sin edición de estados, productos ni stock; tampoco ejecuta pagos, envíos o correos. La paginación por desplazamiento y la búsqueda parcial no están probadas con volúmenes comerciales grandes. Nuevos pedidos durante la navegación pueden desplazar las páginas; no se ofrece una instantánea congelada. MFA, roles, auditoría completa de accesibilidad y dispositivos reales siguen pendientes.
+**Límites de pedidos:** consulta sin edición de estados; tampoco ejecuta pagos, envíos o correos. La paginación por desplazamiento y la búsqueda parcial no están probadas con volúmenes comerciales grandes. Nuevos pedidos durante la navegación pueden desplazar las páginas; no se ofrece una instantánea congelada. MFA, roles, auditoría completa de accesibilidad y dispositivos reales siguen pendientes.
 
 **Validación:** `tests/admin_orders.php` añade 64 comprobaciones HTTP con 30 pedidos ficticios: privacidad, acceso, búsqueda, caracteres literales, inyección SQL/XSS, los cinco estados y estados personalizados, fechas inclusivas, filtros combinados, resumen, ordenación, paginación, retorno y entradas inválidas. El conjunto suma 502 comprobaciones; sintaxis correcta en 53 PHP y log sin avisos en PHP 8.3.6/MariaDB 10.11.14. Revisión visual en escritorio y marcos de 320/390/768 px con HTML generado por PHP y formularios de muestra desactivados.
 
@@ -64,4 +70,4 @@ Desde la navegación del panel, **Inventario** abre `admin/inventario.php`. Cons
 
 Stock bajo significa entre 1 y 5 unidades; agotado, exactamente 0. Los valores nulos y negativos se señalan como datos por revisar y no se suman a las unidades. El resumen abarca todas las referencias filtradas, incluidas las inactivas cuando se muestran. Una referencia activa requiere producto, categoría y variante activos; esta etiqueta no garantiza disponibilidad. El precio respeta la oferta positiva y el precio propio del formato, como el carrito.
 
-La pantalla es de consulta: no modifica stock, productos ni variantes, ni requiere migración. Reutiliza la sesión administrativa y las cabeceras privadas. Los filtros inválidos devuelven 422 y los errores de base de datos, un mensaje genérico 503. Se incorpora `tests/admin_inventory.php` a CI con 50 comprobaciones HTTP de acceso, variantes, activación, precios, datos anómalos, búsqueda, filtros, paginación, SQL/XSS y conservación del inventario. Se mantienen los límites de volumen y paginación descritos para pedidos.
+La pantalla de inventario es de consulta y enlaza con el editor del catálogo. Este editor requiere la migración 004; la consulta por sí sola no modifica stock, productos ni variantes. Reutiliza la sesión administrativa y las cabeceras privadas. Los filtros inválidos devuelven 422 y los errores de base de datos, un mensaje genérico 503. Se incorpora `tests/admin_inventory.php` a CI con 50 comprobaciones HTTP de acceso, variantes, activación, precios, datos anómalos, búsqueda, filtros, paginación, SQL/XSS y conservación del inventario. Se mantienen los límites de volumen y paginación descritos para pedidos.

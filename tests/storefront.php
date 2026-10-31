@@ -39,6 +39,8 @@ try {
         ->execute([$mixed['id'], $mixed['id']]);
     $basic = $make('Floral <script>fixture</script>', 5);
     $b = new TestBrowser();
+    $seed = $b->request('public/producto.php?p=velvet-rose-edp');
+    check($b->status === 200 && strpos($seed, 'fondo cálido.') !== false, 'importación del catálogo de ejemplo conserva las tildes UTF-8');
     $home = $b->request('public/index.php');
     check($b->status === 200 && strpos($home, 'id="home-title"') !== false, 'portada responde con su titulo principal');
     check(strpos($home, 'Contacto próximamente') !== false && strpos($home, 'name="email"') === false, 'contacto pendiente sin formulario ficticio');
@@ -89,6 +91,9 @@ try {
     $pdo->exec('UPDATE categoria SET activa=0 WHERE activa=1');
     $body = $b->request('public/index.php');
     check($b->status === 200 && strpos($body, 'Estamos preparando las colecciones') !== false && !$cards($body), 'portada vacia sigue siendo util');
+    $help=$b->request('public/ayuda.php');
+    check($b->status===200 && strpos($help,'Explora con claridad.')!==false && strpos($help,'no admite pagos reales')!==false,'ayuda explica el estado real del prototipo');
+    check(strpos($help,'favoritos.php')!==false && strpos($help,'carrito.php')!==false && strpos($help,'Contacto próximamente')!==false,'ayuda lleva a recorridos útiles sin inventar contacto');
     echo "RESULTADO: $checks comprobaciones de portada y descubrimiento.\n";
 } finally {
     foreach ($activeCategories as $id) { $pdo->prepare('UPDATE categoria SET activa=1 WHERE id=?')->execute([$id]); }

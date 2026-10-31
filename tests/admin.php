@@ -61,7 +61,7 @@ try {
     $oldToken=$b->token;
     $before=$b->copySession();
     $b->request('admin/login.php',['user'=>'admin','pass'=>$adminPassword]);
-    check($b->status===302 && ($b->headers['location']??'')==='pedidos.php', 'administrador accede con credenciales validas');
+    check($b->status===302 && ($b->headers['location']??'')==='index.php', 'administrador accede con credenciales validas');
     $cookie=$b->headers['set-cookie']??'';
     $expectedPath=rtrim((string)parse_url($base,PHP_URL_PATH),'/').'/admin/';
     check(strpos($cookie,'TIENDAADMIN=')===0 && strpos($cookie,'path='.$expectedPath)!==false && stripos($cookie,'HttpOnly')!==false && stripos($cookie,'SameSite=Lax')!==false, 'cookie administrativa distinta, acotada a admin y protegida');

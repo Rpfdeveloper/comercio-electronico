@@ -6,18 +6,17 @@ Proyecto académico de Comercio Electrónico de la UOC, desarrollado en PHP y My
 
 [Ver el código de la tienda](https://github.com/Rpfdeveloper/comercio-electronico/tree/main/tienda) · [Registro de progreso](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/PROGRESO.md) · [Hoja de ruta](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/HOJA_DE_RUTA.md)
 
-## Último avance: consulta de pedidos desde el panel
+## Último avance: catálogo gestionable y fichas renovadas
 
-- Búsqueda por número exacto, nombre o correo, combinada con estado y fechas.
-- Paginación de 25 pedidos y ordenación por fecha o importe, con desempate estable.
-- Resumen de cantidades e importes de todos los resultados filtrados.
-- Estados obtenidos de la base de datos: el estado inicial se muestra como pendiente.
-- Acceso, listado y detalle adaptables; regreso al listado sin perder los filtros.
-- Consultas privadas sin caché, sin Referer y sin indexación.
+- Resumen administrativo con pedidos pendientes, catálogo, stock bajo y referencias agotadas.
+- Alta de perfumes inactivos y edición de ficha, imagen del proyecto, precios, ofertas y existencias.
+- Formatos por capacidad, historial de cambios y protección contra formularios obsoletos y compras simultáneas.
+- Fichas adaptadas al diseño de Canva, con precio y disponibilidad del formato elegido.
+- Página de ayuda, contacto próximamente y corrección de tildes al importar los datos de ejemplo.
 
-Validación local: **502 comprobaciones** (64 nuevas y 438 regresiones), 53 archivos PHP con sintaxis correcta y log sin avisos. [Estado de GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions). CI configurada para PHP 8.3, 8.4 y 8.5. Revisión visual con datos ficticios en escritorio y marcos de 320, 390 y 768 px; no sustituye una auditoría de accesibilidad ni dispositivos físicos.
+Validación local: **630 comprobaciones**, 64 archivos PHP con sintaxis correcta, JavaScript válido y log sin avisos PHP. [Estado de GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions). CI configurada para PHP 8.3, 8.4 y 8.5. Revisión visual con datos ficticios en escritorio y marcos de 320, 390 y 768 px; no sustituye una auditoría de accesibilidad ni dispositivos físicos.
 
-Esta mejora no necesita una migración nueva ni cambia pedidos. La instalación sigue requiriendo las migraciones previas, incluida `003_customer_favorites.sql`. [Panel: uso y límites](docs/ADMINISTRACION.md) · [Favoritos de cuenta](docs/FAVORITOS_CUENTA.md) · [Retención y SEO](docs/RETENCION_SEO.md).
+Aplicar **`004_catalog_history.sql`** antes de desplegar el editor, conservando las migraciones 001–003. La migración añade el historial y no modifica productos ni pedidos. No reimportar el esquema completo en una base existente. [Gestión del catálogo y actualización](docs/GESTION_CATALOGO.md) · [Panel: uso y límites](docs/ADMINISTRACION.md) · [Retención y SEO](docs/RETENCION_SEO.md).
 
 La guía actual usa filtros del catálogo. El asesor con IA es una siguiente fase y todavía no está conectado a un modelo.
 
@@ -25,7 +24,7 @@ La guía actual usa filtros del catálogo. El asesor con IA es una siguiente fas
 
 ## Funcionalidad y siguientes pasos
 
-La tienda incluye catálogo, categorías, fichas, favoritos en el navegador o vinculados a la cuenta, carrito, compra invitada o registrada y administración de pedidos. Las mejoras anteriores incorporaron CSRF, validación de cantidades y variantes, relectura de precios, descuento transaccional de stock y pruebas de compras simultáneas.
+La tienda incluye catálogo, categorías, fichas, favoritos en el navegador o vinculados a la cuenta, carrito, compra invitada o registrada, consulta de pedidos y gestión administrativa del catálogo y stock. Las mejoras anteriores incorporaron CSRF, validación de cantidades y variantes, relectura de precios, descuento transaccional de stock y pruebas de compras simultáneas.
 
 Pendientes principales: verificación de correo, recuperación de contraseña, MFA administrativo, carrito persistente, reservas y pagos en modo de pruebas, envío real de correos y revisión de producción.
 

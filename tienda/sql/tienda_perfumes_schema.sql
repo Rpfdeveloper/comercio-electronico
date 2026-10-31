@@ -7,6 +7,8 @@ CREATE DATABASE IF NOT EXISTS `tienda_perfumes`
   DEFAULT COLLATE utf8mb4_unicode_ci;
 
 USE `tienda_perfumes`;
+-- El archivo contiene texto UTF-8: conservar tildes incluso si el cliente usa latin1.
+SET NAMES utf8mb4;
 
 /* ============================================================
  * USUARIO DE APLICACIÓN
@@ -29,6 +31,7 @@ SET FOREIGN_KEY_CHECKS = 0;
  * ELIMINAR TABLAS SI EXISTEN
  * ============================================================ */
 
+DROP TABLE IF EXISTS `catalogo_cambio`;
 DROP TABLE IF EXISTS `cliente_favorito`;
 DROP TABLE IF EXISTS `acceso_intento`;
 DROP TABLE IF EXISTS `linea_pedido`;

@@ -2,7 +2,7 @@
 declare(strict_types=1);
 require_once __DIR__ . '/bootstrap.php';
 
-if (admin_current()) { header('Location: pedidos.php', true, 302); exit; }
+if (admin_current()) { header('Location: index.php', true, 302); exit; }
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $_POST['user'] ?? '';
@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($validPassword && $user === 'admin') {
                 $pdo->prepare('DELETE FROM acceso_intento WHERE clave=?')->execute([array_key_first($keys)]);
                 admin_sign_in();
-                header('Location: pedidos.php', true, 302);
+                header('Location: index.php', true, 302);
                 exit;
             }
             http_response_code(401);
@@ -41,7 +41,7 @@ admin_page_start('Acceso al panel', false);
 <section class="panel login-panel" aria-labelledby="login-title">
   <p class="eyebrow">Espacio privado</p>
   <h1 id="login-title">Administración</h1>
-  <p class="muted">Accede para consultar los pedidos de la tienda.</p>
+  <p class="muted">Accede para gestionar el catálogo, consultar el inventario y revisar pedidos.</p>
   <?php if ($error !== ''): ?><p class="notice" role="alert"><?= h($error) ?></p><?php endif; ?>
   <form method="post" action="login.php">
     <?= csrf_field() ?>

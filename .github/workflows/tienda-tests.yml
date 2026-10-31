@@ -90,6 +90,8 @@ jobs:
         run: php tests/admin_orders.php
       - name: Consulta de inventario y existencias
         run: php tests/admin_inventory.php
+      - name: Edición transaccional del catálogo
+        run: php tests/admin_catalog.php
       - name: Catálogo y filtros
         run: php tests/catalog.php
       - name: Carrito y formulario de compra
