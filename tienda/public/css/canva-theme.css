@@ -83,3 +83,40 @@ main.container { padding-top:2.5rem; }
   .favorites-nav-link,.account-nav-link,.cart-button { font-size:.75rem; }
   .cart-button { padding:.4rem .55rem; }
 }
+
+/* Asesor guiado de Canva: una decisión por paso, formulario completo como base. */
+.guide-form { background:#fffdf9; gap:2rem; }
+.guide-form [hidden] { display:none !important; }
+.guide-toolbar,.guide-progress,.guide-summary { grid-column:1/-1; }
+.guide-toolbar { display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
+.guide-toolbar p { margin:0; }
+.guide-form .guide-mode { padding:.4rem 0; background:transparent; color:var(--store-accent); text-decoration:underline; border:0; box-shadow:none; }
+.guide-progress { list-style:none; padding:0; margin:0; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; }
+.guide-progress li { padding:.8rem 0; border-top:3px solid var(--color-border); color:var(--store-muted); font-size:.85rem; }
+.guide-progress li[aria-current=step],.guide-progress li.is-complete { border-color:var(--store-accent); color:var(--store-accent); }
+.guide-progress li[aria-current=step] { font-weight:700; }
+.guide-progress span { margin-right:.3rem; font-size:.75rem; }
+.guide-step { min-width:0; }
+.guide-step h2 { font-family:var(--store-serif); font-weight:400; font-size:clamp(1.6rem,3vw,2.2rem); line-height:1.18; letter-spacing:-.025em; margin:0 0 1rem; }
+.guide-step h2 span { display:block; margin-bottom:.6rem; font:600 .75rem/1.5 system-ui,sans-serif; color:var(--store-accent); }
+.guide-step > p { color:var(--store-muted); line-height:1.6; margin:0 0 1.5rem; }
+.guide-step label { margin-bottom:.5rem; }
+.guide-form:not(.guide-all) .guide-step { grid-column:1/-1; max-width:650px; width:100%; }
+.guide-examples { display:flex; gap:.5rem; flex-wrap:wrap; margin-top:1rem; }
+.guide-form .guide-examples button { min-height:44px; padding:.5rem .9rem; font-size:.85rem; border:1px solid var(--color-border); border-radius:30px; background:var(--store-paper); color:var(--store-ink); box-shadow:none; }
+.guide-form .guide-examples button:hover { border-color:var(--store-accent); background:#eee4d8; }
+.guide-summary { padding:1.5rem; background:#f2ebe2; border:1px solid var(--color-border); border-radius:3px; }
+.guide-summary h3 { font:400 1.3rem/1.3 var(--store-serif); margin:0 0 1rem; }
+.guide-summary dl { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; margin:0; }
+.guide-summary dt { color:var(--store-muted); font-size:.8rem; margin-bottom:.5rem; }
+.guide-summary dd { margin:0; font-weight:600; overflow-wrap:anywhere; }
+.guide-summary p { margin:1rem 0 0; font-size:.8rem; color:var(--store-muted); }
+.guide-actions { padding-top:1.5rem; border-top:1px solid var(--color-border); }
+.guide-actions a { margin-left:auto; font-size:.85rem; }
+@media(max-width:640px) {
+  .guide-progress { gap:.6rem; }
+  .guide-progress li { font-size:.72rem; overflow-wrap:anywhere; }
+  .guide-progress span { display:block; }
+  .guide-summary dl { grid-template-columns:1fr; }
+  .guide-actions a { margin-left:0; }
+}

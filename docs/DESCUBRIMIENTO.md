@@ -10,6 +10,12 @@ La búsqueda encuentra fragmentos literales en nombre, marca, descripción corta
 
 La guía es un filtro real del catálogo, **no una integración de IA**. No genera características, puntuaciones de afinidad ni recomendaciones ficticias, y no envía consultas a terceros. Las preferencias viajan en la URL: el historial y los logs del servidor pueden conservarlas. No introducir datos personales en ellas.
 
+## Recorrido guiado actualizado
+
+Con JavaScript, una visita sin parámetros muestra tres pasos opcionales y permite alternar con el formulario completo sin perder elecciones. Los ejemplos Floral/Fresco/Amaderado rellenan el campo de texto; no asignan familias a productos. Atrás conserva valores, Intro avanza desde los primeros pasos y el último muestra un resumen antes de buscar. Presupuesto vacío significa sin límite; cero es válido y se admiten punto o coma con hasta dos decimales.
+
+Los enlaces con preferencias y las respuestas de búsqueda abren el modo completo. Sin JavaScript, los tres campos siguen visibles y el envío GET continúa funcionando. El foco pasa al título del paso, a los resultados o al error del servidor. El script solo se carga en la guía. [Diseño en Canva y adaptación](DISENO_CANVA.md#asesor-por-pasos--31-de-octubre-de-2026).
+
 ## Diseño y tecnologías
 
 - HTML semántico, formularios GET y consultas preparadas; el recorrido funciona sin JavaScript.

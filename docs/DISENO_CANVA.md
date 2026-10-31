@@ -11,3 +11,15 @@ La fotografía de portada es la misma que utiliza la propuesta de Canva: [recurs
 El enlace **Asesor** lleva a la guía real por colección, descripción y presupuesto. No se presenta como una IA conectada: la explicación existente conserva su alcance y las preferencias no se envían a un modelo externo. **Contacto próximamente** permanece visible, sin inventar un correo o un formulario operativo. La tienda sigue siendo un prototipo sin pagos reales.
 
 La actualización no necesita migraciones. Deben desplegarse conjuntamente las vistas PHP, la nueva hoja de estilo y `main.js`. Se mantienen foco visible, navegación por teclado, etiquetas, preferencias de movimiento reducido, metadatos SEO y contenido utilizable sin JavaScript.
+
+## Asesor por pasos — 31 de octubre de 2026
+
+Se ha actualizado el propio Canva Code de `DAHZjpm14-4`, conservando su portada y catálogo. La copia previa de Canva es `DAHZktu58po`. El asesor pasa a colección, palabra y presupuesto, con progreso, ejemplos, vuelta atrás y modo de formulario completo. Se ha eliminado «IA» de su navegación y se identifica como guía por filtros. Canva muestra un estado final de diseño; la tienda PHP ejecuta la búsqueda real. No hay publicación de un nuevo sitio en Canva ni sincronización automática con GitHub.
+
+La adaptación funcional está en `descubrir.php`, `js/discovery.js` y `css/canva-theme.css`. Mantiene las categorías de la base de datos y los filtros/validaciones del servidor. Al volver de una búsqueda muestra todas las preferencias; al entrar sin parámetros abre el primer paso. El resumen se muestra al final o en modo completo. Sin JavaScript quedan visibles todos los campos y el envío GET. Cambiar de modo o retroceder conserva los valores durante esa visita; no se añade almacenamiento local.
+
+Verificados los tres pasos, ejemplos, navegación con Intro, foco de títulos y resultados, resumen, vuelta atrás, cambio de modo, coma decimal, cero, rechazo de negativos y búsqueda real. El formulario sin JavaScript devolvió diez coincidencias de prueba. Revisado en escritorio y marcos de 320, 390 y 768 px sin desbordamiento horizontal; no equivale a una auditoría completa de accesibilidad.
+
+Se conservan «Contacto próximamente», las restricciones del prototipo y las preferencias de privacidad. Es necesario desplegar el nuevo `discovery.js` junto al PHP y los estilos; no requiere migraciones.
+
+Evidencia visual: [asesor funcionando en la tienda](capturas/asesor-web-20261031.jpg).

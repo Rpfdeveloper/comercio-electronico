@@ -2,6 +2,16 @@
 
 Registro técnico de cambios verificables en `develop` y de entregas integradas en `main`. La rama `original` conserva la entrega recuperada. El proyecto sigue siendo un prototipo: no procesa pagos ni envía correos reales.
 
+## Asesor por pasos en Canva y web (31 de octubre de 2026)
+
+Actualizado el Canva Code existente y trasladado su recorrido a la tienda: colección, palabra y presupuesto con progreso, ejemplos, resumen final, Atrás y modo completo sin perder valores. La web consulta el catálogo real; Canva conserva un estado de diseño explícito. Navegación del diseño corregida de «Asesor IA» a «Asesor», sin simular integración con un modelo.
+
+Mejora progresiva: sin JavaScript funciona el formulario GET completo; los resultados y errores mantienen los filtros visibles. No se guardan nuevas preferencias en cookies ni almacenamiento local, ni se añaden dependencias. Se mantienen validaciones, stock, precios comprables y paginación.
+
+Validación: **552 comprobaciones locales correctas**, **56 PHP** con sintaxis válida, JavaScript válido y revisión de patrones sensibles. Recorrido real en navegador con navegación por teclado, vuelta atrás, cambio de modo, presupuesto cero, negativo y coma decimal; búsqueda sin JavaScript. Revisión en escritorio y marcos de 320/390/768 px, sin desbordamiento horizontal.
+
+Copias previas: GitHub `backup/2026-10-31-antes-asesor-09a7fa6`, sobre `09a7fa6e53690120eab355136180806fb34995c5`; Canva `DAHZktu58po`. Sin migraciones ni cambios de acceso. [Detalles de la adaptación](DISENO_CANVA.md#asesor-por-pasos--31-de-octubre-de-2026).
+
 ## Diseño de Canva aplicado a la tienda (31 de octubre de 2026)
 
 Se adapta la propuesta **Perfume Shop — Interfaces web v2** a la portada y a los componentes públicos: paleta marfil/tinta/terracota, titulares serif, fotografía y mensaje del hero, navegación Inicio/Catálogo/Asesor/Contacto, colecciones y presentación del catálogo. La hoja `canva-theme.css` reúne la adaptación. Se conservan favoritos, cuenta, carrito, precios y existencias reales del prototipo, así como «Contacto próximamente». El asesor sigue siendo una guía por filtros, sin modelo de IA conectado.
