@@ -47,7 +47,7 @@ function catalog_orders(): array
 // Un producto con variantes inactivas nunca se vende como producto base.
 function catalog_source(): string
 {
-    return "SELECT p.id, p.nombre, p.slug, p.descripcion_corta, p.imagen_principal,
+    return "SELECT p.id, p.nombre, p.slug, p.descripcion_corta, p.descripcion_larga, p.imagen_principal,
         p.created_at, c.slug AS categoria_slug, m.slug AS marca_slug, m.nombre AS marca,
         CASE WHEN v.total IS NULL THEN CASE WHEN p.precio_oferta > 0 THEN p.precio_oferta ELSE p.precio END
              ELSE COALESCE(v.precio_disponible, v.precio_activo) END AS precio_desde,
@@ -75,8 +75,8 @@ function catalog_results(PDO $pdo, array $filters): array
     if ($filters['q'] !== '') {
         // El usuario busca caracteres literales, incluidos %, _ y el propio escape.
         $term = '%' . strtr($filters['q'], ['!' => '!!', '%' => '!%', '_' => '!_']) . '%';
-        $where[] = "(nombre LIKE ? ESCAPE '!' OR descripcion_corta LIKE ? ESCAPE '!' OR marca LIKE ? ESCAPE '!')";
-        array_push($params, $term, $term, $term);
+        $where[] = "(nombre LIKE ? ESCAPE '!' OR descripcion_corta LIKE ? ESCAPE '!' OR descripcion_larga LIKE ? ESCAPE '!' OR marca LIKE ? ESCAPE '!')";
+        array_push($params, $term, $term, $term, $term);
     }
     foreach (['min' => '>=', 'max' => '<='] as $key => $operator) {
         if ($filters[$key] !== '') { $where[] = "precio_desde $operator ?"; $params[] = $filters[$key]; }

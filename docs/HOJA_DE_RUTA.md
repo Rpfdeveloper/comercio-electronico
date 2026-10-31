@@ -28,6 +28,9 @@ Estado actual: prototipo funcional en desarrollo. Todavía no está preparado pa
 - [x] Ejecutar las pruebas automáticamente en GitHub.
 
 ## 2. Experiencia de compra
+- [x] Portada adaptable con colecciones y productos del catálogo.
+- [x] Guía por preferencias, presupuesto y disponibilidad, sin dependencia de JavaScript.
+- [ ] Asesor con IA conectado al catálogo, con datos verificados, límites de uso y alternativa sin modelo.
 - [x] Búsqueda, filtros, ordenación y paginación.
 - [x] Actualización clara de cantidades, guardadas al continuar hacia la compra.
 - [ ] Carrito persistente entre sesiones.

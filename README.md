@@ -6,19 +6,20 @@ Proyecto académico de Comercio Electrónico de la UOC, desarrollado en PHP y My
 
 [Ver el código de la tienda](https://github.com/Rpfdeveloper/comercio-electronico/tree/main/tienda) · [Registro de progreso](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/PROGRESO.md) · [Hoja de ruta](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/HOJA_DE_RUTA.md)
 
-## Último avance: carrito y compra clara
+## Último avance: portada y descubrimiento de perfumes
 
-- Las cantidades se guardan y validan al pulsar «Continuar con la compra».
-- Desglose de productos, IVA, envío y total coherente desde el carrito hasta el pedido.
-- Formulario con autocompletado, errores por campo y enlaces para corregirlos, sin perder los datos válidos.
-- Compra como invitado o con cuenta, con controles de contraseña y validación de longitudes Unicode.
-- Diseño revisado en escritorio y marcos de 320, 390 y 768 px, conservando las protecciones de stock y cuentas.
+- Portada adaptable con colecciones, precios y últimas incorporaciones del catálogo.
+- Guía por colección, palabra y presupuesto, con resultados disponibles y precios comprobados.
+- Búsqueda también en la descripción completa de cada perfume.
+- «Contacto próximamente», sin formulario ficticio ni correo personal.
+- Navegación por teclado, movimiento reducido y adaptación de controles con CSS moderno.
+- Pruebas de compatibilidad configuradas para PHP 8.3, 8.4 y 8.5.
 
-Validación: **286 comprobaciones por entorno**, incluidas 47 nuevas de checkout. [GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions/runs/41151317474) pasa con PHP 8.3 y 8.4 y MariaDB 11.4; 39 archivos PHP sin errores de sintaxis y logs sin avisos. [Ver cambios en el PR #2](https://github.com/Rpfdeveloper/comercio-electronico/pull/2).
+Validación local: **316 comprobaciones**, 42 archivos PHP sin errores de sintaxis y logs sin avisos. [Estado de GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions). La revisión visual cubre escritorio y marcos de 320, 390 y 768 px; quedan pendientes dispositivos reales y auditoría completa de accesibilidad.
 
-![Carrito con total desglosado](docs/capturas/carrito-20261031.jpg)
+La guía actual usa filtros del catálogo. El asesor con IA es una siguiente fase y todavía no está conectado a un modelo.
 
-[Carrito y checkout](docs/COMPRA.md) · [Catálogo y filtros](docs/CATALOGO.md) · [Administración](docs/ADMINISTRACION.md) · [Cuentas de clientes](docs/CUENTAS_CLIENTE.md) · [Ejecutar las pruebas](tests/README.md)
+[Portada y guía](docs/DESCUBRIMIENTO.md) · [Carrito y checkout](docs/COMPRA.md) · [Catálogo y filtros](docs/CATALOGO.md) · [Administración](docs/ADMINISTRACION.md) · [Cuentas de clientes](docs/CUENTAS_CLIENTE.md) · [Pruebas](tests/README.md)
 
 ## Funcionalidad y siguientes pasos
 

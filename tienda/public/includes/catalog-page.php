@@ -20,7 +20,7 @@ try {
     if ($filters['marca'] !== '' && !in_array($filters['marca'], array_column($brands, 'slug'), true)) {
         throw new OutOfBoundsException('Marca no encontrada.');
     }
-    if ($categoryPage) { $title = $category['nombre']; }
+    if ($categoryPage) { $title = category_label($category['nombre']); }
     $result = catalog_results(db(), $filters);
 } catch (InvalidArgumentException $e) {
     http_response_code(422); $error = $e->getMessage();
@@ -46,12 +46,12 @@ require __DIR__ . '/header.php';
       <?php else: ?>
         <div><label for="catalog-category">Categoría</label><select id="catalog-category" name="c">
           <option value="">Todas las categorías</option>
-          <?php foreach ($categories as $item): ?><option value="<?= h($item['slug']) ?>" <?= $filters['c'] === $item['slug'] ? 'selected' : '' ?>><?= h($item['nombre']) ?></option><?php endforeach; ?>
+          <?php foreach ($categories as $item): ?><option value="<?= h($item['slug']) ?>" <?= $filters['c'] === $item['slug'] ? 'selected' : '' ?>><?= h(category_label($item['nombre'])) ?></option><?php endforeach; ?>
         </select></div>
       <?php endif; ?>
       <div><label for="catalog-brand">Marca</label><select id="catalog-brand" name="marca">
         <option value="">Todas las marcas</option>
-        <?php foreach ($brands as $item): ?><option value="<?= h($item['slug']) ?>" <?= $filters['marca'] === $item['slug'] ? 'selected' : '' ?>><?= h($item['nombre']) ?></option><?php endforeach; ?>
+        <?php foreach ($brands as $item): ?><option value="<?= h($item['slug']) ?>" <?= $filters['marca'] === $item['slug'] ? 'selected' : '' ?>><?= h(category_label($item['nombre'])) ?></option><?php endforeach; ?>
       </select></div>
       <div><label for="catalog-min">Precio mínimo (€)</label><input id="catalog-min" name="min" type="text" inputmode="decimal" value="<?= h($filters['min']) ?>" placeholder="0,00"></div>
       <div><label for="catalog-max">Precio máximo (€)</label><input id="catalog-max" name="max" type="text" inputmode="decimal" value="<?= h($filters['max']) ?>" placeholder="Sin límite"></div>

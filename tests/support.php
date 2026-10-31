@@ -72,5 +72,5 @@ class TestBrowser {
         $copy->token = $this->token;
         return $copy;
     }
-    public function __destruct() { curl_close($this->curl); }
+    public function __destruct() { $this->curl = null; }
 }
