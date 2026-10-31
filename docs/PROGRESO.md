@@ -2,6 +2,24 @@
 
 Registro técnico de cambios verificables en `develop` y de entregas integradas en `main`. La rama `original` conserva la entrega recuperada. El proyecto sigue siendo un prototipo: no procesa pagos ni envía correos reales.
 
+## Carrito y checkout — PR #2 (31 de octubre de 2026)
+
+- «Continuar con la compra» guarda y valida las cantidades; cero elimina la línea y un carrito vacío vuelve al catálogo.
+- Mismo desglose de productos, IVA, envío y total desde el carrito hasta el pedido guardado.
+- Formulario con autocompletado, errores por campo, resumen con enlaces y foco, compra invitada o con cuenta y control de contraseña.
+- Límites Unicode según la base de datos, rechazo de texto malformado y resúmenes anteriores invalidados cuando falla la validación.
+- Diseño revisado en escritorio y marcos de 320, 390 y 768 px. Corregido el desbordamiento del contador del carrito. Faltan móvil real y auditoría completa de accesibilidad.
+
+Validación local: **286 comprobaciones correctas** (41 compra + 45 cuenta + 48 administración + 73 catálogo + 47 checkout + 32 concurrencia), 39 archivos PHP sin errores de sintaxis y logs sin avisos PHP, con PHP 8.3.6 y MariaDB 10.11.14. Revisión de archivos sensibles correcta. Las pruebas usan datos ficticios.
+
+[GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions/runs/41151317474), sobre `3e4d9b83b5f95bb86091eb3661298c71919f479a`: **286 comprobaciones correctas en cada versión**, PHP 8.3 y 8.4 con MariaDB 11.4. Sintaxis, revisión de patrones sensibles y logs correctos. Los commits posteriores a esa validación solo añaden documentación y captura.
+
+[PR #2](https://github.com/Rpfdeveloper/comercio-electronico/pull/2). Copia previa verificada: `backup/2026-10-31-antes-checkout-e19ae30` en `e19ae30971bd6c1bc351cfb29a023c42309191df`. Los commits se publican con correo privado de GitHub. No requiere migraciones; se conserva la regla de IVA y envío del prototipo.
+
+![Carrito con cantidades guardadas y total desglosado](capturas/carrito-20261031.jpg)
+
+[Uso, comprobaciones y límites](COMPRA.md).
+
 ## Primera integración en main (31 de octubre de 2026)
 
 El [PR #1](https://github.com/Rpfdeveloper/comercio-electronico/pull/1) se fusionó en `main` mediante `7938cfd8f265fbbea11f7dac87d941658f3cc0c1`. El árbol integrado coincide con la entrega corregida de `develop`; se verificó el correo privado del commit. La [ejecución del PR](https://github.com/Rpfdeveloper/comercio-electronico/actions/runs/41145403545) pasó en PHP 8.3 y 8.4 con MariaDB 11.4, con 239 comprobaciones por entorno.
