@@ -2,6 +2,12 @@
 
 Registro técnico de cambios verificables en `develop` y de entregas integradas en `main`. La rama `original` conserva la entrega recuperada. El proyecto sigue siendo un prototipo: no procesa pagos ni envía correos reales.
 
+## Acceso visible a la administración (31 de octubre de 2026)
+
+Se añade «Administración» al pie común de la tienda, separado de «Mi cuenta» de clientes. El enlace lleva al acceso administrativo y conserva el prefijo de instalaciones en subdirectorios. Se ha comprobado la sintaxis PHP y el recorrido real desde la portada hasta la pantalla de usuario y contraseña. No cambia la autenticación ni publica credenciales.
+
+Copia previa verificada: `backup/2026-10-31-antes-enlace-admin-5e83986`, sobre `5e83986deaae5b07f3783163f69f330a82db72ee`.
+
 ## Consulta administrativa de pedidos (31 de octubre de 2026)
 
 Se sustituye el listado completo sin filtros por una consulta de 25 pedidos por página, con búsqueda por número exacto/nombre/correo, estado, fechas inclusivas y cuatro ordenaciones estables. El resumen agrega todos los resultados filtrados. El detalle conserva filtros al volver y muestra observaciones escapadas. Acceso, listado y detalle comparten una interfaz adaptable.
