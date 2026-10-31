@@ -113,3 +113,12 @@ function cart_reduce_stock(PDO $pdo, array $items): void
         }
     }
 }
+
+// Regla actual del prototipo, compartida por carrito, resumen y confirmación.
+function cart_totals(array $items): array
+{
+    $products = round(array_sum(array_column($items, 'subtotal')), 2);
+    $tax = round($products * 0.21, 2);
+    return ['products'=>$products, 'tax'=>$tax, 'shipping'=>0.00,
+        'total'=>round($products + $tax, 2)];
+}
