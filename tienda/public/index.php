@@ -3,6 +3,8 @@ require_once __DIR__ . '/../config/init.php';
 require_once __DIR__ . '/../src/lib/catalog.php';
 $pageTitle = 'Tu esencia, a tu manera';
 $pageDescription = 'Explora el catálogo de Perfume Shop y encuentra fragancias por colección, descripción y presupuesto.';
+$pageCanonical = 'index.php';
+$pageIndexable = true;
 $cats = db()->query('SELECT c.nombre, c.slug, c.imagen_url, COUNT(p.id) AS productos
     FROM categoria c LEFT JOIN producto p ON p.id_categoria = c.id AND p.activo = 1
     WHERE c.activa = 1 GROUP BY c.id, c.nombre, c.slug, c.imagen_url, c.orden
@@ -45,6 +47,10 @@ require __DIR__ . '/includes/header.php';
     <p>Elige una colección, una palabra que describa lo que buscas y tu presupuesto. Te mostramos las coincidencias disponibles en el catálogo.</p>
     <a class="btn" href="<?= h(url('descubrir.php')) ?>">Encontrar mi perfume <span aria-hidden="true">→</span></a>
     <span class="store-discovery-mark" aria-hidden="true">P.</span>
+  </section>
+  <section class="store-section favorites-invitation" aria-labelledby="save-title">
+    <div><p class="store-eyebrow">DESCUBRE HOY. ELIGE A TU RITMO.</p><h2 id="save-title">Una colección que empieza contigo.</h2><p>Guarda lo que te gusta y retómalo en tu próxima visita desde este navegador.</p></div>
+    <a class="store-text-link" href="<?= h(url('favoritos.php')) ?>">Mi colección de favoritos <span aria-hidden="true">♡</span></a>
   </section>
   <section class="store-section" aria-labelledby="latest-title">
     <div class="store-section-heading"><div><p class="store-eyebrow">SIGUE DESCUBRIENDO</p><h2 id="latest-title">Últimas incorporaciones.</h2></div><a class="store-text-link" href="<?= h(url('catalogo.php?stock=1&orden=recientes')) ?>">Ver disponibles <span aria-hidden="true">→</span></a></div>

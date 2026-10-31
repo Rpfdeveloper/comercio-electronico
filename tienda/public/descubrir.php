@@ -7,6 +7,8 @@ $categories = db()->query('SELECT nombre, slug FROM categoria WHERE activa = 1 O
 $filters = catalog_filters([]);
 $error = '';
 $submitted = array_key_exists('buscar', $_GET);
+$pageIndexable = !$submitted && !$_GET;
+$pageCanonical = $pageIndexable ? 'descubrir.php' : null;
 try {
     // Solo preferencias de la guía. Stock y ordenación no son manipulables.
     $filters = catalog_filters(array_intersect_key($_GET, array_flip(['q', 'c', 'max', 'page'])) +

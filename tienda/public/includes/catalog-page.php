@@ -27,11 +27,18 @@ try {
 } catch (OutOfBoundsException $e) {
     http_response_code(404); $error = $e->getMessage();
 }
+$pageTitle = ($category !== null ? 'Perfumes · ' . category_label($category['nombre']) : 'Catálogo de perfumes') .
+    (isset($result) && $result['page'] > 1 ? ' · Página ' . $result['page'] : '');
+$pageDescription = $category !== null ? 'Explora la colección ' . category_label($category['nombre']) . '. Consulta perfumes, capacidades, precios y disponibilidad.' :
+    'Explora el catálogo de perfumes por colección y marca. Consulta cada fragancia y guarda tus favoritas para volver a ellas.';
+$pageIndexable = !$error && $result['total'] > 0 && $filters['q'] === '' && $filters['marca'] === '' &&
+    $filters['min'] === '' && $filters['max'] === '' && $filters['stock'] === '' && $filters['orden'] === 'nombre';
+$pageCanonical = $pageIndexable ? seo_catalog_path($filters) : null;
 require __DIR__ . '/header.php';
 ?>
 <section class="catalog" aria-labelledby="catalog-title">
   <p class="account-eyebrow">CATÁLOGO DE PERFUMES</p>
-  <h2 id="catalog-title"><?= h($title) ?></h2>
+  <h1 id="catalog-title"><?= h($title) ?></h1>
   <?php if ($error !== ''): ?>
     <p class="account-error" role="alert"><?= h($error) ?></p>
     <a href="<?= h(url('catalogo.php')) ?>">Volver al catálogo</a>
@@ -72,16 +79,7 @@ require __DIR__ . '/header.php';
     <?php else: ?>
       <div class="grid catalog-grid">
         <?php foreach ($result['products'] as $product): ?>
-          <article class="card catalog-product">
-            <a href="<?= h(url('producto.php?p=' . rawurlencode($product['slug']))) ?>">
-              <?php if ($product['imagen_principal']): ?><img loading="lazy" src="<?= h($product['imagen_principal']) ?>" alt="<?= h($product['nombre']) ?>"><?php endif; ?>
-              <h3><?= h($product['nombre']) ?></h3>
-            </a>
-            <p class="catalog-brand"><?= h($product['marca']) ?></p>
-            <p><?= h($product['descripcion_corta'] ?? '') ?></p>
-            <?php if ($product['precio_desde'] !== null): ?><div class="price">desde <?= number_format((float)$product['precio_desde'], 2, ',', '.') ?> €</div><?php endif; ?>
-            <span class="catalog-availability <?= $product['disponible'] ? 'available' : '' ?>"><?= $product['disponible'] ? 'Disponible' : 'Agotado' ?></span>
-          </article>
+          <?php require __DIR__ . '/product-card.php'; ?>
         <?php endforeach; ?>
       </div>
       <?php if ($result['pages'] > 1): ?><nav class="catalog-pages" aria-label="Páginas del catálogo">

@@ -6,16 +6,18 @@ Proyecto académico de Comercio Electrónico de la UOC, desarrollado en PHP y My
 
 [Ver el código de la tienda](https://github.com/Rpfdeveloper/comercio-electronico/tree/main/tienda) · [Registro de progreso](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/PROGRESO.md) · [Hoja de ruta](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/HOJA_DE_RUTA.md)
 
-## Último avance: portada y descubrimiento de perfumes
+## Último avance: favoritos y preparación SEO
 
-- Portada adaptable con colecciones, precios y últimas incorporaciones del catálogo.
-- Guía por colección, palabra y presupuesto, con resultados disponibles y precios comprobados.
-- Búsqueda también en la descripción completa de cada perfume.
-- «Contacto próximamente», sin formulario ficticio ni correo personal.
-- Navegación por teclado, movimiento reducido y adaptación de controles con CSS moderno.
-- Pruebas de compatibilidad configuradas para PHP 8.3, 8.4 y 8.5.
+- Colección de hasta 24 favoritos sin cuenta, conservada en este navegador durante 180 días desde el último cambio.
+- Guardar desde catálogo, portada, guía o ficha; retomar con precios y disponibilidad actuales.
+- Diseño adaptable, controles accesibles y funcionamiento sin JavaScript.
+- Títulos y descripciones propios, canónicas, metadatos para compartir y sitemap dinámico.
+- Indexación desactivada hasta configurar y revisar un lanzamiento real; páginas personales y búsquedas internas excluidas.
+- «Contacto próximamente» y catálogo de perfumes conservados.
 
-Validación local: **316 comprobaciones**, 42 archivos PHP sin errores de sintaxis y logs sin avisos. [Estado de GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions). La revisión visual cubre escritorio y marcos de 320, 390 y 768 px; quedan pendientes dispositivos reales y auditoría completa de accesibilidad.
+Validación local: **393 comprobaciones**, 49 archivos PHP sin errores de sintaxis y logs sin avisos. [Estado de GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions). CI para PHP 8.3, 8.4 y 8.5. La inspección visual usa HTML generado por PHP; faltan dispositivos reales y auditoría completa de accesibilidad.
+
+[Funcionamiento, estrategia de retención, SEO y fuentes](docs/RETENCION_SEO.md).
 
 La guía actual usa filtros del catálogo. El asesor con IA es una siguiente fase y todavía no está conectado a un modelo.
 
@@ -23,7 +25,7 @@ La guía actual usa filtros del catálogo. El asesor con IA es una siguiente fas
 
 ## Funcionalidad y siguientes pasos
 
-La tienda incluye catálogo, categorías, fichas, carrito, compra invitada o registrada y administración de pedidos. Las mejoras anteriores incorporaron CSRF, validación de cantidades y variantes, relectura de precios, descuento transaccional de stock y pruebas de compras simultáneas.
+La tienda incluye catálogo, categorías, fichas, favoritos persistentes en el navegador, carrito, compra invitada o registrada y administración de pedidos. Las mejoras anteriores incorporaron CSRF, validación de cantidades y variantes, relectura de precios, descuento transaccional de stock y pruebas de compras simultáneas.
 
 Pendientes principales: verificación de correo, recuperación de contraseña, MFA administrativo, carrito persistente, reservas y pagos en modo de pruebas, envío real de correos y revisión de producción.
 
@@ -43,3 +45,5 @@ La recuperación del 30 de octubre de 2026 verificó 43 archivos: 40 idénticos 
 Definir `TIENDA_DB_PASS`, `TIENDA_ADMIN_PASS` y `TIENDA_AUTH_SECRET` en el entorno del servidor. La aplicación no carga `.env` automáticamente. Mantener `TIENDA_DEBUG=false` fuera de las pruebas. No publicar credenciales, sesiones, logs ni copias de datos.
 
 Para una instalación nueva, adaptar la contraseña de ejemplo del esquema SQL en una copia privada. Para actualizar una base existente, aplicar las migraciones indicadas en la guía de cuentas, sin volver a importar el esquema que recrea tablas. HTTPS y la configuración final del servidor deben revisarse antes de un despliegue público.
+
+SEO: `TIENDA_PUBLIC_URL` y `TIENDA_INDEXABLE` permanecen sin configurar hasta el lanzamiento. [Configuración y límites](docs/RETENCION_SEO.md).

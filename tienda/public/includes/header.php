@@ -20,6 +20,11 @@ if (!empty($_SESSION['cart']) && is_array($_SESSION['cart'])) {
         $cartCount += (int)$item['cantidad'];
     }
 }
+$pageIndexable = ($pageIndexable ?? false) && seo_ready() && http_response_code() < 400;
+$canonical = !empty($pageCanonical) ? seo_absolute($pageCanonical) : '';
+$robots = $pageIndexable ? 'index, follow' : 'noindex, follow';
+header('X-Robots-Tag: ' . $robots);
+header('Cache-Control: no-store, private, max-age=0');
 ?>
 <!doctype html>
 <html lang="es">
@@ -28,11 +33,19 @@ if (!empty($_SESSION['cart']) && is_array($_SESSION['cart'])) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><?= isset($pageTitle) ? h($pageTitle) . ' · ' : '' ?><?= h(APP_NAME) ?></title>
   <meta name="description" content="<?= h($pageDescription ?? 'Explora las colecciones y el catálogo de Perfume Shop. Proyecto en desarrollo.') ?>">
+  <meta name="robots" content="<?= h($robots) ?>">
+  <?php if ($canonical !== ''): ?>
+  <link rel="canonical" href="<?= h($canonical) ?>">
+  <meta property="og:title" content="<?= h(($pageTitle ?? APP_NAME) . ' · ' . APP_NAME) ?>">
+  <meta property="og:description" content="<?= h($pageDescription ?? '') ?>">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="<?= h($canonical) ?>">
+  <?php endif; ?>
   <meta name="theme-color" content="#f8f5f0">
 
   <!-- Hoja de estilos principal de la tienda -->
   <link rel="stylesheet" href="<?= asset('css/style.css?v=1.4') ?>">
-  <link rel="stylesheet" href="<?= asset('css/storefront.css?v=1.0') ?>">
+  <link rel="stylesheet" href="<?= asset('css/storefront.css?v=1.1') ?>">
 </head>
 <body>
 <a class="skip-link" href="#main-content">Saltar al contenido</a>
@@ -65,6 +78,7 @@ if (!empty($_SESSION['cart']) && is_array($_SESSION['cart'])) {
     </div>
 
     <div class="header-actions">
+    <a href="<?= h(url('favoritos.php')) ?>" class="favorites-nav-link">♡ Mis favoritos<?php if (favorites_ids()): ?> <span>(<?= count(favorites_ids()) ?>)</span><?php endif; ?></a>
     <a href="<?= url('cuenta.php') ?>" class="account-nav-link">Mi cuenta</a>
     <!-- DERECHA: BOTÓN CARRITO -->
     <a href="<?= url('carrito.php') ?>" class="cart-button">
@@ -83,3 +97,7 @@ if (!empty($_SESSION['cart']) && is_array($_SESSION['cart'])) {
 
 <!-- Contenedor principal -->
 <main id="main-content" class="container" tabindex="-1">
+<?php if (isset($_SESSION['favorites_notice'])): ?>
+  <div class="favorites-notice" role="status" tabindex="-1" data-focus-on-load><?= h($_SESSION['favorites_notice']) ?> <a href="<?= h(url('favoritos.php')) ?>">Ver mis favoritos</a></div>
+  <?php unset($_SESSION['favorites_notice']); ?>
+<?php endif; ?>

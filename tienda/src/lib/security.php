@@ -1,6 +1,9 @@
 <?php
 declare(strict_types=1);
 
+// Las páginas públicas revisadas pueden sustituirlo al preparar su cabecera.
+header('X-Robots-Tag: noindex, nofollow');
+
 // Todas las entradas comparten la misma configuración y validación de sesión.
 if (session_status() === PHP_SESSION_NONE) {
     ini_set('session.use_strict_mode', '1');

@@ -2,6 +2,20 @@
 
 Registro técnico de cambios verificables en `develop` y de entregas integradas en `main`. La rama `original` conserva la entrega recuperada. El proyecto sigue siendo un prototipo: no procesa pagos ni envía correos reales.
 
+## Favoritos y preparación SEO (31 de octubre de 2026)
+
+Colección personal de 24 perfumes sin registro, conservada 180 días desde el último cambio en ese navegador. Guardado desde todas las superficies del catálogo, retorno con filtros, retirada y vaciado, precios/stock releídos y ocultación de productos o categorías retirados. Funciona sin JavaScript; no reserva stock ni sincroniza dispositivos.
+
+Títulos y descripciones por ficha/categoría, h1, navegación de ruta, canónicas y Open Graph. Sitemap XML con categorías, paginación y productos activos. Noindex por defecto y activación explícita con URL HTTPS configurada y depuración desactivada; búsquedas, favoritos, cuenta y administración permanecen excluidos.
+
+**393 comprobaciones locales correctas**, con PHP 8.3.6 y MariaDB 10.11.14: 77 nuevas y 316 de regresión. Sintaxis, revisión de patrones sensibles y logs PHP correctos. CI configurada para PHP 8.3, 8.4 y 8.5 con MariaDB 11.4. Sin migraciones, nuevos servicios, correos ni pagos reales.
+
+Revisión visual de favoritos vacíos, colección guardada y ficha en escritorio y marcos de 320, 390 y 768 px, sin desbordamiento horizontal ni imágenes rotas. Tarjetas de favoritos a una columna en móvil.
+
+Copia previa verificada: `backup/2026-10-31-antes-favoritos-seo-4f080bd`, en `4f080bdc7b03e22f799eda9b9131616f2abb6e6a`. El lanzamiento público, Search Console, marcado comercial de productos y asesor con IA siguen pendientes.
+
+[Decisiones, límites, fuentes y siguientes medidas de fidelización](RETENCION_SEO.md).
+
 ## Portada y guía de perfumes (31 de octubre de 2026)
 
 Se incorpora una portada con colecciones dinámicas, últimas incorporaciones disponibles y acceso a una guía por colección, palabra y presupuesto. La búsqueda incluye la descripción larga; conserva precios de variantes, disponibilidad y paginación del catálogo. El contacto queda como «Contacto próximamente».
