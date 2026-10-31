@@ -15,6 +15,7 @@ $orders = $pdo->prepare('SELECT p.id,p.fecha_pedido,p.total,e.descripcion AS est
     WHERE p.id_cliente=? ORDER BY p.fecha_pedido DESC,p.id DESC LIMIT 20 OFFSET ' . $offset);
 $orders->execute([$customer['id']]);
 $orders = $orders->fetchAll();
+$pageTitle = 'Mi cuenta';
 require_once __DIR__ . '/includes/header.php';
 ?>
 <section class="account-card" aria-labelledby="account-title">
@@ -23,6 +24,10 @@ require_once __DIR__ . '/includes/header.php';
     <form action="salir.php" method="post"><?= csrf_field() ?><button type="submit" class="account-secondary">Cerrar sesión</button></form>
   </div>
   <p><?= h($customer['email']) ?></p>
+  <section class="account-favorites" aria-labelledby="account-favorites-title">
+    <div><p class="store-eyebrow">TU COLECCIÓN, CONTIGO</p><h3 id="account-favorites-title">Mis favoritos</h3><p>Consulta los perfumes guardados en tu cuenta desde cualquier dispositivo en el que inicies sesión.</p></div>
+    <a class="btn" href="favoritos.php">Ver mis favoritos (<?= count($favoritesContext['ids']) ?>)</a>
+  </section>
   <h3>Mis pedidos</h3>
   <p class="account-help">Aquí aparecen las compras realizadas con tu cuenta. Las compras como invitado se mantienen separadas.</p>
   <?php if (!$orders): ?>

@@ -43,7 +43,7 @@ require_once __DIR__ . '/includes/header.php';
 <section class="account-card account-login" aria-labelledby="account-title">
   <p class="account-eyebrow">TU ESPACIO PERSONAL</p>
   <h2 id="account-title">Accede a tu cuenta</h2>
-  <p>Consulta los pedidos realizados con tu cuenta de cliente.</p>
+  <p>Consulta tus pedidos y recupera los favoritos guardados en tu cuenta.</p>
   <?php if ($error !== ''): ?><p class="account-error" role="alert"><?= h($error) ?></p><?php endif; ?>
   <form method="post" action="acceso.php" class="account-form">
     <?= csrf_field() ?>

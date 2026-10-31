@@ -104,3 +104,15 @@
 .product-breadcrumb { margin:1.5rem 0; font-size:.85rem; line-height:1.8; overflow-wrap:anywhere; }
 .catalog h1 { font-size:clamp(1.7rem,4vw,2.2rem); }
 @media(max-width:640px) { .favorites-page .store-product-grid { grid-template-columns:1fr; } }
+.favorites-scope { display:inline-flex; align-items:center; gap:.5rem; background:#f0f5e9; color:#365421; padding:.55rem .85rem; border-radius:6px; font-size:.85rem; font-weight:600; }
+.favorites-merge { padding:clamp(1.25rem,3vw,2rem); margin:1rem 0 2rem; border:1px solid #d9c5ad; border-radius:12px; background:var(--store-paper); }
+.favorites-merge h2 { font:400 clamp(1.6rem,3vw,2rem)/1.25 Georgia,serif; }
+.favorites-merge p { line-height:1.7; max-width:72ch; }
+.favorites-merge .store-eyebrow { margin-bottom:.5rem; }
+.favorites-merge form { margin-top:1.5rem; }
+.account-favorites { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; background:var(--store-paper); padding:1.25rem; margin:1.5rem 0; border-radius:10px; }
+.account-favorites .store-eyebrow { margin-bottom:.4rem; }
+.account-favorites h3 { margin-top:0; }
+.account-favorites p { max-width:55ch; line-height:1.7; }
+.account-favorites .btn { background:var(--store-accent); color:#fff; border-radius:6px; min-height:48px; padding:.8rem 1.25rem; }
+.account-favorites .btn:hover { background:#803000; box-shadow:none; }

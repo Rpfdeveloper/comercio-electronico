@@ -29,6 +29,7 @@ SET FOREIGN_KEY_CHECKS = 0;
  * ELIMINAR TABLAS SI EXISTEN
  * ============================================================ */
 
+DROP TABLE IF EXISTS `cliente_favorito`;
 DROP TABLE IF EXISTS `acceso_intento`;
 DROP TABLE IF EXISTS `linea_pedido`;
 DROP TABLE IF EXISTS `producto_imagen`;
