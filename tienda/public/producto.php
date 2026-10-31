@@ -34,28 +34,44 @@ require __DIR__ . '/includes/header.php';
 ?>
 <p><a href="<?= h(url('catalogo.php')) ?>">← Volver al catálogo</a></p>
 <nav class="product-breadcrumb" aria-label="Ruta de navegación"><a href="<?= h(url('index.php')) ?>">Inicio</a><span aria-hidden="true"> / </span><a href="<?= h(url('categoria.php?c=' . rawurlencode($prod['categoria_slug']))) ?>"><?= h(category_label($prod['categoria'])) ?></a><span aria-hidden="true"> / </span><span aria-current="page"><?= h($prod['nombre']) ?></span></nav>
-<article class="card product-detail">
-  <p class="store-eyebrow"><?= h($prod['marca']) ?></p>
-  <h1><?= h($prod['nombre']) ?></h1>
-  <?php if ($prod['imagen_principal']): ?><img src="<?= h($prod['imagen_principal']) ?>" alt="<?= h($prod['nombre']) ?>" style="max-width:280px;height:auto"><?php endif; ?>
-  <p><?= nl2br(h($prod['descripcion_larga'] ?? '')) ?></p>
-  <?php if (!$available): ?><p class="account-error" role="status">Agotado. Este perfume no tiene unidades disponibles.</p><?php endif; ?>
-  <?php $favoriteProduct = $prod; require __DIR__ . '/includes/favorite-button.php'; ?>
-  <form method="post" action="carrito.php" class="account-form">
-    <?= csrf_field() ?>
-    <input type="hidden" name="action" value="add">
-    <input type="hidden" name="id_producto" value="<?= (int)$prod['id'] ?>">
-    <?php if ($vars): ?>
-      <label for="var">Capacidad</label>
-      <select id="var" name="id_variante" <?= $available ? '' : 'disabled' ?>>
-        <?php foreach ($vars as $v): ?><option value="<?= (int)$v['id'] ?>" <?= $v['stock'] > 0 ? '' : 'disabled' ?>><?= (int)$v['capacidad_ml'] ?> ml — <?= number_format((float)$v['precio'], 2, ',', '.') ?> €<?= $v['stock'] > 0 ? '' : ' — Agotado' ?></option><?php endforeach; ?>
-      </select>
-    <?php elseif (!$prod['variantes']): ?>
-      <div class="price"><?= number_format((float)$prod['precio_base'], 2, ',', '.') ?> €</div>
-    <?php endif; ?>
-    <label for="qty">Cantidad</label>
-    <input type="number" id="qty" name="cantidad" min="1" max="999" value="1" <?= $available ? '' : 'disabled' ?>>
-    <button type="submit" <?= $available ? '' : 'disabled' ?>>Añadir al carrito</button>
-  </form>
+<?php
+$selectedFormat = $vars[0] ?? null;
+$shownPrice = $selectedFormat ? $selectedFormat['precio'] : (!$prod['variantes'] ? $prod['precio_base'] : null);
+$shownStock = $selectedFormat ? (int)$selectedFormat['stock'] : (!$prod['variantes'] ? (int)$prod['stock'] : 0);
+?>
+<article class="product-showcase" aria-labelledby="product-title">
+  <div class="product-visual">
+    <?php if ($prod['imagen_principal']): ?><img src="<?= h($prod['imagen_principal']) ?>" alt="<?= h($prod['nombre']) ?>" width="640" height="640" fetchpriority="high">
+    <?php else: ?><div class="product-image-placeholder" role="img" aria-label="Imagen del perfume pendiente"><span>Imagen pendiente</span></div><?php endif; ?>
+  </div>
+  <div class="product-information">
+    <p class="store-eyebrow"><?= h($prod['marca']) ?> · <?= h(category_label($prod['categoria'])) ?></p>
+    <h1 id="product-title"><?= h($prod['nombre']) ?></h1>
+    <?php if ($prod['descripcion_corta']): ?><p class="product-lead"><?= h($prod['descripcion_corta']) ?></p><?php endif; ?>
+    <?php if ($shownPrice !== null): ?><p class="product-display-price" data-product-price aria-live="polite"><?= money_eur((float)$shownPrice) ?></p><p class="store-caption">Precio antes de IVA. Consulta el total en el carrito.</p><?php endif; ?>
+    <?php if (!$available): ?><p class="account-error" role="status">Agotado. Este perfume no tiene unidades disponibles.</p><?php else: ?><p class="product-stock" data-product-stock><?= $shownStock ?> unidades disponibles en este formato.</p><?php endif; ?>
+    <form method="post" action="carrito.php" class="account-form product-purchase" data-product-purchase>
+      <?= csrf_field() ?>
+      <input type="hidden" name="action" value="add">
+      <input type="hidden" name="id_producto" value="<?= (int)$prod['id'] ?>">
+      <?php if ($vars): ?>
+        <label for="var">Capacidad</label>
+        <select id="var" name="id_variante" <?= $available ? '' : 'disabled' ?> data-product-variant>
+          <?php foreach ($vars as $v): ?><option value="<?= (int)$v['id'] ?>" data-price="<?= h(money_eur((float)$v['precio'])) ?>" data-stock="<?= (int)$v['stock'] ?>" <?= $v['stock'] > 0 ? '' : 'disabled' ?>><?= (int)$v['capacidad_ml'] ?> ml — <?= number_format((float)$v['precio'], 2, ',', '.') ?> €<?= $v['stock'] > 0 ? '' : ' — Agotado' ?></option><?php endforeach; ?>
+        </select>
+      <?php endif; ?>
+      <label for="qty">Cantidad</label>
+      <input type="number" id="qty" name="cantidad" min="1" max="999" value="1" <?= $available ? '' : 'disabled' ?>>
+      <button type="submit" <?= $available ? '' : 'disabled' ?>>Añadir al carrito <span aria-hidden="true">→</span></button>
+    </form>
+    <?php $favoriteProduct = $prod; require __DIR__ . '/includes/favorite-button.php'; ?>
+    <p class="store-caption">Guardar en favoritos te permite volver a esta ficha. No reserva existencias.</p>
+    <div class="product-context"><span>Catálogo del proyecto</span><span>Sin pagos reales</span></div>
+  </div>
+  <section class="product-description" aria-labelledby="description-title"><h2 id="description-title">Conoce este perfume.</h2>
+    <?php if ($prod['descripcion_larga']): ?><p><?= nl2br(h($prod['descripcion_larga'])) ?></p><?php else: ?><p>La descripción completa está pendiente. No hay más información publicada sobre esta fragancia.</p><?php endif; ?>
+  </section>
+  <aside class="product-help"><h2>Elige a tu ritmo.</h2><p>Explora el catálogo con una colección, una palabra o tu presupuesto.</p><a href="<?= h(url('descubrir.php')) ?>">Abrir el asesor de perfumes →</a></aside>
 </article>
+<script src="<?= asset('js/product.js?v=1') ?>" defer></script>
 <?php require __DIR__ . '/includes/footer.php'; ?>

@@ -39,7 +39,7 @@ header('Cache-Control: no-store, private, max-age=0');
   <!-- Hoja de estilos principal de la tienda -->
   <link rel="stylesheet" href="<?= asset('css/style.css?v=1.4') ?>">
   <link rel="stylesheet" href="<?= asset('css/storefront.css?v=1.2') ?>">
-  <link rel="stylesheet" href="<?= asset('css/canva-theme.css?v=2') ?>">
+  <link rel="stylesheet" href="<?= asset('css/canva-theme.css?v=3') ?>">
 </head>
 <body>
 <a class="skip-link" href="#main-content">Saltar al contenido</a>

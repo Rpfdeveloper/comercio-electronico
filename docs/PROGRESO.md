@@ -2,6 +2,16 @@
 
 Registro técnico de cambios verificables en `develop` y de entregas integradas en `main`. La rama `original` conserva la entrega recuperada. El proyecto sigue siendo un prototipo: no procesa pagos ni envía correos reales.
 
+## Gestión del catálogo y fichas renovadas (31 de octubre de 2026)
+
+Nuevo resumen administrativo, listado del catálogo y formularios de alta, edición y formatos. Las altas son inactivas; se pueden gestionar descripciones, imágenes existentes, precios, ofertas, existencias y visibilidad. Los enlaces y pedidos históricos se conservan. El guardado es transaccional junto con su historial; detecta formularios antiguos y compite correctamente con otras ediciones o compras. Inventario enlaza con el editor.
+
+La ficha pública extiende la adaptación de Canva y actualiza precio y stock al elegir formato. Se incorpora ayuda, enlazada en el pie y en el sitemap de lanzamiento, y un estado honesto para imágenes pendientes. Se explicita UTF-8 en el esquema de instalación para preservar tildes en los ejemplos. Sin nuevos proveedores, dependencias, pagos, correo ni IA conectada.
+
+Validación local: **630 comprobaciones correctas**, **64 PHP** con sintaxis válida, JavaScript válido y revisión de patrones sensibles; log PHP sin avisos. Incluye 75 comprobaciones de gestión del catálogo, fallo del historial con reversión y dos carreras transaccionales reales. Revisión en escritorio y marcos de 320/390/768 px de ficha, ayuda, resumen, listado, edición, alta y formato; sin desbordamiento horizontal. Las muestras administrativas usan datos ficticios y formularios desactivados; las escrituras se prueban por HTTP.
+
+Copia previa de código verificada: `backup/2026-10-31-antes-gestion-catalogo-d4e3d3c`, sobre `d4e3d3c67f36f5e4f424c6430bfd12cea586c63e`. Requiere **migración aditiva 004 antes de desplegar el editor**, sin reiniciar la base existente. [Uso, actualización y límites](GESTION_CATALOGO.md).
+
 ## Asesor por pasos en Canva y web (31 de octubre de 2026)
 
 Actualizado el Canva Code existente y trasladado su recorrido a la tienda: colección, palabra y presupuesto con progreso, ejemplos, resumen final, Atrás y modo completo sin perder valores. La web consulta el catálogo real; Canva conserva un estado de diseño explícito. Navegación del diseño corregida de «Asesor IA» a «Asesor», sin simular integración con un modelo.

@@ -1,7 +1,7 @@
 <?php // $product procede de catalog_results; compartido por portada y guía. ?>
 <article class="card catalog-product">
   <a href="<?= h(url('producto.php?p=' . rawurlencode($product['slug']))) ?>">
-    <?php if ($product['imagen_principal']): ?><img loading="lazy" decoding="async" width="640" height="427" src="<?= h($product['imagen_principal']) ?>" alt="<?= h($product['nombre']) ?>"><?php endif; ?>
+    <?php if ($product['imagen_principal']): ?><img loading="lazy" decoding="async" width="640" height="427" src="<?= h($product['imagen_principal']) ?>" alt="<?= h($product['nombre']) ?>"><?php else: ?><div class="product-image-placeholder" role="img" aria-label="Imagen del perfume pendiente"><span>Imagen pendiente</span></div><?php endif; ?>
     <h3><?= h($product['nombre']) ?></h3>
   </a>
   <p class="catalog-brand"><?= h($product['marca']) ?></p>

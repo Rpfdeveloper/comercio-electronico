@@ -51,7 +51,7 @@ try {
     $body=$b->request('public/index.php?utm_source=prueba');
     check($b->headers['x-robots-tag']==='index, follow' && str_contains($body,'rel="canonical" href="https://shop.example.invalid/tienda/public/index.php"'), 'portada lista usa canonica sin seguimiento');
     $body=$b->request('public/producto.php?p='.$prefix.'-0');
-    check(str_contains($body,'<title>Perfume SEO 0 · Marca SEO') && str_contains($body,'<h1>Perfume SEO 0</h1>'), 'ficha tiene titulo y encabezado propios');
+    check(str_contains($body,'<title>Perfume SEO 0 · Marca SEO') && preg_match('/<h1(?:\s[^>]*)?>Perfume SEO 0<\/h1>/', $body) === 1, 'ficha tiene titulo y encabezado propios');
     check(str_contains($body,'name="description" content="Perfume SEO 0. Descripción floral única."'), 'ficha tiene descripcion propia sin HTML');
     check(str_contains($body,'property="og:url"') && $b->headers['x-robots-tag']==='index, follow', 'ficha publica preparada para compartir e indexar');
     $body=$b->request('public/categoria.php?c='.$prefix.'-1&page=2');

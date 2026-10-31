@@ -4,9 +4,9 @@ El objetivo es evolucionar esta práctica académica, mediante mejoras increment
 
 Estado actual: prototipo funcional en desarrollo. Todavía no está preparado para operar con clientes ni cobrar pagos reales.
 
-## Nueva entrega: consulta administrativa de pedidos
+## Nueva entrega: gestión del catálogo y fichas renovadas
 
-Búsqueda, estado, fechas, resumen, ordenación y paginación privada, con interfaz adaptable y estados fieles a la base de datos. 502 comprobaciones locales correctas. Sin migración nueva ni cambios sobre los pedidos. [Uso y límites](ADMINISTRACION.md).
+Resumen administrativo, altas inactivas, edición de fichas, selección de imágenes existentes, precios, ofertas, formatos y stock con historial transaccional. Fichas adaptadas al estilo de Canva y página de ayuda. **630 comprobaciones locales correctas**. Requiere la migración aditiva 004. [Uso y límites](GESTION_CATALOGO.md).
 
 ## Retención y captación — 31 de octubre de 2026
 
@@ -59,7 +59,9 @@ Búsqueda, estado, fechas, resumen, ordenación y paginación privada, con inter
 
 ## 3. Operación comercial
 - [x] Consulta administrativa de pedidos con búsqueda, filtros, resumen y paginación.
-- [ ] Edición administrativa de productos, variantes, imágenes, categorías, stock y estados de pedidos.
+- [x] Alta y edición de perfumes, formatos, selección de imágenes existentes, precios y stock con historial.
+- [x] Inventario filtrable y resumen operativo.
+- [ ] Subida de imágenes, gestión de marcas/categorías y edición de estados de pedidos.
 - [ ] Integración de pagos en modo de pruebas; webhooks verificados e idempotencia.
 - [ ] Confirmaciones por correo realmente enviadas y registradas.
 - [ ] Envíos, cancelaciones, devoluciones y reembolsos.

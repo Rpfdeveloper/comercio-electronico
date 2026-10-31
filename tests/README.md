@@ -1,6 +1,6 @@
 # Pruebas de la tienda
 
-Estado actual: 41 comprobaciones de compra, 45 de cuenta/privacidad, 48 de administración, 73 de catálogo, 47 de checkout, 30 de portada/descubrimiento, 32 de concurrencia, 38 de favoritos invitados, 39 de SEO, 45 de favoritos de cuenta y 64 de consulta administrativa: **502 por entorno**, más sintaxis y revisión de archivos sensibles. Validación local de esta iteración con PHP 8.3.6 y MariaDB 10.11.14. CI configurada para PHP 8.3, 8.4 y 8.5; los resultados anteriores se conservan como referencia.
+Estado actual: **630 comprobaciones por entorno**, distribuidas en 13 suites: compra (41), cuenta/privacidad (45), acceso administrativo (48), consulta de pedidos (64), inventario (50), gestión del catálogo (75), catálogo público (73), checkout (47), portada/descubrimiento/ayuda (33), concurrencia de compra (32), favoritos invitados (38), favoritos de cuenta (45) y SEO (39). Además se verifica la sintaxis de 64 PHP, el log y los patrones de archivos sensibles. Validación local con PHP 8.3.6 y MariaDB 10.11.14; CI configurada para PHP 8.3, 8.4 y 8.5.
 
 Esta suite usa peticiones HTTP reales, sesiones independientes y una base MariaDB/MySQL desechable cuyo nombre termina en `_test`. No utiliza pagos ni correo reales.
 
@@ -45,6 +45,7 @@ php tests/integration.php
 php tests/customer.php
 php tests/admin.php
 php tests/admin_orders.php
+php tests/admin_inventory.php
 php tests/catalog.php
 php tests/checkout.php
 php tests/storefront.php
@@ -76,7 +77,9 @@ php tests/integration.php
 php tests/customer.php
 php tests/admin.php
 php tests/admin_orders.php
+php tests/admin_inventory.php
 php tests/catalog.php
+php tests/admin_catalog.php
 php tests/concurrency.php
 python3 tests/privacy.py
 ```
@@ -95,14 +98,14 @@ Utiliza correos `example.invalid`, restaura el stock y elimina sus pedidos y el 
 
 ## GitHub Actions
 
-`.github/workflows/tienda-tests.yml` ejecuta las diez suites cuando cambian la aplicación, las pruebas o el workflow en `develop`, `main` o ramas `mejora/**`, y en pull requests hacia esas ramas. La matriz prueba PHP 8.3, 8.4 y 8.5 con MariaDB 11.4 en una base desechable por job. También comprueba la sintaxis de todos los PHP y rechaza avisos, errores y deprecaciones del log.
+`.github/workflows/tienda-tests.yml` ejecuta las trece suites cuando cambian la aplicación, las pruebas o el workflow en `develop`, `main` o ramas `mejora/**`, y en pull requests hacia esas ramas. La matriz prueba PHP 8.3, 8.4 y 8.5 con MariaDB 11.4 en una base desechable por job. También comprueba la sintaxis de todos los PHP y rechaza avisos, errores y deprecaciones del log.
 
 El workflow solo tiene permisos de lectura del repositorio; sus contraseñas ficticias sirven exclusivamente para los servicios temporales de CI. Las acciones se fijan a commits concretos. Resultado verificado el 30 de octubre de 2026: **41 comprobaciones de integración + 29 de concurrencia por versión de PHP**, ambas ejecuciones correctas; 21 archivos PHP sin errores de sintaxis y logs sin avisos. [Ejecución verificada](https://github.com/Rpfdeveloper/comercio-electronico/actions/runs/41126154248). Los resultados posteriores aparecen en [GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions).
 
 Referencias técnicas: [servidor integrado de PHP](https://www.php.net/manual/en/features.commandline.webserver.php) y [bloqueos observables en MariaDB](https://mariadb.com/docs/server/reference/system-tables/information-schema/information-schema-tables/information-schema-innodb-tables/information-schema-innodb_lock_waits-table).
 
 ## Variables de la aplicación
-`TIENDA_DB_HOST`, `TIENDA_DB_PORT`, `TIENDA_DB_NAME`, `TIENDA_DB_USER`, `TIENDA_DB_PASS`, `TIENDA_ADMIN_PASS`, `TIENDA_AUTH_SECRET` y `TIENDA_DEBUG` se leen del entorno del proceso PHP. No se carga automáticamente un archivo `.env`. La depuración está desactivada por defecto. Servidor y suites deben compartir `TIENDA_AUTH_SECRET`; para la cuenta y sus favoritos se requieren las migraciones 002 y 003, aplicadas por `prepare_database.php`.
+`TIENDA_DB_HOST`, `TIENDA_DB_PORT`, `TIENDA_DB_NAME`, `TIENDA_DB_USER`, `TIENDA_DB_PASS`, `TIENDA_ADMIN_PASS`, `TIENDA_AUTH_SECRET` y `TIENDA_DEBUG` se leen del entorno del proceso PHP. No se carga automáticamente un archivo `.env`. La depuración está desactivada por defecto. Servidor y suites deben compartir `TIENDA_AUTH_SECRET`; se requieren las migraciones 001–004, aplicadas por `prepare_database.php`.
 
 ## Cuenta y privacidad
 
@@ -133,7 +136,7 @@ La suite de concurrencia retira una categoría mientras dos confirmaciones ya ha
 
 ## Portada y descubrimiento
 
-`php tests/storefront.php` añade 30 comprobaciones HTTP sobre portada, colecciones, precios de variantes, disponibilidad, búsqueda en descripción larga, entradas malformadas, escape HTML, estados vacíos y paginación. Prepara y elimina fixtures; modifica temporalmente categorías solo en la base desechable y restaura su estado. No ejecutar suites en paralelo sobre la misma base.
+`php tests/storefront.php` incluye 33 comprobaciones HTTP sobre portada, colecciones, precios de variantes, disponibilidad, búsqueda en descripción larga, entradas malformadas, escape HTML, estados vacíos y paginación. Prepara y elimina fixtures; modifica temporalmente categorías solo en la base desechable y restaura su estado. No ejecutar suites en paralelo sobre la misma base.
 
 La CI incluye PHP 8.5, además de 8.3 y 8.4. Se libera el objeto cURL sin la llamada obsoleta a `curl_close()`. [Detalles y límites de esta entrega](../docs/DESCUBRIMIENTO.md).
 
@@ -154,3 +157,12 @@ Comprueba unión elegida, identidad obtenida de la sesión, acceso/modificación
 ## Consulta administrativa de pedidos
 
 `tests/admin_orders.php` incorpora 64 comprobaciones HTTP sobre 30 pedidos ficticios y un estado personalizado temporal. Comprueba orden y paginación estable, búsqueda por número/nombre/correo, caracteres literales, resumen de todo el resultado, estados, fechas inclusivas, filtros combinados, retorno desde el detalle, no-store/noindex/no-referrer, entradas malformadas, SQL/XSS y conservación de los registros. Elimina sus pedidos, líneas y estado temporal al finalizar. Se ejecuta sobre la misma base local desechable que las demás suites; no prepara datos de producción. La revisión visual utiliza muestras separadas y no demuestra funcionamiento de formularios: ese comportamiento lo verifican las peticiones HTTP.
+
+
+## Gestión administrativa del catálogo
+
+`tests/admin_catalog.php` comprueba altas inactivas, edición, formatos, precios, ofertas, existencias, historial, conservación de pedidos y del enlace público, acceso y CSRF, errores 404/409/422, duplicados, Unicode, SQL/XSS, datos malformados y reversión completa si falla el historial. Repite la migración aditiva y comprueba dos carreras reales: edición contra edición y edición contra compra.
+
+Requiere Linux/macOS con al menos dos workers PHP y una cuenta de pruebas con PROCESS y TRIGGER, como favoritos de cuenta. No añadirla a un servidor secuencial de Windows: usar WSL o CI. Las barreras observan dos transacciones esperando el mismo producto; no es una prueba de carga. La cuenta de aplicación no necesita esos permisos. Limpia sus fixtures y trigger al terminar, incluso si falla; ejecutar secuencialmente sobre la base desechable.
+
+La revisión visual de las pantallas administrativas usa HTML obtenido mediante peticiones autenticadas a esa base, con datos ficticios y formularios desactivados. Las escrituras se comprueban por HTTP; esas muestras visuales no se publican como páginas de la tienda.

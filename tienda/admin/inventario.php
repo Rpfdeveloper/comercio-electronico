@@ -52,7 +52,7 @@ admin_page_start('Inventario', true, 'inventario');
 <thead><tr><th scope="col">Perfume</th><th scope="col">Formato / SKU</th><th scope="col">Precio</th><th scope="col">Unidades</th><th scope="col">Existencias</th><th scope="col">En tienda</th></tr></thead><tbody>
 <?php foreach ($result['items'] as $item): [$stockLabel, $stockClass] = admin_inventory_stock($item['existencias']); ?>
 <tr data-reference="<?= (int)$item['producto_id'] ?>-<?= (int)$item['variante_id'] ?>">
-  <td data-label="Perfume"><strong><?= h($item['nombre']) ?></strong><small><?= h($item['marca']) ?> · <?= h($item['categoria']) ?></small></td>
+  <td data-label="Perfume"><strong><a href="producto.php?id=<?= (int)$item['producto_id'] ?>"><?= h($item['nombre']) ?></a></strong><small><?= h($item['marca']) ?> · <?= h($item['categoria']) ?></small></td>
   <td data-label="Formato / SKU"><strong><?= $item['variante_id'] === null ? 'Formato base' : (int)$item['capacidad_ml'] . ' ml' ?></strong><small><?= $item['sku'] === null || $item['sku'] === '' ? 'Sin SKU' : h($item['sku']) ?></small></td>
   <td data-label="Precio"><?= h(money_eur((float)$item['precio'])) ?></td>
   <td data-label="Unidades"><strong><?= $item['existencias'] === null ? 'Sin dato' : (int)$item['existencias'] ?></strong></td>
@@ -65,6 +65,6 @@ admin_page_start('Inventario', true, 'inventario');
 <?php if ($result['page'] > 1): ?><a class="button secondary" rel="prev" href="<?= h(admin_inventory_url($filters, $result['page'] - 1)) ?>">← Anterior</a><?php endif; ?>
 <?php if ($result['page'] < $result['pages']): ?><a class="button secondary" rel="next" href="<?= h(admin_inventory_url($filters, $result['page'] + 1)) ?>">Siguiente →</a><?php endif; ?>
 </div></nav>
-<p class="muted inventory-note">Cada referencia es un formato del perfume. El resumen abarca todos los resultados filtrados, incluidas las referencias inactivas cuando se muestran. «Activa» requiere producto, categoría y variante activos; no garantiza existencias. Esta pantalla es de consulta.</p>
+<p class="muted inventory-note">Cada referencia es un formato del perfume. El resumen abarca todos los resultados filtrados, incluidas las referencias inactivas cuando se muestran. «Activa» requiere producto, categoría y variante activos; no garantiza existencias. Abre el nombre de un perfume para editar su ficha y sus formatos.</p>
 <?php endif; ?>
 <?php admin_page_end(); ?>
