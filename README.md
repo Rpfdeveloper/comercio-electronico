@@ -6,18 +6,19 @@ Proyecto académico de Comercio Electrónico de la UOC, desarrollado en PHP y My
 
 [Ver el código de la tienda](https://github.com/Rpfdeveloper/comercio-electronico/tree/main/tienda) · [Registro de progreso](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/PROGRESO.md) · [Hoja de ruta](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/HOJA_DE_RUTA.md)
 
-## Último avance: catálogo y validación de categorías
+## Último avance: carrito y compra clara
 
-- Búsqueda por nombre, marca o descripción; filtros por categoría, marca, precio y disponibilidad.
-- Ordenación por nombre, precio o incorporación reciente; doce perfumes por página conservando filtros.
-- Precios «desde» basados en capacidades disponibles, ofertas coherentes con el carrito y etiquetas de agotado.
-- Fichas que ocultan productos inactivos y evitan seleccionar capacidades agotadas.
-- Formularios sin dependencia de JavaScript, controles etiquetados y estilos adaptables.
-- Las categorías retiradas bloquean altas al carrito y confirmaciones, incluso durante compras simultáneas.
+- Las cantidades se guardan y validan al pulsar «Continuar con la compra».
+- Desglose de productos, IVA, envío y total coherente desde el carrito hasta el pedido.
+- Formulario con autocompletado, errores por campo y enlaces para corregirlos, sin perder los datos válidos.
+- Compra como invitado o con cuenta, con controles de contraseña y validación de longitudes Unicode.
+- Diseño revisado en escritorio y marcos de 320, 390 y 768 px, conservando las protecciones de stock y cuentas.
 
-Validación: **239 comprobaciones por entorno**: 41 de compra, 45 de cuenta/privacidad, 48 de administración, 73 de catálogo y 32 de concurrencia. [Consultar la ejecución de GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions/runs/41145205094), con PHP 8.3 y 8.4 y MariaDB 11.4. Los 35 archivos PHP pasan sintaxis y los logs no presentan avisos PHP. Las pruebas se ejecutan también en ramas de mejora antes de integrar.
+Validación: **286 comprobaciones por entorno**, incluidas 47 nuevas de checkout. [GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions/runs/41151317474) pasa con PHP 8.3 y 8.4 y MariaDB 11.4; 39 archivos PHP sin errores de sintaxis y logs sin avisos. [Ver cambios en el PR #2](https://github.com/Rpfdeveloper/comercio-electronico/pull/2).
 
-[Uso y límites del catálogo](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/CATALOGO.md) · [Acceso administrativo](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/ADMINISTRACION.md) · [Cuentas de clientes](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/docs/CUENTAS_CLIENTE.md) · [Ejecutar las pruebas](https://github.com/Rpfdeveloper/comercio-electronico/blob/develop/tests/README.md)
+![Carrito con total desglosado](docs/capturas/carrito-20261031.jpg)
+
+[Carrito y checkout](docs/COMPRA.md) · [Catálogo y filtros](docs/CATALOGO.md) · [Administración](docs/ADMINISTRACION.md) · [Cuentas de clientes](docs/CUENTAS_CLIENTE.md) · [Ejecutar las pruebas](tests/README.md)
 
 ## Funcionalidad y siguientes pasos
 
@@ -32,7 +33,7 @@ La primera integración en `main` se realizó mediante el [PR #1](https://github
 - `develop`: preparación y comprobación de las siguientes mejoras.
 - `main`: tienda, pruebas y documentación de las entregas integradas mediante pull request.
 - `original`: entrega académica recuperada, conservada como referencia.
-- `backup/2026-10-31-*`: copias verificadas de `main` y `develop` previas a la primera integración.
+- `backup/2026-10-31-*`: copias verificadas antes de cada integración. La mejora de checkout conserva el estado anterior en `backup/2026-10-31-antes-checkout-e19ae30`.
 
 La recuperación del 30 de octubre de 2026 verificó 43 archivos: 40 idénticos a la entrega y tres ajustados para retirar contraseñas incrustadas. Las 24 imágenes se conservaron sin compresión ni cambios. [Historial de recuperación](https://github.com/Rpfdeveloper/comercio-electronico/commits/original/).
 
