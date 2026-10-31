@@ -1,6 +1,6 @@
 # Pruebas de la tienda
 
-Estado actual: 41 comprobaciones de compra, 45 de cuenta/privacidad, 48 de administración, 73 de catálogo y 32 de concurrencia: **239 por entorno**, más sintaxis y revisión de archivos sensibles. Validación local de esta iteración con PHP 8.3.6 y MariaDB 10.11.14. Los resultados anteriores se conservan más abajo como referencia.
+Estado actual: 41 comprobaciones de compra, 45 de cuenta/privacidad, 48 de administración, 73 de catálogo, 47 de checkout y 32 de concurrencia: **286 por entorno**, más sintaxis y revisión de archivos sensibles. Validación local de esta iteración con PHP 8.3.6 y MariaDB 10.11.14. Los resultados anteriores se conservan más abajo como referencia.
 
 Esta suite usa peticiones HTTP reales, sesiones independientes y una base MariaDB/MySQL desechable cuyo nombre termina en `_test`. No utiliza pagos ni correo reales.
 
@@ -45,6 +45,7 @@ php tests/integration.php
 php tests/customer.php
 php tests/admin.php
 php tests/catalog.php
+php tests/checkout.php
 python3 tests/privacy.py
 ```
 
@@ -52,7 +53,7 @@ La URL y el DSN deben apuntar a la misma instalación. La cuenta de pruebas cons
 
 La suite prueba tokens ausentes, inválidos y de otra sesión; cantidades inválidas; productos y variantes no disponibles; relación producto-variante; altas, cambios y borrado del carrito; pedidos y descuento de stock; confirmaciones repetidas; cambios de precio y disponibilidad; acceso con cuentas nuevas y existentes; autenticación administrativa y cierre de sesión. Restaura el stock y elimina sus pedidos y clientes al terminar, también ante errores.
 
-La suite de integración simula un cambio de stock entre resumen y confirmación. La suite independiente `tests/concurrency.php` comprueba además peticiones simultáneas reales. Ninguna de las dos es una prueba de carga. La inspección visual, accesibilidad, pagos y correo siguen pendientes.
+La suite de integración simula un cambio de stock entre resumen y confirmación. La suite independiente `tests/concurrency.php` comprueba además peticiones simultáneas reales. Ninguna de las dos es una prueba de carga. La revisión visual parcial se documenta en `docs/COMPRA.md`; no sustituye una auditoría de accesibilidad ni pruebas en dispositivos reales. Pagos y correo siguen pendientes.
 
 ## Compras simultáneas (Linux / macOS)
 
@@ -119,3 +120,7 @@ No es una prueba de rendimiento con catálogos grandes. [Comportamiento y límit
 La suite de catálogo comprueba el rechazo de altas directas al carrito, cambios de cantidades, entrada al checkout y confirmaciones de resúmenes anteriores cuando la categoría está inactiva, con y sin variantes. También verifica que el artículo se pueda eliminar y que no se creen pedidos ni se descuente stock. Dos conexiones comprueban que el bloqueo compartido conserva la categoría hasta terminar la transacción.
 
 La suite de concurrencia retira una categoría mientras dos confirmaciones ya han pasado la validación inicial y esperan el producto: ambas deben devolver 409, conservar stock y no registrar pedidos. Las pruebas anteriores siguen comprobando que dos compras de la misma categoría pueden completarse cuando hay existencias suficientes.
+
+## Carrito y checkout
+
+`php tests/checkout.php` añade 47 comprobaciones HTTP: guardar cantidades al continuar, total e IVA coherentes hasta la base de datos, rechazo sin modificar el carrito, campos obligatorios y longitudes Unicode, controles y UTF-8 inválido, tipo de compra, contraseña, formularios malformados, invalidación de resúmenes anteriores, escape HTML, conservación de datos, provincia opcional, vaciado y recuperación ante falta de stock. Crea una compra ficticia y la elimina al terminar, restaurando el producto. El resto de suites conserva las comprobaciones de cuentas, permisos y concurrencia.
