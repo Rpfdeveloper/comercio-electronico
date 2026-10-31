@@ -17,3 +17,7 @@ function url(string $path = ''): string {
 function asset(string $path): string {
     return url($path);
 }
+
+function money_eur(float $amount): string {
+    return number_format($amount, 2, ',', '.') . ' €';
+}

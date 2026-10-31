@@ -29,9 +29,12 @@ Estado actual: prototipo funcional en desarrollo. Todavía no está preparado pa
 
 ## 2. Experiencia de compra
 - [x] Búsqueda, filtros, ordenación y paginación.
-- [ ] Carrito persistente y actualización clara de cantidades.
-- [ ] Checkout accesible, adaptable a móviles y con errores comprensibles.
-- [ ] Política de precios, impuestos, gastos de envío y totales coherentes.
+- [x] Actualización clara de cantidades, guardadas al continuar hacia la compra.
+- [ ] Carrito persistente entre sesiones.
+- [x] Checkout adaptable, errores asociados a campos y navegación con foco.
+- [ ] Auditoría completa de accesibilidad y pruebas en dispositivos móviles reales.
+- [x] Desglose coherente de productos, IVA y envío en carrito, resumen y pedido.
+- [ ] Política comercial de precios, impuestos y gastos de envío configurable.
 - [x] Historial y detalle privado de pedidos propios.
 - [ ] Seguimiento del transportista.
 
@@ -112,3 +115,9 @@ Validación: 222 comprobaciones por entorno, incluidas 59 de catálogo, 35 archi
 Corregida la compra de productos de categorías retiradas, tanto desde carritos anteriores como mediante POST directo y durante confirmaciones simultáneas. La validación transaccional mantiene un bloqueo compartido de la categoría.
 
 239 comprobaciones correctas por entorno (41 + 45 + 48 + 73 + 32), con PHP 8.3 y 8.4 y MariaDB 11.4. El [PR #1](https://github.com/Rpfdeveloper/comercio-electronico/pull/1) se fusionó tras corregir la revisión y superar sus comprobaciones. `main` incluye ahora el código de la tienda. Las copias `backup/2026-10-31-main-85fbc66` y `backup/2026-10-31-develop-e300be6` conservan el estado previo; `original` no cambia.
+
+## Octava iteración — carrito y compra clara (31 de octubre de 2026)
+
+Las cantidades se guardan al continuar, los importes se muestran desde el carrito y los datos de envío se validan antes del resumen. Errores enlazados, foco visible, autocompletado y elección de compra invitada o con cuenta. Diseño revisado en escritorio y marcos de 320, 390 y 768 px; no equivale a probar dispositivos reales.
+
+286 comprobaciones locales correctas, incluidas 47 nuevas de checkout; sintaxis y logs PHP correctos. Copia previa `backup/2026-10-31-antes-checkout-e19ae30`. [Detalle, pruebas y evidencia](PROGRESO.md) · [Uso y límites](COMPRA.md).
