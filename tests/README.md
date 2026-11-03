@@ -1,6 +1,6 @@
 # Pruebas de la tienda
 
-Estado actual: **630 comprobaciones por entorno**, distribuidas en 13 suites: compra (41), cuenta/privacidad (45), acceso administrativo (48), consulta de pedidos (64), inventario (50), gestión del catálogo (75), catálogo público (73), checkout (47), portada/descubrimiento/ayuda (33), concurrencia de compra (32), favoritos invitados (38), favoritos de cuenta (45) y SEO (39). Además se verifica la sintaxis de 64 PHP, el log y los patrones de archivos sensibles. Validación local con PHP 8.3.6 y MariaDB 10.11.14; CI configurada para PHP 8.3, 8.4 y 8.5.
+Estado actual: **684 comprobaciones por entorno**, distribuidas en 14 suites: compra (41), cuenta/privacidad (45), acceso administrativo (48), consulta de pedidos (64), estados de pedido (54), inventario (50), gestión del catálogo (75), catálogo público (73), checkout (47), portada/descubrimiento/ayuda (33), concurrencia de compra (32), favoritos invitados (38), favoritos de cuenta (45) y SEO (39). Además se verifica la sintaxis de 64 PHP, el log y los patrones de archivos sensibles. Validación local con PHP 8.3.6 y MariaDB 10.11.14; CI configurada para PHP 8.3, 8.4 y 8.5.
 
 Esta suite usa peticiones HTTP reales, sesiones independientes y una base MariaDB/MySQL desechable cuyo nombre termina en `_test`. No utiliza pagos ni correo reales.
 
