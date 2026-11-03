@@ -8,6 +8,10 @@ Estado actual: prototipo funcional en desarrollo. Todavía no está preparado pa
 
 Resumen administrativo, altas inactivas, edición de fichas, selección de imágenes existentes, precios, ofertas, formatos y stock con historial transaccional. Fichas adaptadas al estilo de Canva y página de ayuda. **630 comprobaciones locales correctas**. Requiere la migración aditiva 004. [Uso y límites](GESTION_CATALOGO.md).
 
+## Nueva entrega: estados de pedido — 3 de noviembre de 2026
+
+Flujo pendiente → pago registrado → en preparación → enviado, cancelación antes del envío con reposición transaccional de existencias, historial con notas y detección de formularios antiguos y cambios simultáneos. Estados en español en la cuenta del cliente. **684 comprobaciones por entorno** en PHP 8.3, 8.4 y 8.5. Requiere la migración aditiva 005. [Uso y límites](ESTADOS_PEDIDO.md).
+
 ## Retención y captación — 31 de octubre de 2026
 
 - [x] Favoritos sin registro, persistentes en el navegador y con precios actuales.
@@ -61,7 +65,8 @@ Resumen administrativo, altas inactivas, edición de fichas, selección de imág
 - [x] Consulta administrativa de pedidos con búsqueda, filtros, resumen y paginación.
 - [x] Alta y edición de perfumes, formatos, selección de imágenes existentes, precios y stock con historial.
 - [x] Inventario filtrable y resumen operativo.
-- [ ] Subida de imágenes, gestión de marcas/categorías y edición de estados de pedidos.
+- [x] Gestión de estados de pedidos con historial y reposición de stock al cancelar.
+- [ ] Subida de imágenes y gestión de marcas/categorías.
 - [ ] Integración de pagos en modo de pruebas; webhooks verificados e idempotencia.
 - [ ] Confirmaciones por correo realmente enviadas y registradas.
 - [ ] Envíos, cancelaciones, devoluciones y reembolsos.
