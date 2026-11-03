@@ -5,7 +5,7 @@ require_once __DIR__ . '/../tienda/src/lib/order_status.php';
 $password = getenv('TIENDA_TEST_ADMIN_PASS') ?: '';
 if ($password === '') { throw new RuntimeException('Define TIENDA_TEST_ADMIN_PASS'); }
 $marker = 'estados-' . bin2hex(random_bytes(5));
-$orders = []; $products = []; $category = null; $brand = null; $customState = 121; $stateCreated = false;
+$orders = []; $products = []; $guard = null; $category = null; $brand = null; $customState = 121; $stateCreated = false;
 $stateOf = static function (int $id) use ($pdo): string {
     $st = $pdo->prepare('SELECT e.descripcion FROM pedido p JOIN estado_pedido e ON e.id=p.estado WHERE p.id=?');
     $st->execute([$id]); return (string)$st->fetchColumn();
@@ -112,16 +112,17 @@ try {
     $observer = new PDO(getenv('TIENDA_TEST_DSN'), getenv('TIENDA_TEST_USER') ?: 'root', getenv('TIENDA_TEST_PASS') ?: '', [PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION]);
     $guard->beginTransaction();
     $guard->query('SELECT id FROM pedido WHERE id=' . $main . ' FOR UPDATE')->fetch();
-    $multi = curl_multi_init(); $handles = [];
-    foreach ([$b, $second] as $browser) {
+    $multi = curl_multi_init(); $handles = []; $waiting = 0;
+    // La segunda petición se lanza cuando la primera ya espera: así ocupa otro proceso del servidor.
+    foreach ([$b, $second] as $index=>$browser) {
         $handle = $browser->prepare($url, ['estado_actual'=>'processing', 'estado_nuevo'=>'canceled', 'confirmar'=>'1']);
         curl_multi_add_handle($multi, $handle); $handles[] = [$browser, $handle];
+        $deadline = microtime(true) + 10;
+        do {
+            curl_multi_exec($multi, $running); curl_multi_select($multi, 0.05);
+            $waiting = (int)$observer->query("SELECT COUNT(*) FROM information_schema.PROCESSLIST WHERE INFO LIKE 'SELECT p.id,p.estado,e.descripcion FROM pedido p%FOR UPDATE'")->fetchColumn();
+        } while ($waiting < $index + 1 && microtime(true) < $deadline);
     }
-    $deadline = microtime(true) + 10; $waiting = 0;
-    do {
-        curl_multi_exec($multi, $running); curl_multi_select($multi, 0.05);
-        $waiting = (int)$observer->query("SELECT COUNT(*) FROM information_schema.PROCESSLIST WHERE INFO LIKE 'SELECT p.id,p.estado,e.descripcion FROM pedido p%FOR UPDATE'")->fetchColumn();
-    } while ($waiting < 2 && microtime(true) < $deadline);
     check($waiting === 2, 'dos cancelaciones esperan realmente el mismo bloqueo');
     $guard->commit();
     do { curl_multi_exec($multi, $running); curl_multi_select($multi, 0.05); } while ($running > 0);
@@ -163,6 +164,7 @@ try {
     check((int)$count->fetchColumn() === 3, 'entradas hostiles no crean ni borran pedidos');
     echo "PASS $checks comprobaciones de estados de pedido\n";
 } finally {
+    if ($guard !== null && $guard->inTransaction()) { $guard->rollBack(); }
     foreach ($orders as $id) { $pdo->prepare('DELETE FROM pedido WHERE id=?')->execute([$id]); }
     if (isset($products['variant'])) { $pdo->prepare('DELETE FROM producto_variante WHERE id=?')->execute([$products['variant']]); }
     foreach (['simple', 'base'] as $key) { if (isset($products[$key])) { $pdo->prepare('DELETE FROM producto WHERE id=?')->execute([$products[$key]]); } }
