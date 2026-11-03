@@ -102,6 +102,8 @@ jobs:
         run: php tests/storefront.php
       - name: Favoritos persistentes sin cuenta
         run: php tests/favorites.php
+      - name: Carrito guardado en la cuenta
+        run: php tests/cart_account.php
       - name: Favoritos de cuenta y cambios simultáneos
         run: php tests/favorites_account.php
       - name: SEO y sitemap

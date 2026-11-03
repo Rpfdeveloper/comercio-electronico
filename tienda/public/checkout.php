@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../config/init.php';
 require_once __DIR__ . '/../src/lib/cart.php';
 require_once __DIR__ . '/../src/lib/customer.php';
+require_once __DIR__ . '/../src/lib/cart_account.php';
 require_once __DIR__ . '/../src/lib/checkout.php';
 customer_no_cache();
 foreach (['step', 'tipo', 'email', 'nombre', 'direccion', 'cp', 'poblacion', 'provincia', 'pais', 'password'] as $field) {
@@ -42,6 +43,10 @@ if (empty($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
 
 $pdo = db();
 $currentCustomer = customer_current($pdo);
+if ($currentCustomer !== null && $_SERVER['REQUEST_METHOD'] === 'GET') {
+    // Con cuenta, se parte del carrito guardado: puede haber cambiado en otro dispositivo.
+    cart_account_context($pdo);
+}
 $cart =& $_SESSION['cart'];
 
 // Volver a validar en servidor; nunca aceptar precios ni stock del formulario.
@@ -314,6 +319,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step === 'confirm') {
 
         // Limpiamos carrito y datos de checkout
         unset($_SESSION['cart'], $_SESSION['checkout']);
+        if ($currentCustomer !== null) { cart_account_clear($pdo, (int)$currentCustomer['id']); }
 
         require_once __DIR__ . '/includes/header.php';
 

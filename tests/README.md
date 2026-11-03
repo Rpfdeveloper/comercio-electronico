@@ -52,6 +52,7 @@ php tests/checkout.php
 php tests/storefront.php
 php tests/favorites.php
 php tests/favorites_account.php
+php tests/cart_account.php
 php tests/seo.php
 python3 tests/privacy.py
 ```
