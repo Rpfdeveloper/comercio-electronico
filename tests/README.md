@@ -45,6 +45,7 @@ php tests/integration.php
 php tests/customer.php
 php tests/admin.php
 php tests/admin_orders.php
+php tests/admin_order_status.php
 php tests/admin_inventory.php
 php tests/catalog.php
 php tests/checkout.php

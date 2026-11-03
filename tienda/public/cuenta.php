@@ -2,6 +2,7 @@
 declare(strict_types=1);
 require_once __DIR__ . '/../config/init.php';
 require_once __DIR__ . '/../src/lib/customer.php';
+require_once __DIR__ . '/../src/lib/order_status.php';
 $pdo = db();
 $customer = customer_require($pdo);
 $page = filter_var($_GET['pagina'] ?? 1, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 100000]]);
@@ -38,7 +39,7 @@ require_once __DIR__ . '/includes/header.php';
       <thead><tr><th scope="col">Pedido</th><th scope="col">Fecha</th><th scope="col">Estado</th><th scope="col">Total</th><th scope="col">Detalle</th></tr></thead>
       <tbody><?php foreach ($orders as $order): ?><tr>
         <td>#<?= (int)$order['id'] ?></td><td><?= h($order['fecha_pedido']) ?></td>
-        <td><span class="account-status"><?= h($order['estado']) ?></span></td>
+        <td><span class="account-status"><?= h(order_status_label($order['estado'])) ?></span></td>
         <td><?= number_format((float)$order['total'], 2, ',', '.') ?> €</td>
         <td><a href="mi-pedido.php?id=<?= (int)$order['id'] ?>">Ver pedido #<?= (int)$order['id'] ?></a></td>
       </tr><?php endforeach; ?></tbody>
