@@ -2,6 +2,7 @@
 declare(strict_types=1);
 require_once __DIR__ . '/../config/init.php';
 require_once __DIR__ . '/../src/lib/customer.php';
+require_once __DIR__ . '/../src/lib/order_status.php';
 $pdo = db();
 $customer = customer_require($pdo);
 $id = filter_var($_GET['id'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
@@ -28,7 +29,7 @@ require_once __DIR__ . '/includes/header.php';
 ?>
 <section class="account-card" aria-labelledby="order-title">
   <a href="cuenta.php">← Mis pedidos</a>
-  <div class="account-heading"><h2 id="order-title">Pedido #<?= (int)$order['id'] ?></h2><span class="account-status"><?= h($order['estado_texto']) ?></span></div>
+  <div class="account-heading"><h2 id="order-title">Pedido #<?= (int)$order['id'] ?></h2><span class="account-status"><?= h(order_status_label($order['estado_texto'])) ?></span></div>
   <p><?= h($order['fecha_pedido']) ?></p>
   <div class="account-table-wrap"><table class="account-table">
     <caption class="sr-only">Productos del pedido</caption>

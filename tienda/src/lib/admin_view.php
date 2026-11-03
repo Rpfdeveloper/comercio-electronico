@@ -11,7 +11,7 @@ function admin_page_start(string $title, bool $signedIn = true, string $section 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
   <title><?= h($title) ?> · Administración · Perfume Shop</title>
-  <link rel="stylesheet" href="assets/admin.css?v=3">
+  <link rel="stylesheet" href="assets/admin.css?v=4">
 </head>
 <body>
 <a class="skip-link" href="#contenido">Saltar al contenido</a>
