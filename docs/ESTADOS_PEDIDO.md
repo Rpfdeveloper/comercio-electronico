@@ -42,6 +42,8 @@ La cuenta del cliente muestra ahora los estados en español («Pendiente», «Pa
 
 `tests/admin_order_status.php` añade comprobaciones HTTP con pedidos, productos y formatos ficticios: acceso y CSRF, tabla de transiciones, entradas no escalares, SQL y XSS, notas en el límite (500 caracteres multibyte) y por encima, confirmación de cancelación, formularios antiguos, reenvíos, reposición agrupada y exacta, pedidos cerrados y estados personalizados, identificadores inválidos y métodos no previstos. Incluye una carrera real: dos administradores con sesiones independientes esperan el mismo bloqueo y solo una cancelación se aplica.
 
+Resultado: **54 comprobaciones nuevas** y **684 por entorno** con todas las regresiones, en PHP 8.3, 8.4 y 8.5 con MariaDB 11.4 ([ejecución en GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions/runs/41709712175)); sintaxis, revisión de patrones sensibles y log PHP sin avisos. La primera ejecución falló en PHP 8.5 porque el servidor de pruebas asignó ambas peticiones de la carrera al mismo proceso; la prueba lanza ahora la segunda cuando la primera ya espera el bloqueo. No se ha hecho revisión visual en dispositivos reales.
+
 ## Límites
 
 Sin correos al cliente, seguimiento de transportista, devoluciones, reembolsos ni pagos reales. Un pedido enviado no se puede cancelar desde el panel; las devoluciones requerirán su propio flujo. MFA y roles siguen pendientes.

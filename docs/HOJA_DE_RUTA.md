@@ -10,7 +10,7 @@ Resumen administrativo, altas inactivas, edición de fichas, selección de imág
 
 ## Nueva entrega: estados de pedido — 3 de noviembre de 2026
 
-Flujo pendiente → pago registrado → en preparación → enviado, cancelación antes del envío con reposición transaccional de existencias, historial con notas y detección de formularios antiguos y cambios simultáneos. Estados en español en la cuenta del cliente. Requiere la migración aditiva 005. [Uso y límites](ESTADOS_PEDIDO.md).
+Flujo pendiente → pago registrado → en preparación → enviado, cancelación antes del envío con reposición transaccional de existencias, historial con notas y detección de formularios antiguos y cambios simultáneos. Estados en español en la cuenta del cliente. **684 comprobaciones por entorno** en PHP 8.3, 8.4 y 8.5. Requiere la migración aditiva 005. [Uso y límites](ESTADOS_PEDIDO.md).
 
 ## Retención y captación — 31 de octubre de 2026
 
