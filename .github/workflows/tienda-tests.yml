@@ -121,7 +121,8 @@ jobs:
         run: |
           if [ -f "$RUNNER_TEMP/tienda-php.log" ]; then
             cat "$RUNNER_TEMP/tienda-php.log"
-            if grep -E 'PHP (Warning|Fatal error|Parse error|Deprecated)|Uncaught' "$RUNNER_TEMP/tienda-php.log"; then exit 1; fi
+            # La prueba de envíos mayores que post_max_size provoca a propósito este único aviso de PHP.
+            if grep -E 'PHP (Warning|Fatal error|Parse error|Deprecated)|Uncaught' "$RUNNER_TEMP/tienda-php.log" | grep -vE 'PHP Warning:  POST Content-Length of [0-9]+ bytes exceeds the limit of [0-9]+ bytes in Unknown on line 0'; then exit 1; fi
           fi
       - name: Detener servidor
         if: always()
