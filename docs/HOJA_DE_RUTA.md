@@ -8,7 +8,11 @@ Estado actual: prototipo funcional en desarrollo. Todavía no está preparado pa
 
 Resumen administrativo, altas inactivas, edición de fichas, selección de imágenes existentes, precios, ofertas, formatos y stock con historial transaccional. Fichas adaptadas al estilo de Canva y página de ayuda. **630 comprobaciones locales correctas**. Requiere la migración aditiva 004. [Uso y límites](GESTION_CATALOGO.md).
 
-## Nueva entrega: colecciones y marcas — 4 de noviembre de 2026
+## Nueva entrega: marcado de producto — 4 de noviembre de 2026
+
+Las fichas publican datos estructurados schema.org con una oferta por formato, precio sin IVA y disponibilidad reales. **790 comprobaciones por entorno.** Sin migración. [Detalle](RETENCION_SEO.md#marcado-de-producto--4-de-noviembre-de-2026).
+
+## Colecciones y marcas — 4 de noviembre de 2026
 
 Alta y edición de colecciones y marcas desde el panel, con colecciones nuevas ocultas y confirmación antes de retirar perfumes visibles. **771 comprobaciones por entorno.** Sin migración. [Uso y límites](COLECCIONES_MARCAS.md).
 
@@ -27,7 +31,8 @@ Flujo pendiente → pago registrado → en preparación → enviado, cancelació
 - [x] Favoritos vinculados a cuenta y unión explícita desde el navegador; comprobados con sesiones independientes.
 - [ ] Avisos de reposición solicitados, con preferencias y baja.
 - [ ] Contenido original por familias olfativas y ocasiones, con datos verificados.
-- [ ] Lanzamiento real, Search Console y marcado Product/variantes.
+- [x] Marcado Product con una oferta por formato.
+- [ ] Lanzamiento real y Search Console.
 - [ ] Medir retorno y recompra antes de diseñar un programa de puntos o descuentos.
 
 [Entrega, investigación y límites](RETENCION_SEO.md). Favoritos y SEO no prueban por sí solos un aumento de retención o tráfico.
