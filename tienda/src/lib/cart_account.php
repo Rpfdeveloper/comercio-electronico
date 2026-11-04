@@ -70,15 +70,17 @@ function cart_account_write(PDO $pdo, array $customer, array $cart, bool $mergeS
             $result = $mergeSaved ? cart_account_merge(cart_account_load($pdo, (int)$customer['id']), $cart) : $cart;
             $result = array_slice($result, 0, CART_ACCOUNT_LINES, true);
             $pdo->prepare('DELETE FROM cliente_carrito WHERE id_cliente=?')->execute([(int)$customer['id']]);
-            // Solo referencias existentes y coherentes; las retiradas del catálogo no se guardan.
-            $insert = $pdo->prepare('INSERT INTO cliente_carrito(id_cliente,clave,id_producto,id_variante,cantidad)
-                SELECT ?,?,p.id,?,? FROM producto p WHERE p.id=? AND (? IS NULL OR EXISTS
-                (SELECT 1 FROM producto_variante v WHERE v.id=? AND v.id_producto=p.id))');
+            // Solo referencias existentes y coherentes; las retiradas de la base no se guardan.
+            $productExists = $pdo->prepare('SELECT 1 FROM producto WHERE id=?');
+            $variantExists = $pdo->prepare('SELECT 1 FROM producto_variante WHERE id=? AND id_producto=?');
+            $insert = $pdo->prepare('INSERT INTO cliente_carrito(id_cliente,clave,id_producto,id_variante,cantidad) VALUES (?,?,?,?,?)');
             $stored = [];
             foreach ($result as $key => $item) {
-                $insert->execute([(int)$customer['id'], $key, $item['id_variante'], $item['cantidad'],
-                    $item['id_producto'], $item['id_variante'], $item['id_variante']]);
-                if ($insert->rowCount() === 1) { $stored[$key] = $item; }
+                if ($item['id_variante'] !== null) { $variantExists->execute([$item['id_variante'], $item['id_producto']]); $found = $variantExists->fetchColumn(); }
+                else { $productExists->execute([$item['id_producto']]); $found = $productExists->fetchColumn(); }
+                if ($found === false) { continue; }
+                $insert->execute([(int)$customer['id'], $key, $item['id_producto'], $item['id_variante'], $item['cantidad']]);
+                $stored[$key] = $item;
             }
             $pdo->commit();
             return $stored;
@@ -146,7 +148,8 @@ function cart_account_after_sign_in(PDO $pdo, array $customer): void
         $_SESSION['cart'] = cart_account_write($pdo, $customer, $_SESSION['cart'] ?? [], true);
         $_SESSION['cart_synced'] = (int)$customer['id'];
     } catch (Throwable $e) {
-        // El carrito del navegador se conserva tal cual.
+        // El carrito del navegador se conserva tal cual. Sin datos personales en el registro.
+        error_log('Carrito de cuenta no sincronizado al acceder: ' . get_class($e) . ' ' . $e->getMessage());
     }
 }
 

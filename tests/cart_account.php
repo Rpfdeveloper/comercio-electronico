@@ -55,7 +55,9 @@ try {
     check($saved($customers[0]) === [], 'carrito invitado no se guarda en ninguna cuenta');
     $html = $a->request('public/carrito.php');
     check(strpos($html, 'data-cart-saved') === false, 'invitado no ve el aviso de carrito guardado');
+    check($lines($a->request('public/carrito.php')) === [$pa=>2], 'invitado tiene el producto en el carrito');
     $login($a, $emails[0]);
+    if ($a->status !== 303 || $saved($customers[0]) !== [$pa=>2]) { echo 'DIAGNOSTICO acceso=' . $a->status . ' guardado=' . json_encode($saved($customers[0])) . "\n"; }
     check($a->status === 303 && $saved($customers[0]) === [$pa=>2], 'al acceder, el carrito del navegador se guarda en la cuenta');
     $html = $a->request('public/carrito.php');
     check($lines($html) === [$pa=>2] && strpos($html, 'data-cart-saved') !== false, 'cliente ve su carrito y el aviso de guardado');
