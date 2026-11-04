@@ -110,6 +110,8 @@ jobs:
         run: php tests/favorites_account.php
       - name: SEO y sitemap
         run: php tests/seo.php
+      - name: Marcado de producto
+        run: php tests/product_markup.php
       - name: Compras simultáneas
         run: php tests/concurrency.php
       - name: Comprobar log PHP
