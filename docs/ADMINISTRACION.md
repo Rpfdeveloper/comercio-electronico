@@ -2,6 +2,10 @@
 
 El panel continúa usando una única cuenta `admin`, con contraseña en `TIENDA_ADMIN_PASS`. Incluye resumen, consulta y gestión de estados de pedidos, inventario y gestión del catálogo. No añade roles, MFA ni pagos.
 
+## Ajustes de venta — 4 de noviembre de 2026
+
+IVA y gastos de envío configurables. [Uso y límites](POLITICA_COMERCIAL.md).
+
 ## Imágenes — 4 de noviembre de 2026
 
 Nueva sección para subir imágenes y asignarlas a perfumes. [Uso, seguridad y requisitos](IMAGENES.md).

@@ -29,6 +29,7 @@ function admin_page_start(string $title, bool $signedIn = true, string $section 
   <a href="catalogo.php"<?= $section === 'catalogo' ? ' aria-current="page"' : '' ?>>Catálogo</a>
   <a href="colecciones.php"<?= $section === 'colecciones' ? ' aria-current="page"' : '' ?>>Colecciones y marcas</a>
   <a href="imagenes.php"<?= $section === 'imagenes' ? ' aria-current="page"' : '' ?>>Imágenes</a>
+  <a href="ajustes.php"<?= $section === 'ajustes' ? ' aria-current="page"' : '' ?>>Ajustes de venta</a>
   <a href="inventario.php"<?= $section === 'inventario' ? ' aria-current="page"' : '' ?>>Inventario</a>
 </nav><?php endif; ?>
 <?php

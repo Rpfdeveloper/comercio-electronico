@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/init.php';
 require_once __DIR__ . '/../src/lib/cart.php';
+require_once __DIR__ . '/../src/lib/policy.php';
 require_once __DIR__ . '/../src/lib/cart_account.php';
 
 if (isset($_GET['remove'])) {
@@ -81,7 +82,7 @@ try {
     $items = [];
     $error = $e->getMessage();
 }
-$totals = cart_totals($items);
+$totals = cart_totals($items, commerce_policy(db()));
 require_once __DIR__ . '/includes/header.php';
 ?>
 <section class="commerce" aria-labelledby="cart-title">
