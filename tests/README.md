@@ -51,6 +51,7 @@ php tests/admin_taxonomy.php
 php tests/admin_images.php
 php tests/catalog.php
 php tests/checkout.php
+php tests/policy.php
 php tests/storefront.php
 php tests/favorites.php
 php tests/favorites_account.php

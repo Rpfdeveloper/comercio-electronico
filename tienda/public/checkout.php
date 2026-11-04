@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../config/init.php';
 require_once __DIR__ . '/../src/lib/cart.php';
+require_once __DIR__ . '/../src/lib/policy.php';
 require_once __DIR__ . '/../src/lib/customer.php';
 require_once __DIR__ . '/../src/lib/cart_account.php';
 require_once __DIR__ . '/../src/lib/checkout.php';
@@ -146,6 +147,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step === 'form') {
         $_SESSION['checkout']['account_proof'] = $accountProof;
         $_SESSION['checkout']['new_password_hash'] = $newPasswordHash;
         $_SESSION['checkout']['cart_snapshot'] = $items;
+        // Importes mostrados en el resumen: la confirmación cobra exactamente estos o se detiene.
+        $_SESSION['checkout']['totals_snapshot'] = cart_totals($items, commerce_policy($pdo));
         $step = 'resumen';
     } elseif (http_response_code() === 200) {
         http_response_code(422);
@@ -172,7 +175,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step === 'confirm') {
         if (($data['cart_snapshot'] ?? null) !== $items) {
             throw new DomainException('El carrito o los precios han cambiado. Revisa el resumen de nuevo.');
         }
-        $totals = cart_totals($items);
+        // Bloqueo compartido: la política no puede cambiar mientras se registra el pedido.
+        $totals = cart_totals($items, commerce_policy($pdo, true));
+        if (($data['totals_snapshot'] ?? null) !== $totals) {
+            throw new DomainException('Los impuestos o los gastos de envío han cambiado. Revisa el resumen de nuevo.');
+        }
         $importeProductos = $totals['products'];
         $impuestos = $totals['tax'];
         $gastosEnvio = $totals['shipping'];
@@ -346,5 +353,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step === 'confirm') {
         $step = 'form'; // El siguiente intento requiere revisar de nuevo los datos.
     }
 }
-$totals = cart_totals($items);
+$totals = cart_totals($items, commerce_policy($pdo));
 require __DIR__ . '/includes/checkout-view.php';

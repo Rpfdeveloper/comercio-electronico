@@ -102,6 +102,8 @@ jobs:
         run: php tests/catalog.php
       - name: Carrito y formulario de compra
         run: php tests/checkout.php
+      - name: Política comercial
+        run: php tests/policy.php
       - name: Portada y descubrimiento de perfumes
         run: php tests/storefront.php
       - name: Favoritos persistentes sin cuenta
