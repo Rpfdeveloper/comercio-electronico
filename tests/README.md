@@ -47,6 +47,7 @@ php tests/admin.php
 php tests/admin_orders.php
 php tests/admin_order_status.php
 php tests/admin_inventory.php
+php tests/admin_taxonomy.php
 php tests/catalog.php
 php tests/checkout.php
 php tests/storefront.php
