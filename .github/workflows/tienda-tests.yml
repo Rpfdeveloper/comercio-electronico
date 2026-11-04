@@ -94,6 +94,8 @@ jobs:
         run: php tests/admin_inventory.php
       - name: Edición transaccional del catálogo
         run: php tests/admin_catalog.php
+      - name: Colecciones y marcas
+        run: php tests/admin_taxonomy.php
       - name: Catálogo y filtros
         run: php tests/catalog.php
       - name: Carrito y formulario de compra

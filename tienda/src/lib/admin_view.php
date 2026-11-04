@@ -11,7 +11,7 @@ function admin_page_start(string $title, bool $signedIn = true, string $section 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
   <title><?= h($title) ?> · Administración · Perfume Shop</title>
-  <link rel="stylesheet" href="assets/admin.css?v=4">
+  <link rel="stylesheet" href="assets/admin.css?v=5">
 </head>
 <body>
 <a class="skip-link" href="#contenido">Saltar al contenido</a>
@@ -27,6 +27,7 @@ function admin_page_start(string $title, bool $signedIn = true, string $section 
   <a href="index.php"<?= $section === 'resumen' ? ' aria-current="page"' : '' ?>>Resumen</a>
   <a href="pedidos.php"<?= $section === 'pedidos' ? ' aria-current="page"' : '' ?>>Pedidos</a>
   <a href="catalogo.php"<?= $section === 'catalogo' ? ' aria-current="page"' : '' ?>>Catálogo</a>
+  <a href="colecciones.php"<?= $section === 'colecciones' ? ' aria-current="page"' : '' ?>>Colecciones y marcas</a>
   <a href="inventario.php"<?= $section === 'inventario' ? ' aria-current="page"' : '' ?>>Inventario</a>
 </nav><?php endif; ?>
 <?php
