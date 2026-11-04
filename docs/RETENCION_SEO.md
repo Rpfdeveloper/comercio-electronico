@@ -58,3 +58,12 @@ La revisión visual usa HTML renderizado por PHP con datos de prueba; no sustitu
 - [Google: noindex](https://developers.google.com/search/docs/crawling-indexing/block-indexing).
 - [Google: construir y enviar un sitemap](https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap).
 - [Google: datos estructurados de producto](https://developers.google.com/search/docs/appearance/structured-data/product).
+
+
+## Marcado de producto — 4 de noviembre de 2026
+
+Cada ficha publica datos estructurados schema.org `Product` en JSON-LD: nombre, descripción sin etiquetas, marca, colección y una oferta por formato activo (precio, moneda, disponibilidad, estado nuevo y SKU si existe). Los precios coinciden con los mostrados y se declaran **sin IVA** (`valueAddedTaxIncluded: false`), como indica la ficha. Los formatos inactivos, los perfumes ocultos y las páginas 404 no publican marcado.
+
+Las URL e imágenes absolutas solo se incluyen con `TIENDA_PUBLIC_URL` configurada; en el prototipo local no se inventan direcciones. Los textos se escapan para que ningún nombre del catálogo pueda cerrar la etiqueta `script`.
+
+Validación: `tests/product_markup.php`, 19 comprobaciones (escape, ofertas, disponibilidad, IVA, URL condicionales y coherencia con la ficha real). **790 por entorno** en PHP 8.3, 8.4 y 8.5. Antes del lanzamiento conviene revisar una ficha con la prueba de resultados enriquecidos de Google; el marcado no garantiza que se muestren.
