@@ -8,7 +8,11 @@ Estado actual: prototipo funcional en desarrollo. Todavía no está preparado pa
 
 Resumen administrativo, altas inactivas, edición de fichas, selección de imágenes existentes, precios, ofertas, formatos y stock con historial transaccional. Fichas adaptadas al estilo de Canva y página de ayuda. **630 comprobaciones locales correctas**. Requiere la migración aditiva 004. [Uso y límites](GESTION_CATALOGO.md).
 
-## Nueva entrega: IVA y envío configurables — 4 de noviembre de 2026
+## Nueva entrega: correos y recuperación de contraseña — 4 de noviembre de 2026
+
+Bandeja de correo en el panel con confirmaciones de pedido y recuperación de contraseña segura. Los correos se registran pero aún no se envían. **899 comprobaciones por entorno.** Requiere la migración aditiva 008. [Uso y límites](CORREO_RECUPERACION.md).
+
+## IVA y envío configurables — 4 de noviembre de 2026
 
 Nueva sección **Ajustes de venta**: IVA, gastos de envío y envío gratis por importe, aplicados en carrito, resumen y pedido; la confirmación se detiene si la política cambió tras el resumen. **857 comprobaciones por entorno.** Requiere la migración aditiva 007. [Uso y límites](POLITICA_COMERCIAL.md).
 
@@ -58,7 +62,8 @@ Flujo pendiente → pago registrado → en preparación → enviado, cancelació
 - [x] Corregir la imagen Ocean Graphite y añadir migración para instalaciones existentes.
 - [x] Protección CSRF en todas las operaciones que modifican datos.
 - [x] Inicio y cierre de sesión de clientes.
-- [ ] Verificación de correo y recuperación de contraseña.
+- [x] Recuperación de contraseña con enlace de un solo uso (correo registrado, sin envío real).
+- [ ] Verificación de correo al crear la cuenta.
 - [x] Retirar contraseñas en claro de la sesión de checkout.
 - [x] Caducidad y renovación de sesiones de clientes, límites de intentos y depuración desactivada por defecto.
 - [x] Sesión independiente, caducidad y límites de intentos para el acceso administrativo.
@@ -90,7 +95,8 @@ Flujo pendiente → pago registrado → en preparación → enviado, cancelació
 - [x] Gestión de colecciones y marcas desde el panel.
 - [x] Subida de imágenes desde el panel, recodificadas y sin metadatos.
 - [ ] Integración de pagos en modo de pruebas; webhooks verificados e idempotencia.
-- [ ] Confirmaciones por correo realmente enviadas y registradas.
+- [x] Confirmaciones de pedido registradas en una bandeja de correo.
+- [ ] Envío real de correos con un proveedor.
 - [ ] Envíos, cancelaciones, devoluciones y reembolsos.
 - [ ] Facturación y textos comerciales ajustados al modelo de negocio.
 
