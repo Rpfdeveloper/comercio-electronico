@@ -32,6 +32,11 @@ function csrf_field(): string
 }
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+    // Un envío mayor que post_max_size llega sin campos: se explica en vez de culpar a la sesión.
+    if (!$_POST && !$_FILES && (int)($_SERVER['CONTENT_LENGTH'] ?? 0) > 0) {
+        http_response_code(413);
+        exit('El envío supera el tamaño máximo que admite el servidor. Usa un archivo más pequeño.');
+    }
     $token = $_POST['csrf_token'] ?? null;
     if (!is_string($token) || empty($_SESSION['csrf_token']) ||
         !hash_equals($_SESSION['csrf_token'], $token)) {

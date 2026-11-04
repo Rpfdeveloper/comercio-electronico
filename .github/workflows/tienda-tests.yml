@@ -61,7 +61,7 @@ jobs:
       - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: pdo_mysql, curl
+          extensions: pdo_mysql, curl, gd
           coverage: none
       - name: Comprobar sintaxis
         run: find tienda tests -name '*.php' -print0 | xargs -0 -n1 php -l
@@ -94,6 +94,8 @@ jobs:
         run: php tests/admin_inventory.php
       - name: Edición transaccional del catálogo
         run: php tests/admin_catalog.php
+      - name: Subida de imágenes
+        run: php tests/admin_images.php
       - name: Colecciones y marcas
         run: php tests/admin_taxonomy.php
       - name: Catálogo y filtros
