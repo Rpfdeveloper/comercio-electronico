@@ -1,13 +1,14 @@
 <?php
 require_once __DIR__ . '/../config/init.php';
 require_once __DIR__ . '/../src/lib/cart.php';
+require_once __DIR__ . '/../src/lib/cart_account.php';
 
 if (isset($_GET['remove'])) {
     header('Allow: POST');
     http_response_code(405);
     exit('Eliminar un producto requiere enviar el formulario.');
 }
-$cart = $_SESSION['cart'] ?? [];
+[$cartCustomer, $cart, $syncNotice] = cart_account_context(db());
 $error = '';
 $notice = $_SESSION['cart_notice'] ?? '';
 unset($_SESSION['cart_notice']);
@@ -60,11 +61,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $_SESSION['cart'] = $next;
         unset($_SESSION['checkout']);
+        $saveNotice = cart_account_save(db(), $cartCustomer, $next);
         $checkout = $continue && $action === 'update' && $next;
-        if (!$checkout) {
-            $_SESSION['cart_notice'] = $action === 'remove' ? 'Producto eliminado del carrito.' :
-                ($action === 'add' ? 'Producto añadido al carrito.' : 'Carrito actualizado.');
+        if (!$checkout || $saveNotice !== '') {
+            $_SESSION['cart_notice'] = $saveNotice !== '' ? $saveNotice : ($action === 'remove' ? 'Producto eliminado del carrito.' :
+                ($action === 'add' ? 'Producto añadido al carrito.' : 'Carrito actualizado.'));
         }
+        if ($saveNotice !== '') { $checkout = false; }
         header('Location: ' . ($checkout ? 'checkout.php' : 'carrito.php'), true, 303);
         exit;
     } catch (DomainException $e) {
@@ -86,6 +89,8 @@ require_once __DIR__ . '/includes/header.php';
   <div class="commerce-heading"><h2 id="cart-title">Carrito de la compra</h2><a href="catalogo.php">Seguir comprando</a></div>
   <?php if ($error): ?><div class="commerce-error" role="alert" tabindex="-1" data-focus-on-load><p><?= h($error) ?></p></div><?php endif; ?>
   <?php if ($notice && !$error): ?><p class="commerce-notice" role="status"><?= h($notice) ?></p><?php endif; ?>
+  <?php if ($syncNotice): ?><p class="commerce-notice" role="status"><?= h($syncNotice) ?></p><?php endif; ?>
+  <?php if ($cartCustomer !== null): ?><p class="commerce-help" data-cart-saved>Tu carrito se guarda en tu cuenta: lo recuperarás al acceder desde cualquier dispositivo. Los precios y la disponibilidad se comprueban de nuevo antes de comprar.</p><?php endif; ?>
   <?php if (!$items): ?>
     <div class="commerce-panel commerce-empty">
       <?php if ($cart): ?>

@@ -12,7 +12,7 @@ function customer_no_cache(): void
 
 function customer_forget(): void
 {
-    unset($_SESSION['customer'], $_SESSION['checkout']);
+    unset($_SESSION['customer'], $_SESSION['checkout'], $_SESSION['cart_synced']);
 }
 
 function customer_current(PDO $pdo): ?array

@@ -2,6 +2,7 @@
 declare(strict_types=1);
 require_once __DIR__ . '/../config/init.php';
 require_once __DIR__ . '/../src/lib/customer.php';
+require_once __DIR__ . '/../src/lib/cart_account.php';
 customer_no_cache();
 $pdo = db();
 if (customer_current($pdo) !== null) { header('Location: cuenta.php', true, 302); exit; }
@@ -23,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (customer_password_matches($customer, $password)) {
                 customer_clear_attempts($pdo, $email);
                 customer_sign_in($customer);
+                cart_account_after_sign_in($pdo, $customer);
                 header('Location: cuenta.php', true, 303);
                 exit;
             }
