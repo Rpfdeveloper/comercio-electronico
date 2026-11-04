@@ -13,3 +13,7 @@ backups/
 dumps/
 .preview-runtime/
 .runtime/
+
+# Imágenes subidas desde el panel: datos de cada instalación, no del repositorio.
+tienda/public/img/products/Subidas/*
+!tienda/public/img/products/Subidas/.htaccess

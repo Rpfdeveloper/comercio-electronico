@@ -8,7 +8,11 @@ Estado actual: prototipo funcional en desarrollo. Todavía no está preparado pa
 
 Resumen administrativo, altas inactivas, edición de fichas, selección de imágenes existentes, precios, ofertas, formatos y stock con historial transaccional. Fichas adaptadas al estilo de Canva y página de ayuda. **630 comprobaciones locales correctas**. Requiere la migración aditiva 004. [Uso y límites](GESTION_CATALOGO.md).
 
-## Nueva entrega: marcado de producto — 4 de noviembre de 2026
+## Nueva entrega: subida de imágenes — 4 de noviembre de 2026
+
+Nueva sección **Imágenes**: subir JPG/PNG/WebP, asignarlos a un perfume con historial y eliminar subidas sin uso. Cada imagen se recodifica sin metadatos. **827 comprobaciones por entorno.** Sin migración; requiere GD en PHP. [Uso y requisitos](IMAGENES.md).
+
+## Marcado de producto — 4 de noviembre de 2026
 
 Las fichas publican datos estructurados schema.org con una oferta por formato, precio sin IVA y disponibilidad reales. **790 comprobaciones por entorno.** Sin migración. [Detalle](RETENCION_SEO.md#marcado-de-producto--4-de-noviembre-de-2026).
 
@@ -80,7 +84,7 @@ Flujo pendiente → pago registrado → en preparación → enviado, cancelació
 - [x] Inventario filtrable y resumen operativo.
 - [x] Gestión de estados de pedidos con historial y reposición de stock al cancelar.
 - [x] Gestión de colecciones y marcas desde el panel.
-- [ ] Subida de imágenes.
+- [x] Subida de imágenes desde el panel, recodificadas y sin metadatos.
 - [ ] Integración de pagos en modo de pruebas; webhooks verificados e idempotencia.
 - [ ] Confirmaciones por correo realmente enviadas y registradas.
 - [ ] Envíos, cancelaciones, devoluciones y reembolsos.
