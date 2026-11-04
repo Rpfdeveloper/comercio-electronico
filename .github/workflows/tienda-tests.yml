@@ -108,6 +108,8 @@ jobs:
         run: php tests/storefront.php
       - name: Favoritos persistentes sin cuenta
         run: php tests/favorites.php
+      - name: Correo y recuperación de contraseña
+        run: php tests/password_reset.php
       - name: Carrito guardado en la cuenta
         run: php tests/cart_account.php
       - name: Favoritos de cuenta y cambios simultáneos

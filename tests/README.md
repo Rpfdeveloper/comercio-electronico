@@ -56,6 +56,7 @@ php tests/storefront.php
 php tests/favorites.php
 php tests/favorites_account.php
 php tests/cart_account.php
+php tests/password_reset.php
 php tests/seo.php
 php tests/product_markup.php
 python3 tests/privacy.py

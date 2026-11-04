@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../config/init.php';
 require_once __DIR__ . '/../src/lib/cart.php';
 require_once __DIR__ . '/../src/lib/policy.php';
+require_once __DIR__ . '/../src/lib/mail.php';
 require_once __DIR__ . '/../src/lib/customer.php';
 require_once __DIR__ . '/../src/lib/cart_account.php';
 require_once __DIR__ . '/../src/lib/checkout.php';
@@ -323,6 +324,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step === 'confirm') {
         }
 
         $pdo->commit();
+        // Fuera de la transacción: un fallo al registrar el correo no anula el pedido.
+        mail_order_confirmation($pdo, (int)$idPedido, $data['email'], $data['nombre'], $items, $totals);
 
         // Limpiamos carrito y datos de checkout
         unset($_SESSION['cart'], $_SESSION['checkout']);
