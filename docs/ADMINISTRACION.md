@@ -2,6 +2,10 @@
 
 El panel continúa usando una única cuenta `admin`, con contraseña en `TIENDA_ADMIN_PASS`. Incluye resumen, consulta y gestión de estados de pedidos, inventario y gestión del catálogo. No añade roles, MFA ni pagos.
 
+## Colecciones y marcas — 4 de noviembre de 2026
+
+Nueva sección para crear y editar colecciones y marcas. [Uso y límites](COLECCIONES_MARCAS.md).
+
 ## Estados de pedido — 3 de noviembre de 2026
 
 El detalle del pedido permite avanzar su estado, cancelarlo antes del envío reponiendo existencias y consultar el historial. [Flujo, migración 005, validación y límites](ESTADOS_PEDIDO.md). Sustituye el límite «consulta sin edición de estados» de la sección de pedidos.
