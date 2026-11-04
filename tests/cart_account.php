@@ -21,7 +21,7 @@ $login = static function (TestBrowser $b, string $email) use ($password): void {
     $b->request('public/acceso.php', ['email'=>$email, 'password'=>$password]);
 };
 $add = static function (TestBrowser $b, int $product, ?int $variant, $qty): void {
-    $b->request('public/carrito.php');
+    $b->request('public/catalogo.php'); // Siempre incluye formularios con token, aunque el carrito esté vacío.
     $b->request('public/carrito.php', ['action'=>'add', 'id_producto'=>$product, 'id_variante'=>$variant ?? '', 'cantidad'=>$qty]);
 };
 try {
@@ -57,7 +57,6 @@ try {
     check(strpos($html, 'data-cart-saved') === false, 'invitado no ve el aviso de carrito guardado');
     check($lines($a->request('public/carrito.php')) === [$pa=>2], 'invitado tiene el producto en el carrito');
     $login($a, $emails[0]);
-    if ($a->status !== 303 || $saved($customers[0]) !== [$pa=>2]) { echo 'DIAGNOSTICO acceso=' . $a->status . ' guardado=' . json_encode($saved($customers[0])) . "\n"; }
     check($a->status === 303 && $saved($customers[0]) === [$pa=>2], 'al acceder, el carrito del navegador se guarda en la cuenta');
     $html = $a->request('public/carrito.php');
     check($lines($html) === [$pa=>2] && strpos($html, 'data-cart-saved') !== false, 'cliente ve su carrito y el aviso de guardado');
