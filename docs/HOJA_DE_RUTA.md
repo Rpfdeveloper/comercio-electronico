@@ -8,11 +8,15 @@ Estado actual: prototipo funcional en desarrollo. Todavía no está preparado pa
 
 Resumen administrativo, altas inactivas, edición de fichas, selección de imágenes existentes, precios, ofertas, formatos y stock con historial transaccional. Fichas adaptadas al estilo de Canva y página de ayuda. **630 comprobaciones locales correctas**. Requiere la migración aditiva 004. [Uso y límites](GESTION_CATALOGO.md).
 
-## Nueva entrega: carrito guardado en la cuenta — 4 de noviembre de 2026
+## Nueva entrega: colecciones y marcas — 4 de noviembre de 2026
+
+Alta y edición de colecciones y marcas desde el panel, con colecciones nuevas ocultas y confirmación antes de retirar perfumes visibles. **771 comprobaciones por entorno.** Sin migración. [Uso y límites](COLECCIONES_MARCAS.md).
+
+## Entrega anterior: carrito guardado en la cuenta — 4 de noviembre de 2026
 
 El carrito de los clientes con cuenta se guarda y se recupera en cualquier dispositivo, se une sin duplicar al acceder y se vacía al comprar. **717 comprobaciones por entorno.** Requiere la migración aditiva 006. [Uso y límites](CARRITO_CUENTA.md).
 
-## Entrega anterior: estados de pedido — 3 de noviembre de 2026
+## Estados de pedido — 3 de noviembre de 2026
 
 Flujo pendiente → pago registrado → en preparación → enviado, cancelación antes del envío con reposición transaccional de existencias, historial con notas y detección de formularios antiguos y cambios simultáneos. Estados en español en la cuenta del cliente. **684 comprobaciones por entorno** en PHP 8.3, 8.4 y 8.5. Requiere la migración aditiva 005. [Uso y límites](ESTADOS_PEDIDO.md).
 
@@ -70,7 +74,8 @@ Flujo pendiente → pago registrado → en preparación → enviado, cancelació
 - [x] Alta y edición de perfumes, formatos, selección de imágenes existentes, precios y stock con historial.
 - [x] Inventario filtrable y resumen operativo.
 - [x] Gestión de estados de pedidos con historial y reposición de stock al cancelar.
-- [ ] Subida de imágenes y gestión de marcas/categorías.
+- [x] Gestión de colecciones y marcas desde el panel.
+- [ ] Subida de imágenes.
 - [ ] Integración de pagos en modo de pruebas; webhooks verificados e idempotencia.
 - [ ] Confirmaciones por correo realmente enviadas y registradas.
 - [ ] Envíos, cancelaciones, devoluciones y reembolsos.
