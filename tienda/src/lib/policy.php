@@ -36,8 +36,9 @@ function policy_version(array $policy): string
 // Importe con coma o punto y hasta dos decimales, dentro de un rango; vacío solo si $optional.
 function policy_amount($value, float $min, float $max, bool $optional = false): ?string
 {
-    if (!is_string($value)) { throw new InvalidArgumentException('Introduce un número válido.'); }
-    $value = trim($value);
+    // trim() eliminaría caracteres de control como NUL: se rechazan antes de recortar espacios.
+    if (!is_string($value) || strlen($value) > 40 || preg_match('/[\x00-\x1f\x7f]/', $value)) { throw new InvalidArgumentException('Introduce un número válido.'); }
+    $value = trim($value, ' ');
     if ($value === '' && $optional) { return null; }
     if (!preg_match('/\A\d{1,6}(?:[.,]\d{1,2})?\z/', $value)) { throw new InvalidArgumentException('Usa un número con hasta dos decimales, sin símbolos.'); }
     $number = (float)str_replace(',', '.', $value);
