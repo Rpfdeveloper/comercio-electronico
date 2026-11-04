@@ -114,11 +114,17 @@ function cart_reduce_stock(PDO $pdo, array $items): void
     }
 }
 
-// Regla actual del prototipo, compartida por carrito, resumen y confirmación.
-function cart_totals(array $items): array
+// Regla compartida por carrito, resumen y confirmación. Sin política explícita se usa la
+// regla original: IVA del 21 % sobre los productos y envío gratuito.
+function cart_totals(array $items, ?array $policy = null): array
 {
+    $policy = $policy ?? ['iva'=>'21.00', 'envio'=>'0.00', 'envio_gratis_desde'=>null];
     $products = round(array_sum(array_column($items, 'subtotal')), 2);
-    $tax = round($products * 0.21, 2);
-    return ['products'=>$products, 'tax'=>$tax, 'shipping'=>0.00,
-        'total'=>round($products + $tax, 2)];
+    $free = $policy['envio_gratis_desde'] !== null && $products >= (float)$policy['envio_gratis_desde'];
+    $shipping = $products > 0 && !$free ? round((float)$policy['envio'], 2) : 0.00;
+    // El envío es una prestación accesoria: tributa al mismo tipo que los productos.
+    $tax = round(($products + $shipping) * (float)$policy['iva'] / 100, 2);
+    return ['products'=>$products, 'tax'=>$tax, 'shipping'=>$shipping,
+        'total'=>round($products + $shipping + $tax, 2), 'rate'=>(string)$policy['iva'],
+        'free_from'=>$policy['envio_gratis_desde'] === null ? null : (float)$policy['envio_gratis_desde']];
 }
