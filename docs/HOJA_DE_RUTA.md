@@ -8,7 +8,11 @@ Estado actual: prototipo funcional en desarrollo. Todavía no está preparado pa
 
 Resumen administrativo, altas inactivas, edición de fichas, selección de imágenes existentes, precios, ofertas, formatos y stock con historial transaccional. Fichas adaptadas al estilo de Canva y página de ayuda. **630 comprobaciones locales correctas**. Requiere la migración aditiva 004. [Uso y límites](GESTION_CATALOGO.md).
 
-## Nueva entrega: correos y recuperación de contraseña — 4 de noviembre de 2026
+## Nueva entrega: colección Unisex — 4 de noviembre de 2026
+
+Ocho perfumes ficticios para la colección Unisex (Bruma de Higo, Té Blanco Lumen, Ámbar Nómada, Cítrico Cobalto, Iris de Arena, Musgo Polar, Lavanda Ahumada y Lluvia de Jengibre), con formatos de 50 y 100 ml y una ilustración original de cada frasco en `img/products/Unisex`. Las ilustraciones se pueden sustituir por fotografías desde **Administración → Imágenes**. Migración aditiva e idempotente 009: solo añade lo que falta. **906 comprobaciones por entorno.**
+
+## Correos y recuperación de contraseña — 4 de noviembre de 2026
 
 Bandeja de correo en el panel con confirmaciones de pedido y recuperación de contraseña segura. Los correos se registran pero aún no se envían. **899 comprobaciones por entorno.** Requiere la migración aditiva 008. [Uso y límites](CORREO_RECUPERACION.md).
 

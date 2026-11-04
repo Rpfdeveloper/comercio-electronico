@@ -98,6 +98,8 @@ jobs:
         run: php tests/admin_images.php
       - name: Colecciones y marcas
         run: php tests/admin_taxonomy.php
+      - name: Colección Unisex
+        run: php tests/unisex_catalog.php
       - name: Catálogo y filtros
         run: php tests/catalog.php
       - name: Carrito y formulario de compra
