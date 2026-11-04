@@ -8,7 +8,11 @@ Estado actual: prototipo funcional en desarrollo. Todavía no está preparado pa
 
 Resumen administrativo, altas inactivas, edición de fichas, selección de imágenes existentes, precios, ofertas, formatos y stock con historial transaccional. Fichas adaptadas al estilo de Canva y página de ayuda. **630 comprobaciones locales correctas**. Requiere la migración aditiva 004. [Uso y límites](GESTION_CATALOGO.md).
 
-## Nueva entrega: estados de pedido — 3 de noviembre de 2026
+## Nueva entrega: carrito guardado en la cuenta — 4 de noviembre de 2026
+
+El carrito de los clientes con cuenta se guarda y se recupera en cualquier dispositivo, se une sin duplicar al acceder y se vacía al comprar. **717 comprobaciones por entorno.** Requiere la migración aditiva 006. [Uso y límites](CARRITO_CUENTA.md).
+
+## Entrega anterior: estados de pedido — 3 de noviembre de 2026
 
 Flujo pendiente → pago registrado → en preparación → enviado, cancelación antes del envío con reposición transaccional de existencias, historial con notas y detección de formularios antiguos y cambios simultáneos. Estados en español en la cuenta del cliente. **684 comprobaciones por entorno** en PHP 8.3, 8.4 y 8.5. Requiere la migración aditiva 005. [Uso y límites](ESTADOS_PEDIDO.md).
 
@@ -53,7 +57,7 @@ Flujo pendiente → pago registrado → en preparación → enviado, cancelació
 - [ ] Asesor con IA conectado al catálogo, con datos verificados, límites de uso y alternativa sin modelo.
 - [x] Búsqueda, filtros, ordenación y paginación.
 - [x] Actualización clara de cantidades, guardadas al continuar hacia la compra.
-- [ ] Carrito persistente entre sesiones.
+- [x] Carrito guardado en la cuenta y recuperado entre sesiones y dispositivos.
 - [x] Checkout adaptable, errores asociados a campos y navegación con foco.
 - [ ] Auditoría completa de accesibilidad y pruebas en dispositivos móviles reales.
 - [x] Desglose coherente de productos, IVA y envío en carrito, resumen y pedido.
