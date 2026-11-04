@@ -8,6 +8,7 @@ $pdo = db();
 if (customer_current($pdo) !== null) { header('Location: cuenta.php', true, 302); exit; }
 $error = '';
 $email = '';
+$notice = $_SESSION['account_notice'] ?? ''; unset($_SESSION['account_notice']);
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
@@ -46,6 +47,7 @@ require_once __DIR__ . '/includes/header.php';
   <p class="account-eyebrow">TU ESPACIO PERSONAL</p>
   <h2 id="account-title">Accede a tu cuenta</h2>
   <p>Consulta tus pedidos y recupera los favoritos guardados en tu cuenta.</p>
+  <?php if ($notice !== '' && $error === ''): ?><p class="account-notice" role="status"><?= h($notice) ?></p><?php endif; ?>
   <?php if ($error !== ''): ?><p class="account-error" role="alert"><?= h($error) ?></p><?php endif; ?>
   <form method="post" action="acceso.php" class="account-form">
     <?= csrf_field() ?>
@@ -55,6 +57,7 @@ require_once __DIR__ . '/includes/header.php';
     <input id="account-password" name="password" type="password" autocomplete="current-password" required>
     <button type="submit">Entrar en mi cuenta</button>
   </form>
+  <p class="account-help"><a href="recuperar.php">¿Has olvidado tu contraseña?</a></p>
   <p class="account-help">Puedes crear tu cuenta al comprar como usuario registrado. También puedes comprar como invitado.</p>
   <a href="index.php">Volver a la tienda</a>
 </section>

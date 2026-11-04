@@ -2,6 +2,10 @@
 
 El panel continúa usando una única cuenta `admin`, con contraseña en `TIENDA_ADMIN_PASS`. Incluye resumen, consulta y gestión de estados de pedidos, inventario y gestión del catálogo. No añade roles, MFA ni pagos.
 
+## Correos — 4 de noviembre de 2026
+
+Bandeja de los correos que la tienda registra para los clientes. [Uso y límites](CORREO_RECUPERACION.md).
+
 ## Ajustes de venta — 4 de noviembre de 2026
 
 IVA y gastos de envío configurables. [Uso y límites](POLITICA_COMERCIAL.md).

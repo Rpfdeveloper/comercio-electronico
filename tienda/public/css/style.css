@@ -698,3 +698,4 @@ footer em {
 @media(max-width:480px) { .checkout-fields, .checkout-options { grid-template-columns:1fr; } .cart-line { grid-template-columns:minmax(0,1fr) 100px; } .cart-line-description { grid-column:1 / -1; } .cart-line-quantity { max-width:88px; } .commerce-totals { gap:.75rem .5rem; } .commerce-totals .commerce-grand-total { font-size:1.1rem; } }
 
 @media(max-width:768px) { .header-bar { padding-left:1rem; padding-right:1rem; } .header-actions { order:2; } }
+.account-notice { padding:1rem; border-left:4px solid #2f6b3a; background:#eef6ec; color:#1f4a27; }
