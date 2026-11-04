@@ -19,7 +19,7 @@ if (!$prod) {
     require __DIR__ . '/includes/footer.php';
     exit;
 }
-$st = db()->prepare('SELECT id, capacidad_ml,
+$st = db()->prepare('SELECT id, capacidad_ml, sku,
     CASE WHEN precio_oferta > 0 THEN precio_oferta ELSE precio END AS precio, stock
     FROM producto_variante WHERE id_producto = ? AND activo = 1
     ORDER BY stock > 0 DESC, precio, capacidad_ml, id');
@@ -30,6 +30,7 @@ $pageTitle = $prod['nombre'] . ' · ' . $prod['marca'];
 $pageDescription = seo_description($prod['nombre'] . '. ' . ($prod['descripcion_larga'] ?: $prod['descripcion_corta'] ?: 'Consulta capacidades, precio y disponibilidad.'));
 $pageCanonical = 'producto.php?p=' . rawurlencode($prod['slug']);
 $pageIndexable = true;
+$pageJsonLd = seo_product_jsonld($prod, $vars);
 require __DIR__ . '/includes/header.php';
 ?>
 <p><a href="<?= h(url('catalogo.php')) ?>">← Volver al catálogo</a></p>
