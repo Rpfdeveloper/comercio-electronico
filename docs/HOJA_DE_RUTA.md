@@ -8,7 +8,11 @@ Estado actual: prototipo funcional en desarrollo. Todavía no está preparado pa
 
 Resumen administrativo, altas inactivas, edición de fichas, selección de imágenes existentes, precios, ofertas, formatos y stock con historial transaccional. Fichas adaptadas al estilo de Canva y página de ayuda. **630 comprobaciones locales correctas**. Requiere la migración aditiva 004. [Uso y límites](GESTION_CATALOGO.md).
 
-## Nueva entrega: subida de imágenes — 4 de noviembre de 2026
+## Nueva entrega: IVA y envío configurables — 4 de noviembre de 2026
+
+Nueva sección **Ajustes de venta**: IVA, gastos de envío y envío gratis por importe, aplicados en carrito, resumen y pedido; la confirmación se detiene si la política cambió tras el resumen. **857 comprobaciones por entorno.** Requiere la migración aditiva 007. [Uso y límites](POLITICA_COMERCIAL.md).
+
+## Subida de imágenes — 4 de noviembre de 2026
 
 Nueva sección **Imágenes**: subir JPG/PNG/WebP, asignarlos a un perfume con historial y eliminar subidas sin uso. Cada imagen se recodifica sin metadatos. **827 comprobaciones por entorno.** Sin migración; requiere GD en PHP. [Uso y requisitos](IMAGENES.md).
 
@@ -74,7 +78,7 @@ Flujo pendiente → pago registrado → en preparación → enviado, cancelació
 - [x] Checkout adaptable, errores asociados a campos y navegación con foco.
 - [ ] Auditoría completa de accesibilidad y pruebas en dispositivos móviles reales.
 - [x] Desglose coherente de productos, IVA y envío en carrito, resumen y pedido.
-- [ ] Política comercial de precios, impuestos y gastos de envío configurable.
+- [x] IVA y gastos de envío configurables, con envío gratis por importe.
 - [x] Historial y detalle privado de pedidos propios.
 - [ ] Seguimiento del transportista.
 
