@@ -4,7 +4,7 @@ Estado actual: **790 comprobaciones por entorno**, distribuidas en 17 suites: co
 
 Esta suite usa peticiones HTTP reales, sesiones independientes y una base MariaDB/MySQL desechable cuyo nombre termina en `_test`. No utiliza pagos ni correo reales.
 
-Requisitos: PHP CLI con PDO MySQL y cURL; MariaDB/MySQL local en marcha. El script de preparación requiere una cuenta con permiso para crear la base de pruebas y su usuario. No ejecutar contra una instalación comercial.
+Requisitos: PHP CLI con PDO MySQL, cURL y GD; MariaDB/MySQL local en marcha. El script de preparación requiere una cuenta con permiso para crear la base de pruebas y su usuario. No ejecutar contra una instalación comercial.
 
 ## Preparación (PowerShell)
 Desde la raíz del repositorio, sustituir las contraseñas de ejemplo y adaptar el puerto:
@@ -48,6 +48,7 @@ php tests/admin_orders.php
 php tests/admin_order_status.php
 php tests/admin_inventory.php
 php tests/admin_taxonomy.php
+php tests/admin_images.php
 php tests/catalog.php
 php tests/checkout.php
 php tests/storefront.php
