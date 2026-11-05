@@ -43,7 +43,7 @@ admin_page_start('Ajustes de venta', true, 'ajustes');
 <?php if ($notice): ?><p class="notice success" role="status"><?= h($notice) ?></p><?php endif; ?>
 <?php if ($errors): ?><div class="notice" role="alert" tabindex="-1" autofocus><strong>No se ha guardado. Revisa los datos:</strong><ul><?php foreach ($errors as $key=>$message): ?><li><a href="#policy-<?= h($key) ?>"><?= h($message) ?></a></li><?php endforeach; ?></ul></div><?php endif; ?>
 <?php if ($conflict): ?><div class="notice" role="alert"><p><?= h($conflict) ?></p><a class="button secondary" href="ajustes.php">Ver valores actuales</a></div><?php endif; ?>
-<?php if ($unavailable): ?><p class="notice" role="alert">No se pueden consultar ni guardar los ajustes. Aplica la migración <code>007_commerce_policy.sql</code>; mientras tanto la tienda usa IVA del 21 % y envío gratuito.</p><?php endif; ?>
+<?php if ($unavailable): ?><p class="notice" role="alert">No se pueden consultar ni guardar los ajustes. Comprueba la conexión y la migración <code>007_commerce_policy.sql</code>. La compra se detiene hasta poder leer los importes configurados.</p><?php endif; ?>
 <?php if (!$unavailable && !$conflict): ?>
 <form method="post" action="ajustes.php" class="catalog-editor">
 <?= csrf_field() ?><input type="hidden" name="version" value="<?= h($errors && is_string($_POST['version'] ?? null) ? $_POST['version'] : policy_version($policy)) ?>">

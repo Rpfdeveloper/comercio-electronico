@@ -32,8 +32,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !in_array($_POST['step'] ?? 'form',
     exit;
 }
 
-// Carrito obligatorio
+$pdo = db();
+$currentCustomer = customer_current($pdo);
+[$cartCustomer, $liveCart, $syncNotice] = cart_account_context($pdo);
+if ($currentCustomer !== null && ($cartCustomer === null || $syncNotice !== '')) {
+    http_response_code(503);
+    unset($_SESSION['checkout']);
+    require __DIR__ . '/includes/header.php';
+    echo '<div class="commerce-error" role="alert"><p>No podemos comprobar el carrito de tu cuenta. No se ha registrado ningún pedido. Inténtalo más tarde.</p><a href="carrito.php">Volver al carrito</a></div>';
+    require __DIR__ . '/includes/footer.php';
+    exit;
+}
+$_SESSION['cart'] = $liveCart;
+
+// Recuperar primero la cuenta, incluso si la copia de este navegador está vacía.
 if (empty($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['step'] ?? '') === 'confirm') { http_response_code(409); }
+    unset($_SESSION['checkout']);
     require_once __DIR__ . '/includes/header.php';
     echo '<section class="container" style="margin-top:2rem;">
             <h2>Carrito de la compra</h2>
@@ -43,12 +58,6 @@ if (empty($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
     exit;
 }
 
-$pdo = db();
-$currentCustomer = customer_current($pdo);
-if ($currentCustomer !== null && $_SERVER['REQUEST_METHOD'] === 'GET') {
-    // Con cuenta, se parte del carrito guardado: puede haber cambiado en otro dispositivo.
-    cart_account_context($pdo);
-}
 $cart =& $_SESSION['cart'];
 
 // Volver a validar en servidor; nunca aceptar precios ni stock del formulario.
@@ -70,6 +79,16 @@ if (!$items) {
             <p>No se han encontrado productos válidos en el carrito.</p>
           </section>';
     require_once __DIR__ . '/includes/footer.php';
+    exit;
+}
+
+try { $policy = commerce_policy($pdo); }
+catch (PDOException $e) {
+    http_response_code(503);
+    unset($_SESSION['checkout']);
+    require __DIR__ . '/includes/header.php';
+    echo '<div class="commerce-error" role="alert"><p>No podemos calcular los impuestos y el envío en este momento. Tu carrito se conserva; inténtalo más tarde.</p><a href="carrito.php">Volver al carrito</a></div>';
+    require __DIR__ . '/includes/footer.php';
     exit;
 }
 
@@ -148,8 +167,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step === 'form') {
         $_SESSION['checkout']['account_proof'] = $accountProof;
         $_SESSION['checkout']['new_password_hash'] = $newPasswordHash;
         $_SESSION['checkout']['cart_snapshot'] = $items;
+        $_SESSION['checkout']['cart_customer_id'] = $cartCustomer === null ? null : (int)$cartCustomer['id'];
         // Importes mostrados en el resumen: la confirmación cobra exactamente estos o se detiene.
-        $_SESSION['checkout']['totals_snapshot'] = cart_totals($items, commerce_policy($pdo));
+        $_SESSION['checkout']['totals_snapshot'] = cart_totals($items, $policy);
         $step = 'resumen';
     } elseif (http_response_code() === 200) {
         http_response_code(422);
@@ -171,6 +191,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step === 'confirm') {
 
     try {
         $pdo->beginTransaction();
+        $accountId = $data['cart_customer_id'] ?? null;
+        if ($accountId !== ($cartCustomer === null ? null : (int)$cartCustomer['id'])) {
+            throw new CartAccountConflict('La sesión del carrito ha cambiado. Revisa el resumen de nuevo.');
+        }
+        if ($cartCustomer !== null) {
+            // Mismo orden que los cambios del carrito: cuenta, líneas y productos.
+            // Un segundo dispositivo ve el vaciado antes de poder confirmar otra vez.
+            cart_account_lock($pdo, $cartCustomer);
+            $cart = cart_account_load($pdo, (int)$cartCustomer['id'], true);
+        }
         // Releer precios y bloquear stock dentro de la misma transacción que el pedido.
         $items = cart_items($pdo, $cart, true);
         if (($data['cart_snapshot'] ?? null) !== $items) {
@@ -323,13 +353,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step === 'confirm') {
             ]);
         }
 
+        if ($cartCustomer !== null) { cart_account_clear($pdo, (int)$cartCustomer['id']); }
         $pdo->commit();
         // Fuera de la transacción: un fallo al registrar el correo no anula el pedido.
         mail_order_confirmation($pdo, (int)$idPedido, $data['email'], $data['nombre'], $items, $totals);
 
         // Limpiamos carrito y datos de checkout
         unset($_SESSION['cart'], $_SESSION['checkout']);
-        if ($currentCustomer !== null) { cart_account_clear($pdo, (int)$currentCustomer['id']); }
 
         require_once __DIR__ . '/includes/header.php';
 
@@ -348,13 +378,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step === 'confirm') {
         if ($pdo->inTransaction()) {
             $pdo->rollBack();
         }
-        http_response_code($e instanceof DomainException ? 409 : 500);
+        http_response_code($e instanceof DomainException || $e instanceof CartAccountSessionExpired ? 409 : ($e instanceof PDOException ? 503 : 500));
         $errors['general'] = $e instanceof DomainException
             ? $e->getMessage()
-            : 'Se ha producido un error al registrar el pedido. Inténtalo de nuevo más tarde.';
+            : ($e instanceof CartAccountSessionExpired ? 'Tu sesión ha cambiado. Vuelve a acceder y revisa el carrito.' : 'Se ha producido un error al registrar el pedido. Inténtalo de nuevo más tarde.');
         unset($_SESSION['checkout']);
         $step = 'form'; // El siguiente intento requiere revisar de nuevo los datos.
     }
 }
-$totals = cart_totals($items, commerce_policy($pdo));
+$totals = cart_totals($items, $policy);
 require __DIR__ . '/includes/checkout-view.php';

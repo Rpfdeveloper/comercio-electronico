@@ -5,6 +5,7 @@ $password = getenv('TIENDA_TEST_ADMIN_PASS') ?: '';
 if ($password === '') { throw new RuntimeException('Define TIENDA_TEST_ADMIN_PASS'); }
 $marker = 'politica-' . bin2hex(random_bytes(4));
 $category = null; $brand = null; $product = null;
+$policyHidden = false;
 $lastChange = (int)$pdo->query('SELECT COALESCE(MAX(id),0) FROM tienda_politica_cambio')->fetchColumn();
 $policy = static fn(): array => $pdo->query('SELECT iva,envio,envio_gratis_desde FROM tienda_politica WHERE id=1')->fetch();
 $version = static function (string $html): string { preg_match('/name="version" value="([a-f0-9]{64})"/', $html, $m); return $m[1] ?? ''; };
@@ -82,8 +83,30 @@ try {
     $curl = $b->prepare('admin/ajustes.php'); curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PUT');
     $b->receive(curl_exec($curl)); curl_setopt($curl, CURLOPT_CUSTOMREQUEST, null);
     check($b->status === 405, 'metodos no previstos rechazados');
+
+    // Una política ilegible nunca se convierte en IVA 21 % y envío gratuito.
+    $c->request('public/catalogo.php');
+    $c->request('public/carrito.php', ['action'=>'add', 'id_producto'=>$product, 'cantidad'=>1]);
+    $checkout($c, $marker . '@example.invalid');
+    $countBefore = (int)$pdo->query('SELECT COUNT(*) FROM pedido')->fetchColumn();
+    $stockBefore = (int)$pdo->query('SELECT stock FROM producto WHERE id=' . $product)->fetchColumn();
+    $pdo->exec('RENAME TABLE tienda_politica TO tienda_politica_pausa'); $policyHidden = true;
+    $html = $c->request('public/carrito.php');
+    check($c->status === 503 && strpos($html, 'Total no disponible') !== false && strpos($html, 'class="commerce-primary" disabled') !== false, 'sin politica no se ofrece un total de sustitucion');
+    $html = $c->request('public/checkout.php', ['step'=>'confirm']);
+    check($c->status === 503 && strpos($html, 'No podemos calcular') !== false && (int)$pdo->query('SELECT COUNT(*) FROM pedido')->fetchColumn() === $countBefore, 'confirmar sin politica no registra pedidos');
+    check((int)$pdo->query('SELECT stock FROM producto WHERE id=' . $product)->fetchColumn() === $stockBefore, 'fallo de politica conserva stock');
+    $pdo->exec('RENAME TABLE tienda_politica_pausa TO tienda_politica'); $policyHidden = false;
+    $pdo->exec('DELETE FROM tienda_politica WHERE id=1');
+    $html = $c->request('public/checkout.php');
+    check($c->status === 503, 'fila de politica ausente tambien detiene la compra');
+    $pdo->exec('INSERT INTO tienda_politica(id) VALUES (1)');
+    $html = $c->request('public/carrito.php');
+    check($c->status === 200 && strpos($html, '24,20 €') !== false, 'recuperar la politica conserva el carrito y su total real');
     echo "PASS $checks comprobaciones de politica comercial\n";
 } finally {
+    if ($policyHidden) { $pdo->exec('RENAME TABLE tienda_politica_pausa TO tienda_politica'); }
+    $pdo->exec('INSERT IGNORE INTO tienda_politica(id) VALUES (1)');
     $pdo->exec("UPDATE tienda_politica SET iva=21.00, envio=0.00, envio_gratis_desde=NULL WHERE id=1");
     $pdo->exec('DELETE FROM tienda_politica_cambio WHERE id>' . $lastChange);
     $ids = $pdo->prepare('SELECT id FROM pedido WHERE email=?'); $ids->execute([$marker . '@example.invalid']);
