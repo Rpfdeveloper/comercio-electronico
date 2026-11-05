@@ -84,6 +84,10 @@ jobs:
         run: php tests/integration.php
       - name: Privacidad y cuenta de cliente
         run: php tests/customer.php
+      - name: Perfil, dirección habitual y cambio de contraseña
+        run: php tests/profile.php
+      - name: Perfil y recuperación simultáneos
+        run: php tests/profile_concurrency.php
       - name: Aislamiento y acceso administrativo
         run: php tests/admin.php
       - name: Consulta administrativa de pedidos
