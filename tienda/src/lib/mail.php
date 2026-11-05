@@ -28,7 +28,7 @@ function mail_order_confirmation(PDO $pdo, int $orderId, string $to, string $nam
         "\nEnvío: " . ((float)$totals['shipping'] > 0 ? money_eur((float)$totals['shipping']) : 'gratis') .
         "\nIVA: " . money_eur((float)$totals['tax']) .
         "\nTotal: " . money_eur((float)$totals['total']) .
-        "\n\nTe avisaremos cuando cambie su estado. Este pedido no supone ningún cobro: la tienda es un prototipo sin pasarela de pago.\n";
+        "\n\nEste pedido no supone ningún cobro: la tienda es un prototipo sin pasarela de pago. Si has comprado con cuenta, puedes consultar su estado en Mi cuenta.\n";
     try { mail_queue($pdo, 'pedido', (string)$orderId, $to, 'Pedido #' . $orderId . ' registrado', $body); }
     catch (PDOException $e) { /* Migración 008 pendiente o fallo puntual: el pedido ya está confirmado. */ }
 }

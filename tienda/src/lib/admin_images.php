@@ -110,13 +110,15 @@ function admin_images_store($file, string $label): string
 // Asigna la imagen a un perfume dentro de una transacción y lo anota en su historial.
 function admin_images_assign(PDO $pdo, int $productId, string $path): void
 {
-    if (!in_array($path, admin_catalog_images(), true)) { throw new ImageUploadError('La imagen no está en la biblioteca.'); }
     $pdo->beginTransaction();
     try {
         $st = $pdo->prepare('SELECT imagen_principal FROM producto WHERE id=? FOR UPDATE');
         $st->execute([$productId]);
         $before = $st->fetch();
         if (!$before) { throw new ImageUploadError('Elige un perfume existente.'); }
+        // Comprobar después de tomar el bloqueo: la imagen pudo borrarse mientras
+        // esperábamos. El borrado de la biblioteca consulta estas mismas filas.
+        if (!in_array($path, admin_catalog_images(), true)) { throw new ImageUploadError('La imagen no está en la biblioteca.'); }
         if ($before['imagen_principal'] !== $path) {
             $pdo->prepare('UPDATE producto SET imagen_principal=? WHERE id=?')->execute([$path, $productId]);
             $pdo->prepare('INSERT INTO catalogo_cambio(id_producto,accion,cambios) VALUES (?,?,?)')->execute([$productId, 'image',

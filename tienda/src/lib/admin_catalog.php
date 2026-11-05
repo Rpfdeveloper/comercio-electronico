@@ -167,6 +167,12 @@ function admin_catalog_write(PDO $pdo, int $id, array $input): int
             }
         }
         $after = admin_catalog_read($pdo, $id, true);
+        // Revalidar con la fila ya escrita y bloqueada, también en altas nuevas.
+        // Una eliminación concurrente pudo terminar mientras el INSERT esperaba.
+        $image = $after['product']['imagen_principal'];
+        if ($image && !in_array($image, admin_catalog_images(), true)) {
+            throw new CatalogValidation(['imagen_principal'=>'La imagen ya no está disponible. Elige otra antes de guardar.']);
+        }
         $changes = admin_catalog_changes($before, $after);
         if ($changes) { $pdo->prepare('INSERT INTO catalogo_cambio(id_producto,accion,cambios) VALUES (?,?,?)')->execute([$id,$action,json_encode($changes, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE)]); }
         $pdo->commit();

@@ -34,13 +34,14 @@ require_once __DIR__ . '/includes/header.php';
     <p class="account-notice" role="status" data-reset-sent>Si existe una cuenta con ese correo, te hemos preparado un enlace para cambiar la contraseña. Es válido durante <?= RESET_MINUTES ?> minutos.</p>
     <p class="account-help">Este prototipo todavía no envía correos: el mensaje queda registrado en la administración de la tienda.</p>
   <?php else: ?>
-    <p>Escribe el correo de tu cuenta y te enviaremos un enlace para elegir una contraseña nueva.</p>
+    <p>Escribe el correo de tu cuenta para solicitar un enlace con el que elegir una contraseña nueva.</p>
+    <p class="account-help">Este prototipo todavía no envía correos. El enlace se registra en la administración para realizar pruebas.</p>
     <?php if ($error !== ''): ?><p class="account-error" role="alert"><?= h($error) ?></p><?php endif; ?>
     <form method="post" action="recuperar.php" class="account-form">
       <?= csrf_field() ?>
       <label for="reset-email">Correo electrónico</label>
       <input id="reset-email" name="email" type="email" autocomplete="email" maxlength="160" value="<?= h($email) ?>" required>
-      <button type="submit">Enviar enlace</button>
+      <button type="submit">Solicitar enlace</button>
     </form>
   <?php endif; ?>
   <a href="acceso.php">Volver al acceso</a>
