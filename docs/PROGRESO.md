@@ -1,5 +1,16 @@
 # Progreso de la tienda
 
+## 5 de noviembre de 2026 — datos y seguridad de la cuenta
+
+Nueva pantalla **Mi cuenta → Mis datos y seguridad**: nombre y dirección habitual editables, versión del formulario para detectar cambios desde otro dispositivo y cambio de contraseña con confirmación de la actual. Renovación de la sesión actual, invalidación de otras sesiones y enlaces anteriores, límites de intentos separados y conservación del carrito/favoritos.
+
+El checkout conserva el perfil al enviar un pedido a otro destino. Los pedidos anteriores no cambian. Recuperación y perfil comparten el orden de bloqueos para revalidar la autorización después de esperar.
+
+Validación local: **995 comprobaciones en 24 suites**, con 73 nuevas; sintaxis de 91 archivos PHP, revisión de privacidad y log sin avisos inesperados. PHP 8.3.6 / MariaDB 10.11.14. Revisión visual de perfil y errores en escritorio y marcos de 320, 390 y 768 px, sin desbordamiento horizontal del documento. No equivale a una auditoría completa de accesibilidad o dispositivos físicos.
+
+Sin migraciones nuevas. Copia de código previa: `backup/2026-11-05-antes-perfil-2ffccc2`. [Uso, actualización y límites](PERFIL_CLIENTE.md). Pagos, verificación de correo y envío real de correos continúan pendientes.
+
+
 Registro técnico de cambios verificables en `develop` y de entregas integradas en `main`. La rama `original` conserva la entrega recuperada. El proyecto sigue siendo un prototipo: no procesa pagos ni envía correos reales.
 
 ## Revisión de las últimas entregas (5 de noviembre de 2026)

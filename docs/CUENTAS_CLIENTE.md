@@ -1,6 +1,6 @@
 # Acceso de clientes
 
-La cuenta se crea al completar una compra como usuario registrado. Después se puede entrar desde **Mi cuenta**, consultar sus pedidos, recuperar favoritos desde otras sesiones y volver a comprar con los datos guardados. El alta independiente, la verificación del correo y la recuperación de contraseña siguen pendientes.
+La cuenta se crea al completar una compra como usuario registrado. Después se puede entrar desde **Mi cuenta**, consultar sus pedidos, recuperar favoritos desde otras sesiones y volver a comprar con los datos guardados. También permite [editar los datos y cambiar la contraseña](PERFIL_CLIENTE.md). La recuperación de contraseña existe en modo de prueba: [correo y recuperación](CORREO_RECUPERACION.md). El alta independiente y la verificación del correo siguen pendientes.
 
 ## Actualizar una instalación existente
 
@@ -24,6 +24,6 @@ Una instalación nueva importa el esquema y aplica todas las migraciones por ord
 
 ## Límites actuales
 
-No se implementan todavía verificación del correo, recuperación de contraseña, MFA ni envío de correos. El historial muestra el estado guardado del pedido, sin seguimiento del transportista. El acceso no prueba la propiedad del buzón. No se enlazan pedidos invitados por correo, pues esa coincidencia no acredita propiedad. Las pruebas no sustituyen una auditoría de seguridad, accesibilidad ni una prueba de carga sostenida.
+No se implementan todavía verificación del correo, MFA ni envío real de correos. La recuperación registra el enlace en la bandeja administrativa de pruebas. El historial muestra el estado guardado del pedido, sin seguimiento del transportista. El acceso no prueba la propiedad del buzón. No se enlazan pedidos invitados por correo, pues esa coincidencia no acredita propiedad. Las pruebas no sustituyen una auditoría de seguridad, accesibilidad ni una prueba de carga sostenida.
 
 La administración dispone ahora de [sesión y límites propios](ADMINISTRACION.md), separados de los de clientes.

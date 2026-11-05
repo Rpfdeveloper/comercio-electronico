@@ -1,6 +1,6 @@
 # Pruebas de la tienda
 
-Estado actual: **922 comprobaciones por entorno**, distribuidas en 22 suites: compra (41), cuenta/privacidad (45), acceso administrativo (48), consulta de pedidos (64), estados de pedido (54), inventario (50), colecciones y marcas (54), imágenes (37), gestión del catálogo (75), catálogo público (73), colección Unisex (7), checkout (47), política comercial (35), portada/descubrimiento/ayuda (33), concurrencia de compra (32), favoritos invitados (38), favoritos de cuenta (45), carrito guardado (33), consistencia entre dispositivos (11), correo y recuperación (42) y SEO (39), marcado de producto (19). Además se verifica la sintaxis de 87 PHP, el log y los patrones de archivos sensibles. Validación local con PHP 8.3.6 y MariaDB 10.11.14; CI configurada para PHP 8.3, 8.4 y 8.5.
+Estado actual: **995 comprobaciones por entorno**, distribuidas en 24 suites: compra (41), cuenta/privacidad (45), perfil y seguridad (61), concurrencia de perfil (12), acceso administrativo (48), consulta de pedidos (64), estados de pedido (54), inventario (50), colecciones y marcas (54), imágenes (37), gestión del catálogo (75), catálogo público (73), colección Unisex (7), checkout (47), política comercial (35), portada/descubrimiento/ayuda (33), concurrencia de compra (32), favoritos invitados (38), favoritos de cuenta (45), carrito guardado (33), consistencia entre dispositivos (11), correo y recuperación (42) y SEO (39), marcado de producto (19). Además se verifica la sintaxis de 91 PHP, el log y los patrones de archivos sensibles. Validación local con PHP 8.3.6 y MariaDB 10.11.14; CI configurada para PHP 8.3, 8.4 y 8.5.
 
 Esta suite usa peticiones HTTP reales, sesiones independientes y una base MariaDB/MySQL desechable cuyo nombre termina en `_test`. No utiliza pagos ni correo reales.
 
@@ -43,6 +43,7 @@ $env:TIENDA_TEST_URL='http://127.0.0.1:8080'
 $env:TIENDA_TEST_ADMIN_PASS='CLAVE_ADMIN_SOLO_DE_PRUEBAS'
 php tests/integration.php
 php tests/customer.php
+php tests/profile.php
 php tests/admin.php
 php tests/admin_orders.php
 php tests/admin_order_status.php
@@ -62,7 +63,7 @@ php tests/product_markup.php
 python3 tests/privacy.py
 ```
 
-Este bloque de PowerShell ejecuta las suites que no necesitan peticiones simultáneas. Para las **922 comprobaciones completas**, incluidas gestión del catálogo, favoritos de cuenta, consistencia del carrito y compras simultáneas, usar el servidor con varios procesos de la sección siguiente o GitHub Actions.
+Este bloque de PowerShell ejecuta las suites que no necesitan peticiones simultáneas. Para las **995 comprobaciones completas**, incluidas gestión del catálogo, favoritos de cuenta, consistencia del carrito, perfil y compras simultáneas, usar el servidor con varios procesos de la sección siguiente o GitHub Actions.
 
 La URL y el DSN deben apuntar a la misma instalación. La cuenta de pruebas consulta y prepara datos; el servidor usa el usuario de aplicación. Con la clave administrativa definida deben pasar 41 comprobaciones. Si se omite, no se ejecuta el recorrido administrativo completo.
 
@@ -84,6 +85,8 @@ En otra terminal, con las mismas variables de pruebas:
 ```bash
 php tests/integration.php
 php tests/customer.php
+php tests/profile.php
+php tests/profile_concurrency.php
 php tests/admin.php
 php tests/admin_orders.php
 php tests/admin_order_status.php
@@ -123,7 +126,7 @@ Utiliza correos `example.invalid`, restaura el stock y elimina sus pedidos y el 
 
 ## GitHub Actions
 
-`.github/workflows/tienda-tests.yml` ejecuta las 22 suites cuando cambian la aplicación, las pruebas o el workflow en `develop`, `main` o ramas `mejora/**`, y en pull requests hacia esas ramas. La matriz prueba PHP 8.3, 8.4 y 8.5 con MariaDB 11.4 en una base desechable por job. También comprueba la sintaxis de todos los PHP y rechaza avisos, errores y deprecaciones del log.
+`.github/workflows/tienda-tests.yml` ejecuta las 24 suites cuando cambian la aplicación, las pruebas o el workflow en `develop`, `main` o ramas `mejora/**`, y en pull requests hacia esas ramas. La matriz prueba PHP 8.3, 8.4 y 8.5 con MariaDB 11.4 en una base desechable por job. También comprueba la sintaxis de todos los PHP y rechaza avisos, errores y deprecaciones del log.
 
 El workflow solo tiene permisos de lectura del repositorio; sus contraseñas ficticias sirven exclusivamente para los servicios temporales de CI. Las acciones se fijan a commits concretos. Los resultados correspondientes a cada commit aparecen en [GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions). El único aviso permitido es el que provoca intencionadamente la prueba de un POST mayor que `post_max_size`.
 
@@ -198,3 +201,11 @@ La revisión visual de las pantallas administrativas usa HTML obtenido mediante 
 `tests/cart_consistency.php` añade **11 comprobaciones**: checkout directo con copia local vacía, formularios antiguos, cambios después del resumen, vaciado transaccional, confirmaciones repetidas, fallo al vaciar con reversión, dos escrituras solapadas y dos confirmaciones desde sesiones distintas. Verifica el número de pedidos, las existencias y el contenido guardado. Usa una barrera que observa dos transacciones esperando el bloqueo de la cuenta; requiere los procesos y permisos de la sección de concurrencia. Limpia triggers, pedidos, productos y cuentas de ejemplo, incluso si falla.
 
 `tests/policy.php` incluye **35 comprobaciones**: además de la edición y cálculo, simula tabla y registro de ajustes ausentes para verificar que se conserva el carrito y se detiene la compra sin inventar impuestos o envío. Restaura los ajustes al terminar. No ejecutar las suites en paralelo ni contra datos reales.
+
+## Perfil y seguridad de la cuenta
+
+`tests/profile.php` añade 61 comprobaciones HTTP y SQL: cuenta propia, CSRF, texto y Unicode, versiones obsoletas, reversión de cambios en nombre/dirección, conservación de pedidos, dirección puntual frente a habitual, renovación e invalidación de sesiones, contraseñas, enlaces de recuperación, carrito/favoritos y límites persistentes de intentos. Usa TRIGGER para simular fallos y comprueba que no queden cambios parciales.
+
+`tests/profile_concurrency.php` añade 12 comprobaciones, incluidas cuatro barreras que exigen observar dos transacciones HTTP solapadas. Compiten dos ediciones, dos cambios de contraseña y perfil contra recuperación con ambos órdenes de lanzamiento. Requiere varios procesos PHP y PROCESS. No se presupone el ganador; se comprueba que solo una operación se acepte y que la base refleje exactamente ese resultado.
+
+Las dos suites usan exclusivamente clientes `example.invalid`, eliminan sus fixtures y restauran el stock. No ejecutar en paralelo con otras suites sobre la misma base. [Comportamiento y límites](../docs/PERFIL_CLIENTE.md).
