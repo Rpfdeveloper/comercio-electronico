@@ -4,6 +4,10 @@ El objetivo es evolucionar esta práctica académica, mediante mejoras increment
 
 Estado actual: prototipo funcional en desarrollo. Todavía no está preparado para operar con clientes ni cobrar pagos reales.
 
+## Datos y seguridad de la cuenta — 5 de noviembre de 2026
+
+Nombre y dirección habitual editables, con protección ante cambios de otro dispositivo. Cambio de contraseña con verificación de la actual, límites de intentos e invalidación de sesiones y enlaces antiguos. Los pedidos pueden enviarse a otra dirección sin sustituir el perfil. Sin migraciones nuevas. [Uso y límites](PERFIL_CLIENTE.md).
+
 ## Nueva entrega: gestión del catálogo y fichas renovadas
 
 Resumen administrativo, altas inactivas, edición de fichas, selección de imágenes existentes, precios, ofertas, formatos y stock con historial transaccional. Fichas adaptadas al estilo de Canva y página de ayuda. **630 comprobaciones locales correctas**. Requiere la migración aditiva 004. [Uso y límites](GESTION_CATALOGO.md).
@@ -89,6 +93,7 @@ Flujo pendiente → pago registrado → en preparación → enviado, cancelació
 - [x] Desglose coherente de productos, IVA y envío en carrito, resumen y pedido.
 - [x] IVA y gastos de envío configurables, con envío gratis por importe.
 - [x] Historial y detalle privado de pedidos propios.
+- [x] Edición del nombre y dirección habitual, y cambio seguro de contraseña.
 - [ ] Seguimiento del transportista.
 
 ## 3. Operación comercial

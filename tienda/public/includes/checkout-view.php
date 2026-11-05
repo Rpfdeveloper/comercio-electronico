@@ -25,6 +25,7 @@
           </fieldset>
           <?php if ($currentCustomer): ?><p class="commerce-help">Has accedido como <?= h($currentCustomer['email']) ?>. Puedes comprar con esta cuenta sin repetir la contraseña.</p><?php else: ?><p class="commerce-help">¿Ya tienes cuenta? <a href="acceso.php">Accede para usar tus datos guardados</a>.</p><?php endif; ?>
           <p class="commerce-help">Todos los campos son obligatorios salvo la provincia.</p>
+          <?php if ($currentCustomer): ?><p class="commerce-help">La dirección de este pedido no cambia tu dirección habitual. Puedes editarla en <a href="perfil.php">Mis datos y seguridad</a>.</p><?php endif; ?>
           <div class="checkout-fields">
             <?php foreach (checkout_fields() as $key => $field): ?>
               <div class="checkout-field <?= in_array($key, ['email','nombre','direccion'], true) ? 'checkout-wide' : '' ?>">

@@ -240,16 +240,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step === 'confirm') {
                     throw new RuntimeException('No se ha podido autenticar la cuenta.');
                 }
                 $idCliente = (int)$rowCli['id'];
-
-                $st = $pdo->prepare(
-                    "UPDATE cliente
-                     SET nombre = :nombre
-                     WHERE id = :id"
-                );
-                $st->execute([
-                    ':nombre' => $data['nombre'],
-                    ':id'     => $idCliente,
-                ]);
             } else {
                 if (empty($data['new_password_hash']) || !empty($data['account_proof'])) {
                     throw new RuntimeException('La cuenta ha cambiado. Repite el proceso.');
@@ -265,30 +255,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step === 'confirm') {
                 $idCliente = (int)$pdo->lastInsertId();
             }
 
-            // Alta / actualización de cliente_registrado
-            $passHash = $rowCli ? $rowCli['password_hash'] : $data['new_password_hash'];
+            // Solo el alta fija la dirección habitual. Un pedido posterior puede
+            // enviarse a otra dirección sin sobrescribir el perfil del cliente.
+            if (!$rowCli) {
+                $passHash = $data['new_password_hash'];
 
-            $st = $pdo->prepare(
-                "INSERT INTO cliente_registrado
-                    (id_cliente, password_hash, direccion, cp, poblacion, provincia, pais)
-                 VALUES
-                    (:id_cliente, :pw, :dir, :cp, :pob, :prov, :pais)
-                 ON DUPLICATE KEY UPDATE
-                    direccion     = VALUES(direccion),
-                    cp            = VALUES(cp),
-                    poblacion     = VALUES(poblacion),
-                    provincia     = VALUES(provincia),
-                    pais          = VALUES(pais)"
-            );
-            $st->execute([
-                ':id_cliente' => $idCliente,
-                ':pw'         => $passHash,
-                ':dir'        => $data['direccion'],
-                ':cp'         => $data['cp'],
-                ':pob'        => $data['poblacion'],
-                ':prov'       => $data['provincia'] ?: null,
-                ':pais'       => $data['pais'],
-            ]);
+                $st = $pdo->prepare(
+                    "INSERT INTO cliente_registrado
+                        (id_cliente, password_hash, direccion, cp, poblacion, provincia, pais)
+                     VALUES
+                        (:id_cliente, :pw, :dir, :cp, :pob, :prov, :pais)"
+                );
+                $st->execute([
+                    ':id_cliente' => $idCliente,
+                    ':pw'         => $passHash,
+                    ':dir'        => $data['direccion'],
+                    ':cp'         => $data['cp'],
+                    ':pob'        => $data['poblacion'],
+                    ':prov'       => $data['provincia'] ?: null,
+                    ':pais'       => $data['pais'],
+                ]);
+            }
         }
 
         // Alta del pedido
