@@ -28,6 +28,10 @@ function reset_request(PDO $pdo, string $email): void
     $token = bin2hex(random_bytes(32));
     $pdo->beginTransaction();
     try {
+        // Serializar emisión, recuperación y cambio desde el perfil por cuenta.
+        $lock = $pdo->prepare('SELECT id_cliente FROM cliente_registrado WHERE id_cliente=? FOR UPDATE');
+        $lock->execute([(int)$customer['id']]);
+        if (!$lock->fetchColumn()) { $pdo->commit(); return; }
         // Un enlace nuevo invalida los anteriores de la misma cuenta.
         $pdo->prepare('DELETE FROM cliente_recuperacion WHERE id_cliente=?')->execute([(int)$customer['id']]);
         $pdo->prepare('INSERT INTO cliente_recuperacion(token_hash,id_cliente,expira) VALUES (?,?,UTC_TIMESTAMP() + INTERVAL ' . RESET_MINUTES . ' MINUTE)')
@@ -67,8 +71,14 @@ function reset_find(PDO $pdo, $token, bool $lock = false): array
 // porque su prueba depende del hash anterior.
 function reset_complete(PDO $pdo, $token, string $password): int
 {
+    $candidate = reset_find($pdo, $token);
     $pdo->beginTransaction();
     try {
+        // Cuenta antes que token, igual que la edición de contraseña del perfil.
+        $lock = $pdo->prepare('SELECT id_cliente FROM cliente_registrado WHERE id_cliente=? FOR UPDATE');
+        $lock->execute([(int)$candidate['id_cliente']]);
+        if (!$lock->fetchColumn()) { throw new ResetInvalid(); }
+        // El enlace puede haberse invalidado mientras esperábamos el bloqueo.
         $row = reset_find($pdo, $token, true);
         $pdo->prepare('UPDATE cliente_registrado SET password_hash=? WHERE id_cliente=?')
             ->execute([password_hash($password, PASSWORD_DEFAULT), (int)$row['id_cliente']]);

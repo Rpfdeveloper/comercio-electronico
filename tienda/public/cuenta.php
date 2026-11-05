@@ -25,6 +25,10 @@ require_once __DIR__ . '/includes/header.php';
     <form action="salir.php" method="post"><?= csrf_field() ?><button type="submit" class="account-secondary">Cerrar sesión</button></form>
   </div>
   <p><?= h($customer['email']) ?></p>
+  <section class="account-favorites" aria-labelledby="account-profile-title">
+    <div><p class="store-eyebrow">DATOS Y SEGURIDAD</p><h3 id="account-profile-title">Tu dirección habitual, siempre a mano</h3><p>Actualiza tus datos de envío y cambia tu contraseña desde tu cuenta.</p></div>
+    <a class="btn" href="perfil.php">Mis datos y seguridad</a>
+  </section>
   <section class="account-favorites" aria-labelledby="account-favorites-title">
     <div><p class="store-eyebrow">TU COLECCIÓN, CONTIGO</p><h3 id="account-favorites-title">Mis favoritos</h3><p>Consulta los perfumes guardados en tu cuenta desde cualquier dispositivo en el que inicies sesión.</p></div>
     <a class="btn" href="favoritos.php">Ver mis favoritos (<?= count($favoritesContext['ids']) ?>)</a>
