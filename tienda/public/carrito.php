@@ -21,6 +21,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $continue = ($_POST['continuar'] ?? '') === '1';
         $action = isset($_POST['remove']) ? 'remove' : ($_POST['action'] ?? '');
+        // Las páginas incluyen la versión que vio el cliente. Las peticiones sin versión
+        // conservan la comprobación transaccional frente a escrituras simultáneas.
+        if ($cartCustomer !== null && isset($_POST['cart_version']) &&
+            (!is_string($_POST['cart_version']) || !hash_equals(cart_account_version($cart), $_POST['cart_version']))) {
+            throw new CartAccountConflict('El carrito ha cambiado en otro dispositivo. Revisa su contenido actual antes de repetir el cambio.');
+        }
         if ($action === 'add') {
             $id = cart_integer($_POST['id_producto'] ?? null);
             $variant = isset($_POST['id_variante']) && $_POST['id_variante'] !== ''
@@ -60,9 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($action !== 'remove' && !($action === 'update' && !$next)) {
             cart_items(db(), $next); // Validar antes de modificar la sesión.
         }
-        $_SESSION['cart'] = $next;
         unset($_SESSION['checkout']);
-        $saveNotice = cart_account_save(db(), $cartCustomer, $next);
+        $saveNotice = cart_account_save(db(), $cartCustomer, $next, $cart);
         $checkout = $continue && $action === 'update' && $next;
         if (!$checkout || $saveNotice !== '') {
             $_SESSION['cart_notice'] = $saveNotice !== '' ? $saveNotice : ($action === 'remove' ? 'Producto eliminado del carrito.' :
@@ -71,6 +76,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($saveNotice !== '') { $checkout = false; }
         header('Location: ' . ($checkout ? 'checkout.php' : 'carrito.php'), true, 303);
         exit;
+    } catch (CartAccountConflict $e) {
+        http_response_code(409);
+        unset($_SESSION['checkout']);
+        [$cartCustomer, $cart, $syncNotice] = cart_account_context(db());
+        $error = $e->getMessage();
     } catch (DomainException $e) {
         http_response_code(422);
         $error = $e->getMessage();
@@ -82,7 +92,12 @@ try {
     $items = [];
     $error = $e->getMessage();
 }
-$totals = cart_totals($items, commerce_policy(db()));
+$totals = null;
+try { $totals = cart_totals($items, commerce_policy(db())); }
+catch (PDOException $e) {
+    http_response_code(503);
+    $error = 'No podemos calcular los impuestos y el envío en este momento. Tu carrito se conserva; inténtalo más tarde.';
+}
 require_once __DIR__ . '/includes/header.php';
 ?>
 <section class="commerce" aria-labelledby="cart-title">
@@ -104,6 +119,7 @@ require_once __DIR__ . '/includes/header.php';
   <?php else: ?>
     <form method="post" action="carrito.php" class="commerce-layout">
       <?= csrf_field() ?><input type="hidden" name="action" value="update">
+      <?php if ($cartCustomer !== null): ?><input type="hidden" name="cart_version" value="<?= h(cart_account_version($cart)) ?>"><?php endif; ?>
       <div class="commerce-panel">
         <p class="commerce-help" id="quantity-help">Puedes actualizar las cantidades o continuar directamente. Al continuar se guardarán tus cambios. Una cantidad de 0 elimina el producto.</p>
         <ul class="cart-lines">
@@ -123,8 +139,10 @@ require_once __DIR__ . '/includes/header.php';
         <button type="submit" class="commerce-secondary">Actualizar carrito</button>
       </div>
       <aside class="commerce-panel commerce-summary" aria-labelledby="summary-title">
-        <?php $summaryItems = []; require __DIR__ . '/includes/order-summary.php'; ?>
-        <button type="submit" name="continuar" value="1" class="commerce-primary">Continuar con la compra</button>
+        <?php if ($totals !== null): ?>
+          <?php $summaryItems = []; require __DIR__ . '/includes/order-summary.php'; ?>
+        <?php else: ?><h3 id="summary-title">Total no disponible</h3><p>Podrás continuar cuando podamos calcular los impuestos y el envío.</p><?php endif; ?>
+        <button type="submit" name="continuar" value="1" class="commerce-primary"<?= $totals === null ? ' disabled' : '' ?>>Continuar con la compra</button>
         <p class="commerce-help">Revisarás tus datos y el pedido antes de confirmarlo.</p>
       </aside>
     </form>

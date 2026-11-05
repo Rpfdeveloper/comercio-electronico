@@ -27,11 +27,11 @@ El resumen guarda los importes mostrados. Al confirmar, la política se lee con 
 
 ## Actualización
 
-Aplicar `tienda/sql/migrations/007_commerce_policy.sql` (aditiva e idempotente). Sin ella, la tienda sigue usando 21 % y envío gratis, y la página de ajustes indica que falta la migración.
+Aplicar `tienda/sql/migrations/007_commerce_policy.sql` (aditiva e idempotente). Si falta la tabla o su registro de ajustes, la compra se detiene con **503** y el carrito indica que el total no está disponible. Un fallo de lectura no sustituye los ajustes por 21 % y envío gratis. La página administrativa pide comprobar la conexión y la migración.
 
 ## Validación
 
-`tests/policy.php`: 30 comprobaciones HTTP (valores por defecto, validación, CSRF, conflictos, historial, carrito con envío y umbral inclusivo, cambio de política durante la compra y pedido con los importes mostrados). **857 comprobaciones por entorno** en PHP 8.3, 8.4 y 8.5.
+`tests/policy.php`: **35 comprobaciones HTTP**, incluidas tabla no disponible, registro ausente, compra detenida sin pedido ni descuento de stock y recuperación del carrito. También verifica valores iniciales, validación, CSRF, conflictos, historial, umbral de envío y cambios durante la compra. [Resultados y ejecución de todas las suites](../tests/README.md).
 
 ## Límites
 

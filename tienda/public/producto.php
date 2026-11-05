@@ -62,7 +62,8 @@ $shownStock = $selectedFormat ? (int)$selectedFormat['stock'] : (!$prod['variant
         </select>
       <?php endif; ?>
       <label for="qty">Cantidad</label>
-      <input type="number" id="qty" name="cantidad" min="1" max="999" value="1" <?= $available ? '' : 'disabled' ?>>
+      <input type="number" id="qty" name="cantidad" min="1" max="<?= max(1, min(999, $shownStock)) ?>" value="1" inputmode="numeric" aria-describedby="product-quantity-help" <?= $available ? '' : 'disabled' ?>>
+      <p class="store-caption" id="product-quantity-help">La cantidad está limitada a las unidades disponibles. El carrito vuelve a comprobar las existencias.</p>
       <button type="submit" <?= $available ? '' : 'disabled' ?>>Añadir al carrito <span aria-hidden="true">→</span></button>
     </form>
     <?php $favoriteProduct = $prod; require __DIR__ . '/includes/favorite-button.php'; ?>
@@ -74,5 +75,5 @@ $shownStock = $selectedFormat ? (int)$selectedFormat['stock'] : (!$prod['variant
   </section>
   <aside class="product-help"><h2>Elige a tu ritmo.</h2><p>Explora el catálogo con una colección, una palabra o tu presupuesto.</p><a href="<?= h(url('descubrir.php')) ?>">Abrir el asesor de perfumes →</a></aside>
 </article>
-<script src="<?= asset('js/product.js?v=1') ?>" defer></script>
+<script src="<?= asset('js/product.js?v=2') ?>" defer></script>
 <?php require __DIR__ . '/includes/footer.php'; ?>

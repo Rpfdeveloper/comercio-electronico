@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-// Política comercial: IVA y gastos de envío. Una sola fila; sin la migración 007 se usa
-// la regla anterior (21 % y envío gratuito), de modo que la tienda sigue funcionando igual.
+// Política comercial: IVA y gastos de envío. Los valores iniciales solo sirven al instalar;
+// un fallo de lectura nunca debe sustituir los importes configurados al comprar.
 const POLICY_DEFAULT = ['iva'=>'21.00', 'envio'=>'0.00', 'envio_gratis_desde'=>null];
 
 class PolicyValidation extends DomainException
@@ -16,16 +16,15 @@ function policy_read(PDO $pdo, bool $lock = false): array
 {
     $st = $pdo->query('SELECT iva,envio,envio_gratis_desde FROM tienda_politica WHERE id=1' . ($lock ? ' LOCK IN SHARE MODE' : ''));
     $row = $st->fetch();
-    if (!$row) { return POLICY_DEFAULT; }
+    if (!$row) { throw new PDOException('Falta la política comercial.'); }
     return ['iva'=>(string)$row['iva'], 'envio'=>(string)$row['envio'],
         'envio_gratis_desde'=>$row['envio_gratis_desde'] === null ? null : (string)$row['envio_gratis_desde']];
 }
 
-// Para la tienda: nunca impide vender por un fallo de lectura de la política.
+// El llamador muestra un aviso y detiene la compra si no puede calcular el total real.
 function commerce_policy(PDO $pdo, bool $lock = false): array
 {
-    try { return policy_read($pdo, $lock); }
-    catch (PDOException $e) { return POLICY_DEFAULT; }
+    return policy_read($pdo, $lock);
 }
 
 function policy_version(array $policy): string

@@ -6,7 +6,7 @@
   </a>
   <p class="catalog-brand"><?= h($product['marca']) ?></p>
   <p><?= h($product['descripcion_corta'] ?? '') ?></p>
-  <?php if ($product['precio_desde'] !== null): ?><div class="price">desde <?= money_eur((float)$product['precio_desde']) ?></div><?php endif; ?>
+  <?php if ($product['precio_desde'] !== null): ?><div class="price">desde <?= money_eur((float)$product['precio_desde']) ?></div><p class="store-caption">Sin IVA · total en el carrito</p><?php endif; ?>
   <span class="catalog-availability <?= $product['disponible'] ? 'available' : '' ?>"><?= $product['disponible'] ? 'Disponible' : 'Agotado' ?></span>
   <?php $favoriteProduct = $product; require __DIR__ . '/favorite-button.php'; ?>
 </article>

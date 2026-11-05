@@ -8,6 +8,25 @@ require_once __DIR__ . '/customer.php';
 const CART_ACCOUNT_LINES = 100;
 
 class CartAccountSessionExpired extends RuntimeException {}
+class CartAccountConflict extends DomainException {}
+
+function cart_account_version(array $cart): string
+{
+    $cart = cart_account_clean($cart);
+    ksort($cart);
+    return hash('sha256', json_encode($cart, JSON_THROW_ON_ERROR));
+}
+
+// Todos los escritores de una cuenta toman primero este bloqueo, incluida la compra.
+function cart_account_lock(PDO $pdo, array $customer): void
+{
+    $lock = $pdo->prepare('SELECT password_hash FROM cliente_registrado WHERE id_cliente=? FOR UPDATE');
+    $lock->execute([(int)$customer['id']]);
+    $hash = $lock->fetchColumn();
+    if (!is_string($hash) || !hash_equals((string)$customer['password_hash'], $hash)) {
+        throw new CartAccountSessionExpired('La sesión ha cambiado.');
+    }
+}
 
 // Entradas bien formadas del carrito de sesión; las demás se descartan sin interpretarlas.
 function cart_account_clean($cart): array
@@ -41,9 +60,9 @@ function cart_account_merge(array $saved, array $session): array
     return array_slice($merged, 0, CART_ACCOUNT_LINES, true);
 }
 
-function cart_account_load(PDO $pdo, int $customerId): array
+function cart_account_load(PDO $pdo, int $customerId, bool $lock = false): array
 {
-    $st = $pdo->prepare('SELECT clave,id_producto,id_variante,cantidad FROM cliente_carrito WHERE id_cliente=? ORDER BY actualizado, clave');
+    $st = $pdo->prepare('SELECT clave,id_producto,id_variante,cantidad FROM cliente_carrito WHERE id_cliente=? ORDER BY actualizado, clave' . ($lock ? ' FOR UPDATE' : ''));
     $st->execute([$customerId]);
     $cart = [];
     foreach ($st->fetchAll() as $row) {
@@ -54,20 +73,19 @@ function cart_account_load(PDO $pdo, int $customerId): array
 }
 
 // Sustituye el carrito guardado. $mergeSaved une primero con lo ya guardado (al iniciar sesión).
-function cart_account_write(PDO $pdo, array $customer, array $cart, bool $mergeSaved = false): array
+function cart_account_write(PDO $pdo, array $customer, array $cart, bool $mergeSaved = false, ?array $expected = null): array
 {
     $cart = cart_account_clean($cart);
     for ($attempt = 0; ; ++$attempt) {
         try {
             $pdo->beginTransaction();
             // Serializa cambios de la misma cuenta desde varias sesiones y comprueba la credencial.
-            $lock = $pdo->prepare('SELECT password_hash FROM cliente_registrado WHERE id_cliente=? FOR UPDATE');
-            $lock->execute([(int)$customer['id']]);
-            $hash = $lock->fetchColumn();
-            if (!is_string($hash) || !hash_equals((string)$customer['password_hash'], $hash)) {
-                throw new CartAccountSessionExpired('La sesión ha cambiado.');
+            cart_account_lock($pdo, $customer);
+            $saved = cart_account_load($pdo, (int)$customer['id'], true);
+            if ($expected !== null && !hash_equals(cart_account_version($expected), cart_account_version($saved))) {
+                throw new CartAccountConflict('El carrito ha cambiado en otro dispositivo. Revisa su contenido actual antes de repetir el cambio.');
             }
-            $result = $mergeSaved ? cart_account_merge(cart_account_load($pdo, (int)$customer['id']), $cart) : $cart;
+            $result = $mergeSaved ? cart_account_merge($saved, $cart) : $cart;
             $result = array_slice($result, 0, CART_ACCOUNT_LINES, true);
             $pdo->prepare('DELETE FROM cliente_carrito WHERE id_cliente=?')->execute([(int)$customer['id']]);
             // Solo referencias existentes y coherentes; las retiradas de la base no se guardan.
@@ -124,17 +142,19 @@ function cart_account_context(PDO $pdo): array
 }
 
 // Guarda el carrito tras un cambio. Devuelve un aviso vacío si se guardó o no había cuenta.
-function cart_account_save(PDO $pdo, ?array $customer, array $cart): string
+function cart_account_save(PDO $pdo, ?array $customer, array $cart, array $expected): string
 {
-    if ($customer === null) { return ''; }
+    if ($customer === null) { $_SESSION['cart'] = $cart; return ''; }
     try {
-        $_SESSION['cart'] = cart_account_write($pdo, $customer, $cart);
+        $_SESSION['cart'] = cart_account_write($pdo, $customer, $cart, false, $expected);
         return '';
     } catch (CartAccountSessionExpired $e) {
         customer_forget();
+        $_SESSION['cart'] = $cart;
         return 'Tu sesión ha caducado. El carrito se conserva en este navegador; vuelve a acceder para guardarlo en tu cuenta.';
     } catch (PDOException $e) {
         unset($_SESSION['cart_synced']);
+        $_SESSION['cart'] = $cart;
         return 'El carrito se ha actualizado en este navegador, pero no se ha podido guardar en tu cuenta.';
     }
 }
@@ -155,6 +175,6 @@ function cart_account_after_sign_in(PDO $pdo, array $customer): void
 
 function cart_account_clear(PDO $pdo, int $customerId): void
 {
-    try { $pdo->prepare('DELETE FROM cliente_carrito WHERE id_cliente=?')->execute([$customerId]); }
-    catch (PDOException $e) { /* El pedido ya está confirmado; no se revierte por esto. */ }
+    // Se llama dentro de la transacción de compra, con la cuenta bloqueada.
+    $pdo->prepare('DELETE FROM cliente_carrito WHERE id_cliente=?')->execute([$customerId]);
 }

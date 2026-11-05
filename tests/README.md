@@ -1,6 +1,6 @@
 # Pruebas de la tienda
 
-Estado actual: **906 comprobaciones por entorno**, distribuidas en 21 suites: compra (41), cuenta/privacidad (45), acceso administrativo (48), consulta de pedidos (64), estados de pedido (54), inventario (50), colecciones y marcas (54), imágenes (37), gestión del catálogo (75), catálogo público (73), colección Unisex (7), checkout (47), política comercial (30), portada/descubrimiento/ayuda (33), concurrencia de compra (32), favoritos invitados (38), favoritos de cuenta (45), carrito guardado (33), correo y recuperación (42) y SEO (39), marcado de producto (19). Además se verifica la sintaxis de 64 PHP, el log y los patrones de archivos sensibles. Validación local con PHP 8.3.6 y MariaDB 10.11.14; CI configurada para PHP 8.3, 8.4 y 8.5.
+Estado actual: **922 comprobaciones por entorno**, distribuidas en 22 suites: compra (41), cuenta/privacidad (45), acceso administrativo (48), consulta de pedidos (64), estados de pedido (54), inventario (50), colecciones y marcas (54), imágenes (37), gestión del catálogo (75), catálogo público (73), colección Unisex (7), checkout (47), política comercial (35), portada/descubrimiento/ayuda (33), concurrencia de compra (32), favoritos invitados (38), favoritos de cuenta (45), carrito guardado (33), consistencia entre dispositivos (11), correo y recuperación (42) y SEO (39), marcado de producto (19). Además se verifica la sintaxis de 87 PHP, el log y los patrones de archivos sensibles. Validación local con PHP 8.3.6 y MariaDB 10.11.14; CI configurada para PHP 8.3, 8.4 y 8.5.
 
 Esta suite usa peticiones HTTP reales, sesiones independientes y una base MariaDB/MySQL desechable cuyo nombre termina en `_test`. No utiliza pagos ni correo reales.
 
@@ -32,7 +32,7 @@ $env:TIENDA_DEBUG='true'
 $env:TIENDA_AUTH_SECRET='clave-ficticia-solo-pruebas-con-mas-de-32-bytes'
 New-Item -ItemType Directory -Force tests/sessions | Out-Null
 $sessionPath=(Resolve-Path tests/sessions).Path
-php -d "session.save_path=$sessionPath" -d output_buffering=0 -S 127.0.0.1:8080 -t tienda
+php -d "session.save_path=$sessionPath" -d output_buffering=0 -d display_errors=0 -S 127.0.0.1:8080 -t tienda
 ```
 
 ## Ejecutar
@@ -55,7 +55,6 @@ php tests/checkout.php
 php tests/policy.php
 php tests/storefront.php
 php tests/favorites.php
-php tests/favorites_account.php
 php tests/cart_account.php
 php tests/password_reset.php
 php tests/seo.php
@@ -63,19 +62,21 @@ php tests/product_markup.php
 python3 tests/privacy.py
 ```
 
+Este bloque de PowerShell ejecuta las suites que no necesitan peticiones simultáneas. Para las **922 comprobaciones completas**, incluidas gestión del catálogo, favoritos de cuenta, consistencia del carrito y compras simultáneas, usar el servidor con varios procesos de la sección siguiente o GitHub Actions.
+
 La URL y el DSN deben apuntar a la misma instalación. La cuenta de pruebas consulta y prepara datos; el servidor usa el usuario de aplicación. Con la clave administrativa definida deben pasar 41 comprobaciones. Si se omite, no se ejecuta el recorrido administrativo completo.
 
 La suite prueba tokens ausentes, inválidos y de otra sesión; cantidades inválidas; productos y variantes no disponibles; relación producto-variante; altas, cambios y borrado del carrito; pedidos y descuento de stock; confirmaciones repetidas; cambios de precio y disponibilidad; acceso con cuentas nuevas y existentes; autenticación administrativa y cierre de sesión. Restaura el stock y elimina sus pedidos y clientes al terminar, también ante errores.
 
-La suite de integración simula un cambio de stock entre resumen y confirmación. La suite independiente `tests/concurrency.php` comprueba además peticiones simultáneas reales. Ninguna de las dos es una prueba de carga. La revisión visual parcial se documenta en `docs/COMPRA.md`; no sustituye una auditoría de accesibilidad ni pruebas en dispositivos reales. Pagos y correo siguen pendientes.
+La suite de integración simula un cambio de stock entre resumen y confirmación. La suite independiente `tests/concurrency.php` comprueba además peticiones simultáneas reales. Ninguna de las dos es una prueba de carga. La revisión visual parcial se documenta en `docs/COMPRA.md`; no sustituye una auditoría de accesibilidad ni pruebas en dispositivos reales. Pagos y envío real de correo siguen pendientes; el registro administrativo de correos y la recuperación de contraseña se prueban sin enviar mensajes.
 
 ## Compras simultáneas (Linux / macOS)
 
-Requiere MariaDB, la extensión cURL y al menos dos procesos HTTP. La cuenta `TIENDA_TEST_USER` necesita el permiso `PROCESS` para observar `INNODB_LOCK_WAITS`; la cuenta de la aplicación no necesita ese permiso. Con las variables anteriores configuradas y desde la raíz:
+Requiere MariaDB, la extensión cURL y al menos dos procesos HTTP. La cuenta `TIENDA_TEST_USER` necesita `PROCESS` para observar `INNODB_LOCK_WAITS` y `TRIGGER` para los fallos SQL simulados; la cuenta de la aplicación no necesita esos permisos. Con las variables anteriores configuradas y desde la raíz:
 
 ```bash
 mkdir -p tests/sessions
-PHP_CLI_SERVER_WORKERS=4 php -d session.save_path="$PWD/tests/sessions" -d output_buffering=0 -S 127.0.0.1:8080 -t tienda
+PHP_CLI_SERVER_WORKERS=4 php -d session.save_path="$PWD/tests/sessions" -d output_buffering=0 -d display_errors=0 -S 127.0.0.1:8080 -t tienda
 ```
 
 En otra terminal, con las mismas variables de pruebas:
@@ -85,12 +86,28 @@ php tests/integration.php
 php tests/customer.php
 php tests/admin.php
 php tests/admin_orders.php
+php tests/admin_order_status.php
 php tests/admin_inventory.php
-php tests/catalog.php
 php tests/admin_catalog.php
+php tests/admin_images.php
+php tests/admin_taxonomy.php
+php tests/unisex_catalog.php
+php tests/catalog.php
+php tests/checkout.php
+php tests/policy.php
+php tests/storefront.php
+php tests/favorites.php
+php tests/password_reset.php
+php tests/cart_account.php
+php tests/cart_consistency.php
+php tests/favorites_account.php
+php tests/seo.php
+php tests/product_markup.php
 php tests/concurrency.php
 python3 tests/privacy.py
 ```
+
+`display_errors=0` evita que el aviso de un envío deliberadamente mayor que `post_max_size` altere las cabeceras antes de arrancar la aplicación. La depuración de la aplicación continúa activa mediante `TIENDA_DEBUG` para las pruebas.
 
 El servidor integrado de PHP admite múltiples procesos desde PHP 7.4 y no soporta esa opción en Windows. En Windows, usa WSL o ejecuta las pruebas mediante GitHub Actions. Un servidor secuencial debe fallar en la prueba de concurrencia: no basta con lanzar dos peticiones que se atiendan una detrás de otra.
 
@@ -106,14 +123,14 @@ Utiliza correos `example.invalid`, restaura el stock y elimina sus pedidos y el 
 
 ## GitHub Actions
 
-`.github/workflows/tienda-tests.yml` ejecuta las trece suites cuando cambian la aplicación, las pruebas o el workflow en `develop`, `main` o ramas `mejora/**`, y en pull requests hacia esas ramas. La matriz prueba PHP 8.3, 8.4 y 8.5 con MariaDB 11.4 en una base desechable por job. También comprueba la sintaxis de todos los PHP y rechaza avisos, errores y deprecaciones del log.
+`.github/workflows/tienda-tests.yml` ejecuta las 22 suites cuando cambian la aplicación, las pruebas o el workflow en `develop`, `main` o ramas `mejora/**`, y en pull requests hacia esas ramas. La matriz prueba PHP 8.3, 8.4 y 8.5 con MariaDB 11.4 en una base desechable por job. También comprueba la sintaxis de todos los PHP y rechaza avisos, errores y deprecaciones del log.
 
-El workflow solo tiene permisos de lectura del repositorio; sus contraseñas ficticias sirven exclusivamente para los servicios temporales de CI. Las acciones se fijan a commits concretos. Resultado verificado el 30 de octubre de 2026: **41 comprobaciones de integración + 29 de concurrencia por versión de PHP**, ambas ejecuciones correctas; 21 archivos PHP sin errores de sintaxis y logs sin avisos. [Ejecución verificada](https://github.com/Rpfdeveloper/comercio-electronico/actions/runs/41126154248). Los resultados posteriores aparecen en [GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions).
+El workflow solo tiene permisos de lectura del repositorio; sus contraseñas ficticias sirven exclusivamente para los servicios temporales de CI. Las acciones se fijan a commits concretos. Los resultados correspondientes a cada commit aparecen en [GitHub Actions](https://github.com/Rpfdeveloper/comercio-electronico/actions). El único aviso permitido es el que provoca intencionadamente la prueba de un POST mayor que `post_max_size`.
 
 Referencias técnicas: [servidor integrado de PHP](https://www.php.net/manual/en/features.commandline.webserver.php) y [bloqueos observables en MariaDB](https://mariadb.com/docs/server/reference/system-tables/information-schema/information-schema-tables/information-schema-innodb-tables/information-schema-innodb_lock_waits-table).
 
 ## Variables de la aplicación
-`TIENDA_DB_HOST`, `TIENDA_DB_PORT`, `TIENDA_DB_NAME`, `TIENDA_DB_USER`, `TIENDA_DB_PASS`, `TIENDA_ADMIN_PASS`, `TIENDA_AUTH_SECRET` y `TIENDA_DEBUG` se leen del entorno del proceso PHP. No se carga automáticamente un archivo `.env`. La depuración está desactivada por defecto. Servidor y suites deben compartir `TIENDA_AUTH_SECRET`; se requieren las migraciones 001–004, aplicadas por `prepare_database.php`.
+`TIENDA_DB_HOST`, `TIENDA_DB_PORT`, `TIENDA_DB_NAME`, `TIENDA_DB_USER`, `TIENDA_DB_PASS`, `TIENDA_ADMIN_PASS`, `TIENDA_AUTH_SECRET` y `TIENDA_DEBUG` se leen del entorno del proceso PHP. No se carga automáticamente un archivo `.env`. La depuración está desactivada por defecto. Servidor y suites deben compartir `TIENDA_AUTH_SECRET`; se requieren las migraciones 001–009, aplicadas por `prepare_database.php`.
 
 ## Cuenta y privacidad
 
@@ -174,3 +191,10 @@ Comprueba unión elegida, identidad obtenida de la sesión, acceso/modificación
 Requiere Linux/macOS con al menos dos workers PHP y una cuenta de pruebas con PROCESS y TRIGGER, como favoritos de cuenta. No añadirla a un servidor secuencial de Windows: usar WSL o CI. Las barreras observan dos transacciones esperando el mismo producto; no es una prueba de carga. La cuenta de aplicación no necesita esos permisos. Limpia sus fixtures y trigger al terminar, incluso si falla; ejecutar secuencialmente sobre la base desechable.
 
 La revisión visual de las pantallas administrativas usa HTML obtenido mediante peticiones autenticadas a esa base, con datos ficticios y formularios desactivados. Las escrituras se comprueban por HTTP; esas muestras visuales no se publican como páginas de la tienda.
+
+
+## Consistencia del carrito entre dispositivos
+
+`tests/cart_consistency.php` añade **11 comprobaciones**: checkout directo con copia local vacía, formularios antiguos, cambios después del resumen, vaciado transaccional, confirmaciones repetidas, fallo al vaciar con reversión, dos escrituras solapadas y dos confirmaciones desde sesiones distintas. Verifica el número de pedidos, las existencias y el contenido guardado. Usa una barrera que observa dos transacciones esperando el bloqueo de la cuenta; requiere los procesos y permisos de la sección de concurrencia. Limpia triggers, pedidos, productos y cuentas de ejemplo, incluso si falla.
+
+`tests/policy.php` incluye **35 comprobaciones**: además de la edición y cálculo, simula tabla y registro de ajustes ausentes para verificar que se conserva el carrito y se detiene la compra sin inventar impuestos o envío. Restaura los ajustes al terminar. No ejecutar las suites en paralelo ni contra datos reales.

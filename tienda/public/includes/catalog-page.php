@@ -70,7 +70,7 @@ require __DIR__ . '/header.php';
         <a href="<?= h(url($path . ($categoryPage ? '?c=' . rawurlencode($filters['c']) : ''))) ?>">Limpiar filtros</a>
       </div>
     </form>
-    <p class="catalog-price-help">El precio «desde» corresponde a la capacidad más económica con stock. Si todas están agotadas, se muestra el menor precio de sus capacidades activas. Los filtros de precio se aplican a ese importe.</p>
+    <p class="catalog-price-help">El precio «desde» corresponde a la capacidad más económica con stock. Si todas están agotadas, se muestra el menor precio de sus capacidades activas. Los precios y filtros son sin IVA; consulta los impuestos, el envío y el total en el carrito.</p>
     <div class="catalog-summary"><p role="status"><strong><?= $result['total'] ?></strong> <?= $result['total'] === 1 ? 'perfume encontrado' : 'perfumes encontrados' ?></p>
       <?php if ($result['total'] > 0): ?><p>Página <?= $result['page'] ?> de <?= $result['pages'] ?></p><?php endif; ?>
     </div>
