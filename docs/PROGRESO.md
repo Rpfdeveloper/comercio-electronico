@@ -2,6 +2,16 @@
 
 Registro técnico de cambios verificables en `develop` y de entregas integradas en `main`. La rama `original` conserva la entrega recuperada. El proyecto sigue siendo un prototipo: no procesa pagos ni envía correos reales.
 
+## Revisión de las últimas entregas (5 de noviembre de 2026)
+
+Revisadas las entregas #12–#19: estados de pedido, carrito de cuenta, colecciones/marcas, marcado de producto, imágenes, ajustes de venta, recuperación de contraseña y catálogo Unisex. Se mantienen esas funcionalidades y se corrigen conflictos entre dispositivos, la confirmación desde resúmenes antiguos, el vaciado del carrito fuera de la transacción y el cálculo de importes por defecto cuando no puede leerse la política comercial.
+
+Mejoradas las imágenes de ficha, límites de cantidad por formato, indicaciones de precios sin IVA y textos de correo en modo de prueba. Revalidación de imágenes dentro del bloqueo administrativo. Documentación actualizada sin nuevas migraciones.
+
+Validación local: **922 comprobaciones en 22 suites**, sintaxis de **87 PHP**, JavaScript y revisión de patrones sensibles. Las pruebas nuevas reproducen dos fallos en la versión anterior. Revisión visual de la ficha en escritorio y marcos de 320/390/768 px. [Hallazgos, evidencia y límites](REVISION_2026-11-05.md).
+
+Copia previa de código: `backup/2026-11-05-antes-revision-c29e6fb`, sobre `c29e6fb0a2ccc6f49504836df31ccc84d188b6ee`. Las instalaciones existentes deben actualizarse por separado; no se despliega automáticamente en el ordenador local.
+
 ## Gestión del catálogo y fichas renovadas (31 de octubre de 2026)
 
 Nuevo resumen administrativo, listado del catálogo y formularios de alta, edición y formatos. Las altas son inactivas; se pueden gestionar descripciones, imágenes existentes, precios, ofertas, existencias y visibilidad. Los enlaces y pedidos históricos se conservan. El guardado es transaccional junto con su historial; detecta formularios antiguos y compite correctamente con otras ediciones o compras. Inventario enlaza con el editor.
